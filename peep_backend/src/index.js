@@ -51,7 +51,7 @@ const Comment = {
 }
 
 const createProfile = async (username, profile_pic = "", msg_sender) => {
-  const user = new User
+  const user = User
   user.username = username
   user.address = msg_sender
   user.profile_pic = profile_pic
@@ -66,11 +66,12 @@ const createProfile = async (username, profile_pic = "", msg_sender) => {
     },
     body: JSON.stringify({ payload: hexResult })
   })
-  return advance_req
+  return await advance_req.json()
 }
 
 const createPost = async (username, message, upload = "") => {
-  const post = new Post
+  console.log("creating post...")
+  const post = Post
   post.id = database.posts.length
   post.username = username
   post.content = {
@@ -87,7 +88,7 @@ const createPost = async (username, message, upload = "") => {
     },
     body: JSON.stringify({ payload: hexResult })
   })
-  return advance_req
+  return await advance_req.json()
 }
 
 const createComment = async (post_id, username, message, upload = "") => {
@@ -112,6 +113,7 @@ const createComment = async (post_id, username, message, upload = "") => {
   return advance_req
 
 }
+
 const editPost = async (id, message) => {
   const post = database.posts.find((item) => item.id == id)
   post.content.message = message
@@ -127,6 +129,7 @@ const editPost = async (id, message) => {
   return advance_req
 
 }
+
 const deletePost = async (id) => {
   const newDB = database.posts.map(item => {
     if (item.id == id) {
@@ -148,6 +151,7 @@ const deletePost = async (id) => {
   return advance_req
 
 }
+
 const likePost = async (id) => {
   const post = database.posts.find((item) => item.id == id)
   post.likes = post.likes + 1
@@ -163,12 +167,37 @@ const likePost = async (id) => {
   return advance_req
 
 }
+
 const fetchPostsByAlgorithm = () => { }
 
+const editProfile = () => {}
+
+const deleteProfile = () => {}
+
+const repipped = () => {}
 
 
 async function handle_advance(data) {
   console.log("Received advance request data " + JSON.stringify(data));
+  const payload = data.payload;
+  let JSONpayload = {}
+  // try {
+  //   if(String(data.metadata.msg_sender).toLowerCase() === DAPP_ADDRESS_REALY.toLowerCase())
+  // }
+
+  const payloadStr = viem.hexToString(payload)
+  JSONpayload = JSON.parse(JSON.parse(payloadStr))
+  console.log("payload",payloadStr)
+  console.log("JSONpayload",JSONpayload)
+  console.log("JSONpayload",typeof JSONpayload)
+  console.log(JSONpayload.data.username, JSONpayload.data.message, JSONpayload.data.upload)
+  console.log(`received request ${JSON.stringify(JSONpayload)}`)
+
+  let advance_req_json;
+  
+  if(JSONpayload.method === "createPost"){
+    advance_req_json = createPost(JSONpayload.data.username, JSONpayload.data.message, JSONpayload.data.upload)}
+  console.log("Received status"+ " with body ")
   return "accept";
 }
 
@@ -195,6 +224,7 @@ var finish = { status: "accept" };
     });
 
     console.log("Received finish status " + finish_req.status);
+    
 
     if (finish_req.status == 202) {
       console.log("No pending rollup request, trying again");
