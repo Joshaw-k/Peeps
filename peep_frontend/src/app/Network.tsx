@@ -1,3 +1,5 @@
+"use client";
+
 // Copyright 2022 Cartesi Pte. Ltd.
 
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -23,7 +25,11 @@ export const Network: FC = () => {
   return (
     <div>
       {!wallet && (
-        <button onClick={() => connect()}>
+        <button
+          type="button"
+          className="btn btn-primary rounded-box"
+          onClick={() => connect()}
+        >
           {connecting ? "connecting" : "connect"}
         </button>
       )}
