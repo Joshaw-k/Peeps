@@ -29,6 +29,7 @@ import { Home } from "./Home";
 import { Navbar } from "./components/Navbar";
 import { UserLeft } from "./components/UserLeft";
 import { RightComponent } from "./components/RightComponent";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 // const config: any = configFile;
 

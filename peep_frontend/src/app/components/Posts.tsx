@@ -1,6 +1,17 @@
 "use client";
 
 import { FaRetweet } from "react-icons/fa6";
+import { ethers } from "ethers";
+import React, { useState } from "react";
+import { useNoticesQuery } from "../generated/graphql";
+import { useQuery, gql } from "@apollo/client";
+
+type Notice = {
+  id: string;
+  index: number;
+  input: any; //{index: number; epoch: {index: number; }
+  payload: string;
+};
 
 interface IPostContainer {
   children: any;
@@ -126,25 +137,123 @@ const PostActions = ({ children }: IPostActions) => {
         <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200">
           <FaRetweet width={24} height={24} className={"text-xl"} />
         </span>
-        <span className={"text-xs"}>Repost</span>
+        <span className={"text-xs"}>Repeep</span>
       </div>
     </section>
   );
 };
 
+// GraphQL query to retrieve notices given a cursor
+const GET_NOTICES = gql`
+  query GetNotices($cursor: String) {
+    notices(first: 10, after: $cursor) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      edges {
+        node {
+          index
+          input {
+            index
+          }
+          payload
+        }
+      }
+    }
+  }
+`;
+
 export const Post = () => {
+  // const [result, reexecuteQuery] = useNoticesQuery();
+  // const { data, fetching, error } = result;
+  const [cursor, setCursor] = useState(null);
+
+  const { loading, error, data } = useQuery(GET_NOTICES, {
+    variables: { cursor },
+    pollInterval: 500,
+  });
+
+  // if (fetching) return <p>Loading...</p>;
+  if (loading) return <p>Loading...</p>;
+  // if (error) return <p>Oh no... {error.message}</p>;
+
+  if (!data || !data.notices) return <p>No notices</p>;
+
+  const notices: Notice[] = data.notices.edges
+    .map((node: any) => {
+      const n = node.node;
+      let inputPayload = n?.input.payload;
+      if (inputPayload) {
+        try {
+          inputPayload = ethers.utils.toUtf8String(inputPayload);
+        } catch (e) {
+          inputPayload = inputPayload + " (hex)";
+        }
+      } else {
+        inputPayload = "(empty)";
+      }
+      let payload = n?.payload;
+      if (payload) {
+        try {
+          payload = ethers.utils.toUtf8String(payload);
+        } catch (e) {
+          payload = payload + " (hex)";
+        }
+      } else {
+        payload = "(empty)";
+      }
+      return {
+        id: `${n?.id}`,
+        index: parseInt(n?.index),
+        payload: `${payload}`,
+        input: n ? { index: n.input.index, payload: inputPayload } : {},
+      };
+    })
+    .sort((b: any, a: any) => {
+      if (a.input.index === b.input.index) {
+        return b.index - a.index;
+      } else {
+        return b.input.index - a.input.index;
+      }
+    });
+
   return (
     <>
-      {[1, 2, 3, 4, 5].map((_a) => (
+      {/* <button onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}>
+        Reload
+      </button> */}
+      {/* <table>
+        <thead>
+          <tr>
+            <th>Input Index</th>
+            <th>Notice Index</th>
+            <th>Input Payload</th>
+            <th>Payload</th>
+          </tr>
+        </thead>
+        <tbody>
+          {notices.length === 0 && (
+            <tr>
+              <td colSpan={4}>no notices</td>
+            </tr>
+          )}
+          {notices.map((n: any) => (
+            <tr key={`${n.input.index}-${n.index}`}>
+              <td>{n.input.index}</td>
+              <td>{n.index}</td>
+              <td>{n.input.payload}</td>
+              <td>{n.payload}</td>
+            </tr>
+          ))}
+        </tbody>
+      </table> */}
+      {notices.reverse().map((eachNotice) => (
         <>
           <PostContainer>
             <PostUser />
-            <PostBody>
-              Lorem ipsum dolor sit amet consectetur, adipisicing elit. Delectus
-              dignissimos velit, tempora eaque consequatur adipisci facere
-              provident saepe deleniti pariatur? Vero molestias eius atque
-              expedita suscipit repellat optio ex eligendi!
-            </PostBody>
+            <PostBody>{JSON.parse(eachNotice.payload).message}</PostBody>
             <PostActions />
           </PostContainer>
           {/* <div className="divider"></div> */}

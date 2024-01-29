@@ -34,12 +34,13 @@ export const Network: FC = () => {
         </button>
       )}
       {wallet && (
-        <div>
-          <label>Switch Chain</label>
+        <div className="space-x-3">
+          {/* <label>Switch Chain</label> */}
           {settingChain ? (
             <span>Switching chain...</span>
           ) : (
             <select
+              className="select select-sm ring-0 max-w-xs focus:outline-0 bg-base-200 focus:bg-base-300"
               onChange={({ target: { value } }) => {
                 if (config[value] !== undefined) {
                   setChain({ chainId: value });

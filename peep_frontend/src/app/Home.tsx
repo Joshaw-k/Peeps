@@ -2,8 +2,16 @@
 
 import { Post } from "./components/Posts";
 import PostForm from "./components/PostForm";
+import { useState } from "react";
+
+export interface IInputProps {
+  dappAddress: string;
+}
 
 export const Home = () => {
+  const [dappAddress, setDappAddress] = useState<string>(
+    "0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C"
+  );
   return (
     // <section className={"grid grid-cols-12 py-8"}>
     //   <section className={"col-span-3"}>
@@ -17,13 +25,13 @@ export const Home = () => {
     //       Posts
     //     </div>
     //     <Post />
-    //   </section>
+    //   </section> dappAddress={dappAddress}
     //   <section className={"col-span-3"}>
     //     <RightComponent />
     //   </section>
     // </section>
     <div>
-      <PostForm />
+      <PostForm dappAddress={dappAddress} />
       <div className={"prose text-4xl font-bold text-gray-400 px-2 py-6 mt-8"}>
         Posts
       </div>
