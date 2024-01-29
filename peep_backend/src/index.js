@@ -62,7 +62,7 @@ async function handle_advance(data) {
     const user = database.users.find(
       (item) => item.address === data.metadata.msg_sender
     );
-    post.username = user.username;
+    post.username = user?.username;
     post.content = {
       message: JSONpayload.data.message,
       upload: JSONpayload.data.upload,
@@ -70,7 +70,7 @@ async function handle_advance(data) {
 
     post.date_posted = 0;
     database.posts.push(post);
-    user.posts.push(post.id);
+    user?.posts.push(post.id);
     const result = JSON.stringify(database);
     const hexResult = viem.stringToHex(result);
     advance_req = await fetch(rollup_server + "/notice", {
@@ -560,9 +560,9 @@ async function handle_advance(data) {
   const json = await advance_req?.json();
   console.log(
     "Received status " +
-      advance_req?.status +
-      " with body " +
-      JSON.stringify(json)
+    advance_req?.status +
+    " with body " +
+    JSON.stringify(json)
   );
   return "accept";
 }

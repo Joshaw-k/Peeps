@@ -224,7 +224,7 @@ export const Post = () => {
       {/* <button onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}>
         Reload
       </button> */}
-      {/* <table>
+      <table>
         <thead>
           <tr>
             <th>Input Index</th>
@@ -248,7 +248,7 @@ export const Post = () => {
             </tr>
           ))}
         </tbody>
-      </table> */}
+      </table>
       {notices.reverse().map((eachNotice) => (
         <>
           <PostContainer>
