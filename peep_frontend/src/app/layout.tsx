@@ -2,8 +2,7 @@
 
 import type { Metadata } from "next";
 
-import { Inter } from "next/font/google";
-import { Navbar } from "./components/Navbar";
+import { Inter, Noto_Sans_JP } from "next/font/google";
 import { UserLeft } from "./components/UserLeft";
 import { RightComponent } from "./components/RightComponent";
 import App from "./App";
@@ -14,8 +13,11 @@ import injectedModule from "@web3-onboard/injected-wallets";
 
 import "./globals.css";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import PeepsProvider from "./context";
+import Navbar from "./components/Navbar";
 
-const inter = Inter({ subsets: ["latin"] });
+const inter = Inter({ subsets: ["cyrillic"], preload: true });
+const notoSansJP = Noto_Sans_JP({ subsets: ["cyrillic"], preload: true });
 
 const metadata: Metadata = {
   title: "Peeps",
@@ -57,11 +59,12 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en">
+    <html lang="en" className={notoSansJP.className}>
       <body className={"flex flex-col h-dvh overflow-y-auto"}>
         {/* <section className={"flex flex-col h-screen"}>
           <Navbar />
         </section> */}
+        {/* <PeepsProvider> */}
         <ApolloProvider client={client}>
           <Navbar />
           <section className={"grid grid-cols-12 py-8"}>
@@ -76,6 +79,7 @@ export default function RootLayout({
           {/* <App /> */}
           {/* {children} */}
         </ApolloProvider>
+        {/* </PeepsProvider> */}
       </body>
     </html>
   );

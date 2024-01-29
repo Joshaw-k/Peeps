@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { FaGear, FaWallet } from "react-icons/fa6";
+import { ProfileForm } from "./ProfileForm";
 
 const Avatar = () => {
   return (
@@ -29,6 +30,13 @@ export const UserLeft = () => {
           <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
             amanda@email.com
           </p>
+        </div>
+      </div>
+      <div className={"card card-compact bg-amber-400/40 my-4"}>
+        <div className="card-body">
+          <div className="card-title">Action Required</div>
+          You have not created your profile
+          <ProfileForm />
         </div>
       </div>
       <div>
