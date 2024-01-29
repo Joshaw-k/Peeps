@@ -237,6 +237,7 @@ async function handle_advance(data) {
     const user = {
       id: 0,
       username: "",
+      bio: "",
       address: "",
       profile_pic: "",
       posts: [],
@@ -249,6 +250,7 @@ async function handle_advance(data) {
     user.id = database.users.length;
     user.username = JSONpayload.data.username;
     user.address = data.metadata.msg_sender;
+    user.bio = JSONpayload.data.bio;
     user.profile_pic = JSONpayload.data.profile_pic;
     user.date_joined = 0;
     database.users.push(user);
@@ -299,7 +301,25 @@ async function handle_advance(data) {
         }),
       });
     }
+    if (JSONpayload.data.bio == "" || null) {
+      console.log("bio cannot be empty");
+      const result = JSON.stringify({
+        error: String("Bio:" + JSONpayload.data.bio),
+      });
+      const hexresult = viem.stringToHex(result);
+      await fetch(rollup_server + "/report", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+
+        body: JSON.stringify({
+          payload: hexresult,
+        }),
+      });
+    }
     user.username = JSONpayload.data.username;
+    user.bio = JSONpayload.data.bio;
     user.profile_pic = JSONpayload.data.profile_pic;
     const result = JSON.stringify(database);
 
