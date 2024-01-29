@@ -13,6 +13,7 @@ import configFile from "./config.json";
 import injectedModule from "@web3-onboard/injected-wallets";
 
 import "./globals.css";
+import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -42,6 +43,14 @@ init({
   },
 });
 
+//Setup GraphQL Apollo client
+const URL_QUERY_GRAPHQL = "http://localhost:8080/graphql";
+
+const client = new ApolloClient({
+  uri: URL_QUERY_GRAPHQL,
+  cache: new InMemoryCache(),
+});
+
 export default function RootLayout({
   children,
 }: {
@@ -53,18 +62,20 @@ export default function RootLayout({
         {/* <section className={"flex flex-col h-screen"}>
           <Navbar />
         </section> */}
-        <Navbar />
-        <section className={"grid grid-cols-12 py-8"}>
-          <section className={"col-span-3"}>
-            <UserLeft />
+        <ApolloProvider client={client}>
+          <Navbar />
+          <section className={"grid grid-cols-12 py-8"}>
+            <section className={"col-span-3"}>
+              <UserLeft />
+            </section>
+            <section className={"col-span-6 px-4"}>{children}</section>
+            <section className={"col-span-3"}>
+              <RightComponent />
+            </section>
           </section>
-          <section className={"col-span-6 px-4"}>{children}</section>
-          <section className={"col-span-3"}>
-            <RightComponent />
-          </section>
-        </section>
-        {/* <App /> */}
-        {/* {children} */}
+          {/* <App /> */}
+          {/* {children} */}
+        </ApolloProvider>
       </body>
     </html>
   );

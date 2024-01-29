@@ -469,6 +469,28 @@ export const NoticesByInputDocument = gql`
 }
     `;
 
+// GraphQL query to retrieve notices given a cursor
+export const GET_NOTICES = gql`
+        query GetNotices($cursor: String) {
+            notices(first: 10, after: $cursor) {
+                totalCount
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+                edges {
+                    node {
+                        index
+                        input {
+                            index
+                        }
+                        payload
+                    }
+                }
+            }
+        }
+    `;
+
 export function useNoticesByInputQuery(options: Omit<Urql.UseQueryArgs<NoticesByInputQueryVariables>, 'query'>) {
   return Urql.useQuery<NoticesByInputQuery, NoticesByInputQueryVariables>({ query: NoticesByInputDocument, ...options });
 };
