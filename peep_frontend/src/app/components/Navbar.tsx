@@ -3,9 +3,9 @@
 import Link from "next/link";
 import { Network } from "../Network";
 
-export const Navbar = () => {
+const Navbar: React.FC = () => {
   return (
-    <section className="sticky top-0 z-[100]">
+    <section className="sticky top-0 z-[10]">
       <div className="navbar bg-base-100 px-24 h-20">
         <div className="navbar-start">
           <div className="dropdown">
@@ -86,3 +86,5 @@ export const Navbar = () => {
     </section>
   );
 };
+
+export default Navbar;

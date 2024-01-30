@@ -72,7 +72,7 @@ async function handle_advance(data) {
 
     post.date_posted = 0;
     database.posts.push(post);
-    user.posts.push(post.id);
+    user?.posts.push(post.id);
     const result = JSON.stringify(database);
     const hexResult = viem.stringToHex(result);
     advance_req = await fetch(rollup_server + "/notice", {
@@ -562,9 +562,9 @@ async function handle_advance(data) {
   const json = await advance_req?.json();
   console.log(
     "Received status " +
-      advance_req?.status +
-      " with body " +
-      JSON.stringify(json)
+    advance_req?.status +
+    " with body " +
+    JSON.stringify(json)
   );
   return "accept";
 }
