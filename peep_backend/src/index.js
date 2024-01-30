@@ -49,6 +49,7 @@ async function handle_advance(data) {
     const post = {
       id: 0,
       username: "",
+      address: "",
       content: {
         message: "",
         upload: "",
@@ -62,7 +63,8 @@ async function handle_advance(data) {
     const user = database.users.find(
       (item) => item.address === data.metadata.msg_sender
     );
-    post.username = user?.username;
+    post.username = user.username;
+    post.address = user.address;
     post.content = {
       message: JSONpayload.data.message,
       upload: JSONpayload.data.upload,
