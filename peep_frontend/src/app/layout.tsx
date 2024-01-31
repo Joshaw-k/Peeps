@@ -16,8 +16,13 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import PeepsProvider from "./context";
 import Navbar from "./components/Navbar";
 
-const inter = Inter({ subsets: ["cyrillic"], preload: true });
-const notoSansJP = Noto_Sans_JP({ subsets: ["cyrillic"], preload: true });
+const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+const notoSansJP = Noto_Sans_JP({
+  subsets: ["cyrillic"],
+  display: "swap",
+  preload: true,
+  variable: "--font-noto-sans-jp",
+});
 
 const metadata: Metadata = {
   title: "Peeps",
@@ -60,7 +65,9 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={notoSansJP.className}>
-      <body className={"flex flex-col h-dvh overflow-y-auto"}>
+      <body
+        className={`${notoSansJP.className} flex flex-col h-dvh overflow-y-auto`}
+      >
         {/* <section className={"flex flex-col h-screen"}>
           <Navbar />
         </section> */}

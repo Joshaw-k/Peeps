@@ -58,7 +58,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
   );
 
   return (
-    <div className="font-sans">
+    <div className="">
       {/* <Navbar /> */}
       {/* <Navbar /> */}
       {/* <section className={"grid grid-cols-12 py-8"}>
@@ -75,7 +75,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
       </section> */}
       {/* <Network /> */}
       <Home />
-      <GraphQLProvider>
+      {/* <GraphQLProvider>
         <div>
           Dapp Address:{" "}
           <input
@@ -96,7 +96,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
         <Notices />
         <h2>Vouchers</h2>
         <Vouchers dappAddress={dappAddress} />
-      </GraphQLProvider>
+      </GraphQLProvider> */}
     </div>
   );
 };
