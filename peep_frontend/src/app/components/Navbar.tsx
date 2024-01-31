@@ -50,7 +50,7 @@ const Navbar: React.FC = () => {
           </div>
           <Link
             href={"/"}
-            className="text-xl font-sans font-black bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent"
+            className="text-xl font-black bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent"
           >
             Peeps
           </Link>

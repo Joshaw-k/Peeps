@@ -5,6 +5,9 @@ import { ethers } from "ethers";
 import React, { useState } from "react";
 import { useNoticesQuery } from "../generated/graphql";
 import { useQuery, gql } from "@apollo/client";
+import { useRollups } from "../useRollups";
+import { defaultDappAddress } from "../utils/constants";
+import { CommentModal } from "./commentModal";
 
 type Notice = {
   id: string;
@@ -22,6 +25,10 @@ interface IPostBody {
 }
 
 interface IPostActions {
+  postId: number;
+  message: string;
+  upload: string;
+  postData: any;
   children?: any;
 }
 
@@ -38,7 +45,7 @@ const AvatarPost = () => {
   );
 };
 
-const PostUser = () => {
+export const PostUser = (props: any) => {
   return (
     <section className={"flex flex-row px-2 text-sm"}>
       <div
@@ -46,10 +53,10 @@ const PostUser = () => {
       >
         <AvatarPost />
         <span className="font-medium text-md relative dark:text-gray-400">
-          Blessed
+          {props?.username} - {props?.id}
         </span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-        <span className="relative dark:text-gray-400">@blessed07</span>
+        <span className="relative dark:text-gray-400">@{props?.username}</span>
       </div>
       <div className={"flex-grow-0 px-6 text-gray-500"}>
         {/* {new Date().toLocaleTimeString()} */}
@@ -58,7 +65,7 @@ const PostUser = () => {
   );
 };
 
-const PostContainer = ({ children }: IPostContainer) => {
+export const PostContainer = ({ children }: IPostContainer) => {
   return (
     <section
       className={"card card-compact p-4 my-2 border-base-200 bg-gray-100/60"}
@@ -68,7 +75,7 @@ const PostContainer = ({ children }: IPostContainer) => {
   );
 };
 
-const PostBody = ({ children }: IPostBody) => {
+export const PostBody = ({ children }: IPostBody) => {
   return (
     <section className={"px-3 py-4 text-base leading-7 text-pretty"}>
       {children}
@@ -76,7 +83,56 @@ const PostBody = ({ children }: IPostBody) => {
   );
 };
 
-const PostActions = ({ children }: IPostActions) => {
+export const PostActions = ({
+  postId,
+  message,
+  upload,
+  postData,
+  children,
+}: IPostActions) => {
+  const rollups = useRollups(defaultDappAddress);
+  // const [postId, setPostId] = useState();
+
+  const addInput = async (str: string) => {
+    if (rollups) {
+      try {
+        let payload = ethers.utils.toUtf8Bytes(str);
+        // if (hexInput) {
+        //   payload = ethers.utils.arrayify(str);
+        // }
+        await rollups.inputContract.addInput(defaultDappAddress, payload);
+      } catch (e) {
+        console.log(`${e}`);
+      }
+    }
+  };
+
+  const handleLikePost = () => {
+    // construct the json payload to send to addInput
+    const jsonPayload = JSON.stringify({
+      method: "likePost",
+      data: {
+        id: postId,
+      },
+    });
+    addInput(JSON.stringify(jsonPayload));
+    console.log(JSON.stringify(jsonPayload));
+  };
+
+  // const handleCommentPost = () => {
+  //   // construct the json payload to send to addInput
+  //   const jsonPayload = JSON.stringify({
+  //     method: "likePost",
+  //     data: {
+  //       post_id: postId,
+  //       message: commentMessage,
+  //       upload: upload,
+  //     },
+  //   });
+  //   addInput(JSON.stringify(jsonPayload));
+  //   console.log(JSON.stringify(jsonPayload));
+  // };
+
   return (
     <section className={"flex flex-row gap-x-6 p-2"}>
       <div
@@ -84,7 +140,10 @@ const PostActions = ({ children }: IPostActions) => {
           "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
         }
       >
-        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200">
+        <span
+          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200"
+          onClick={handleLikePost}
+        >
           <svg
             className="flex-shrink-0 w-5 h-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -104,12 +163,15 @@ const PostActions = ({ children }: IPostActions) => {
         <span className={"text-xs"}>Like</span>
       </div>
 
-      <div
+      {/* <div
         className={
           "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
         }
       >
-        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200">
+        <span
+          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200"
+          onClick={showCommentModal}
+        >
           <svg
             className="flex-shrink-0 w-5 h-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -127,7 +189,13 @@ const PostActions = ({ children }: IPostActions) => {
           </svg>
         </span>
         <span className={"text-xs"}>Comment</span>
-      </div>
+      </div> */}
+      <CommentModal
+        postId={postId}
+        message={message}
+        upload={upload}
+        postData={postData}
+      />
 
       <div
         className={
@@ -219,12 +287,16 @@ export const Post = () => {
       }
     });
 
+  if (notices.length < 1) {
+    return <p>No Notices</p>;
+  }
+
   return (
     <>
       {/* <button onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}>
         Reload
       </button> */}
-      <table>
+      {/* <table>
         <thead>
           <tr>
             <th>Input Index</th>
@@ -248,17 +320,29 @@ export const Post = () => {
             </tr>
           ))}
         </tbody>
-      </table>
-      {notices.reverse().map((eachNotice) => (
-        <>
-          <PostContainer>
-            <PostUser />
-            <PostBody>{JSON.parse(eachNotice.payload).message}</PostBody>
-            <PostActions />
-          </PostContainer>
-          {/* <div className="divider"></div> */}
-        </>
-      ))}
+      </table> */}
+      {notices
+        ? JSON.parse(notices.reverse()[0].payload).posts.map(
+            (eachNotice: any) => (
+              // .filter((it) => JSON.parse(it.payload).posts.length > 0)
+              <>
+                <PostContainer key={eachNotice}>
+                  {console.log(eachNotice)}
+                  <PostUser {...eachNotice} />
+                  <PostBody>{eachNotice?.content?.message}</PostBody>
+                  <PostActions
+                    postId={eachNotice.id}
+                    message={eachNotice?.content?.message}
+                    upload={eachNotice?.content?.uplooad}
+                    postData={eachNotice}
+                  />
+                  {/* {<PostContainer></PostContainer>} */}
+                </PostContainer>
+                {/* <div className="divider"></div> */}
+              </>
+            )
+          )
+        : null}
     </>
   );
 };

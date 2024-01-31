@@ -3,8 +3,8 @@
     "version": "0.3.0",
     "private": true,
     "dependencies": {
-        "@cartesi/rollups": "1.0.0",
         "@apollo/client": "^3.7.13",
+        "@cartesi/rollups": "1.0.0",
         "@ethersproject/providers": "^5.6.0",
         "@openzeppelin/contracts": "4.8.3",
         "@tailwindcss/typography": "^0.5.10",
@@ -19,6 +19,7 @@
         "@web3-onboard/react": "^2.1.5",
         "buffer": "^6.0.3",
         "cacheable-request": "^10.2.7",
+        "d3": "^7.8.5",
         "ethers": "5.7.2",
         "graphql": "^16.4.0",
         "loader-utils": "3.2.1",
