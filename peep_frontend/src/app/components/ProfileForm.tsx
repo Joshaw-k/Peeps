@@ -7,6 +7,7 @@ import { useRollups } from "../useRollups";
 import { ethers } from "ethers";
 import { usePeepsContext } from "../context";
 import { defaultDappAddress } from "../utils/constants";
+import { ButtonLoader } from "./Button";
 
 export const ProfileForm = () => {
   //   const { baseDappAddress } = usePeepsContext();
@@ -14,6 +15,7 @@ export const ProfileForm = () => {
   const [dp, setDp] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   const addInput = async (str: string) => {
     if (rollups) {
@@ -30,6 +32,7 @@ export const ProfileForm = () => {
   };
 
   const handleCreateProfile = () => {
+    setIsSubmit(true);
     // construct the json payload to send to addInput
     const jsonPayload = JSON.stringify({
       method: "createProfile",
@@ -106,7 +109,7 @@ export const ProfileForm = () => {
                     className="btn btn-primary rounded-xl"
                     onClick={handleCreateProfile}
                   >
-                    Create Profile
+                    {isSubmit ? <ButtonLoader /> : "Create Profile"}
                   </button>
                 </div>
               </form>

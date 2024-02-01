@@ -75,7 +75,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
       </section> */}
       {/* <Network /> */}
       <Home />
-      <GraphQLProvider>
+      {/* <GraphQLProvider>
         <div>
           Dapp Address:{" "}
           <input
@@ -96,7 +96,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
         <Notices />
         <h2>Vouchers</h2>
         <Vouchers dappAddress={dappAddress} />
-      </GraphQLProvider>
+      </GraphQLProvider> */}
     </div>
   );
 };

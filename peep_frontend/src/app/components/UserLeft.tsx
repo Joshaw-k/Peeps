@@ -6,6 +6,7 @@ import { ProfileForm } from "./ProfileForm";
 import { useConnectWallet } from "@web3-onboard/react";
 import { useNotices } from "./useNotices";
 import { useEffect, useState } from "react";
+import { usePeepsContext } from "../context";
 
 const Avatar = () => {
   return (
@@ -18,7 +19,8 @@ const Avatar = () => {
 };
 
 export const UserLeft = () => {
-  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const { wallet } = usePeepsContext();
   const { data, notices } = useNotices();
   const [currentUser, setCurrentUser] = useState();
   const latestNotices = notices ? notices?.reverse()[0] : null;
@@ -53,7 +55,7 @@ export const UserLeft = () => {
   console.log(currentUser);
 
   return (
-    <section className={"sticky top-0 w-[60%] mx-auto"}>
+    <section className={"sticky top-28 w-[60%] mx-auto"}>
       <div
         className={
           "card card-bordered bg-base-200 p-4 flex flex-row items-center gap-x-4"

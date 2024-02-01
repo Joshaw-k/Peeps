@@ -8,21 +8,28 @@ import React, {
   useState,
 } from "react";
 import { defaultDappAddress } from "../utils/constants";
+import { useConnectWallet } from "@web3-onboard/react";
 // import {
 //   SUMMARY_HISTORY_CACHE_NAME,
 //   SUMMARY_SEARCH_CACHE_NAME,
 // } from "../helpers/constants";
 
 interface IPeepsContext {
+  wallet: any;
+  connecting: boolean;
+  connect: any;
+  disconnect: any;
   baseDappAddress: string;
-  updateDappAddress: string;
-  children: any;
+  updateBaseDappAddress: any;
 }
 
 const PeepsContext = createContext<IPeepsContext>({
+  wallet: null,
+  connecting: false,
+  connect: null,
+  disconnect: null,
   baseDappAddress: "",
-  updateDappAddress: "",
-  children: "",
+  updateBaseDappAddress: null,
 });
 
 /*
@@ -98,6 +105,7 @@ const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
   // const searchQuery = searchParams.get("search_query");
   const [baseDappAddress, setBaseDappAddress] =
     useState<string>(defaultDappAddress);
+  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
 
   /*
   const [baseData, setBaseData] = useState(getSummarySearchCache() || []);
@@ -224,6 +232,10 @@ const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
   return (
     <PeepsContext.Provider
       value={{
+        wallet,
+        connecting,
+        connect,
+        disconnect,
         baseDappAddress,
         updateBaseDappAddress,
         // searchQuery,
