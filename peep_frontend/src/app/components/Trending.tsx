@@ -45,7 +45,7 @@ const TrendingCard = ({ index, hashTag, repostCount }: ITweet) => {
   return (
     <Link
       href={`/trending/${hashTag.toLowerCase()}`}
-      className="card w-full gap-y-1 rounded-box px-5 py-3 my-1 bg-gray-100 hover:bg-gray-200 dark:bg-base-200 transition-colors"
+      className="card w-full gap-y-1 rounded-box px-5 py-3 my-1 bg-gray-100 hover:bg-gray-200 dark:bg-base-200 dark:hover:bg-base-300 transition-colors"
     >
       <div className="text-neutral-content font-bold">#{index}</div>
       <div className="font-bold">{hashTag}</div>

@@ -5,6 +5,7 @@ import { useRef, useState } from "react";
 import { useRollups } from "../useRollups";
 import { IInputProps } from "../Home";
 import { usePeepsContext } from "../context";
+import toast from "react-hot-toast";
 
 const PostForm: React.FC<IInputProps> = (props) => {
   const { currentUser } = usePeepsContext();
@@ -21,14 +22,18 @@ const PostForm: React.FC<IInputProps> = (props) => {
         if (hexInput) {
           payload = ethers.utils.arrayify(str);
         }
-        await rollups.inputContract.addInput(props.dappAddress, payload);
+        return await rollups.inputContract.addInput(props.dappAddress, payload);
+        // const tx =
+        // console.log(tx);
+        // const receipt = await tx.wait(1);
+        // console.log(receipt);
       } catch (e) {
         console.log(`${e}`);
       }
     }
   };
 
-  const handlePost = () => {
+  const handlePost = async () => {
     // construct the json payload to send to addInput
     const jsonPayload = JSON.stringify({
       method: "createPost",
@@ -37,8 +42,18 @@ const PostForm: React.FC<IInputProps> = (props) => {
         message: postText,
       },
     });
-    addInput(JSON.stringify(jsonPayload));
-    console.log(JSON.stringify(jsonPayload));
+    const res = await addInput(JSON.stringify(jsonPayload));
+    console.log(res);
+    const receipt = await res?.wait(1);
+    console.log(receipt);
+    const event = receipt?.events?.find((e) => e.event === "InputAdded");
+    console.log(event);
+
+    toast("Transaction successful");
+
+    // wait for confirmation
+    // const receipt = await tx.wait(1);
+    // console.log(JSON.stringify(jsonPayload));
   };
 
   return (
