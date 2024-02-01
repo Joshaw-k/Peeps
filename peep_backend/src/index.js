@@ -193,7 +193,7 @@ async function handle_advance(data) {
     post.likes.push(user.id);
     user.likes = user.likes + 1;
     user.liked_posts.push(post.id);
-    console.log(new TrendingAlgorithm().alltrendingPosts());
+    // console.log(new TrendingAlgorithm().alltrendingPosts());
     database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
     const result = JSON.stringify(database);
     const hexResult = viem.stringToHex(result);

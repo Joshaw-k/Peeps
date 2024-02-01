@@ -747,8 +747,6 @@ const postTexts = [
   "Organizing a virtual talent show during challenging times, bringing smiles to classmates' faces!",
 ];
 
-console.log("post-Texts", postTexts);
-
 class TrendingAlgorithm {
   trendingPostsList = [];
 
@@ -761,7 +759,7 @@ class TrendingAlgorithm {
   }
 
   alltrendingPosts() {
-    console.log(this.trendingPostsList);
+    // console.log(this.trendingPostsList);
     return this.trendingPostsList;
   }
 
@@ -800,6 +798,6 @@ class TrendingAlgorithm {
   // console.log(mostCommon);
 }
 
-new TrendingAlgorithm().alltrendingPosts();
+// new TrendingAlgorithm().alltrendingPosts();
 
-module.exports = { TrendingAlgorithm };
+module.exports = TrendingAlgorithm;
