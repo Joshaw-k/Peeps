@@ -16,6 +16,8 @@ import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
 import PeepsProvider from "./context";
 import Navbar from "./components/Navbar";
 
+import { Toaster } from "react-hot-toast";
+
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoSansJP = Noto_Sans_JP({
   subsets: ["cyrillic"],
@@ -85,6 +87,29 @@ export default function RootLayout({
                 </section>
               </section>
             </section>
+            <Toaster
+              position="top-right"
+              containerStyle={{ top: "88px" }}
+              toastOptions={
+                {
+                  // Define default options
+                  // className: "",
+                  // duration: 5000,
+                  // style: {
+                  //   background: "#363636",
+                  //   color: "#fff",
+                  // },
+                  // // Default options for specific types
+                  // success: {
+                  //   duration: 3000,
+                  //   theme: {
+                  //     primary: "green",
+                  //     secondary: "black",
+                  //   },
+                  // },
+                }
+              }
+            />
             {/* <App /> */}
             {/* {children} */}
           </ApolloProvider>

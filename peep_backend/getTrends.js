@@ -9,9 +9,9 @@ Process:
  - Return the posts with the most common words
 */
 
-const { postTexts } = createPostCSV('./sentimentdataset.csv');
+const createPostCSV = require('./dummyData')
 const { removeStopwords } = require('stopword')
-// const { createPostCSV } = require('./dummyData')
+const { postTexts } = createPostCSV('./sentimentdataset.csv');
 
 class TrendingAlgorithm {
     trendingPostsList = [];

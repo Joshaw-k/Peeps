@@ -12,15 +12,15 @@ import { GET_NOTICES, TNotice, useNotices } from "../components/useNotices";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
+import { usePeepsContext } from "../context";
 
 const Profile = () => {
   // const { data, error, loading, notices } = useNotices();
-  const [dynamicNotices, setDynamicNotices] = useState(null);
   const [currentAddress, setCurrentAddress] = useState<string>("");
-  const [{ wallet }] = useConnectWallet();
+  // const [{ wallet }] = useConnectWallet();
+  const { wallet } = usePeepsContext();
 
   useEffect(() => {
-    // setDynamicNotices(notices);
     console.log("Open A", wallet?.accounts[0]);
     setCurrentAddress(wallet?.accounts[0].address);
   }, [wallet?.accounts[0].address]);
@@ -88,7 +88,7 @@ const Profile = () => {
           (it: any) => it.address === currentAddress
         )
       )} */}
-      {JSON.parse(notices.reverse()[0].payload)
+      {JSON.parse(notices?.reverse()[0].payload)
         .posts.filter((it: any) => it.address === currentAddress)
         .map((eachNotice: any) => (
           // .filter((it) => JSON.parse(it.payload).posts.length > 0)
