@@ -35,11 +35,12 @@ export const Network: FC = () => {
   useEffect(() => {
     if (notices) {
       updateBaseDappAddress(wallet?.accounts[0]?.address);
-      updateCurrentUser(
-        JSON.parse(notices?.reverse()[0].payload).users.filter(
-          (it: any) => it.address === wallet?.accounts[0]?.address
-        )
-      );
+      notices?.length > 0 &&
+        updateCurrentUser(
+          JSON.parse(notices?.reverse()[0].payload).users.filter(
+            (it: any) => it.address === wallet?.accounts[0]?.address
+          )
+        );
     }
   }, [wallet]);
 

@@ -21,6 +21,7 @@ const Avatar = () => {
 export const UserLeft = () => {
   // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const { wallet, currentUser, userCreated } = usePeepsContext();
+  const [isLoggedIn, setIsLoggedIn] = useState();
   // const { data, notices } = useNotices();
   // const [currentUser, setCurrentUser] = useState();
   // const latestNotices = notices ? notices?.reverse()[0] : null;
@@ -52,8 +53,8 @@ export const UserLeft = () => {
   // }, [wallet?.accounts[0].address]);
 
   // console.log(notices?.reverse()[0].payload);
-  console.log(currentUser);
-  console.log(userCreated);
+  // console.log(currentUser);
+  // console.log(userCreated);
 
   return (
     <section className={"sticky top-28 w-[60%] mx-auto"}>
@@ -63,7 +64,7 @@ export const UserLeft = () => {
         }
       >
         <Avatar />
-        {currentUser?.length > 0 ? (
+        {userCreated ? (
           <div className="grow">
             <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
               {currentUser[0]?.username}
@@ -83,7 +84,7 @@ export const UserLeft = () => {
           </div>
         )}
       </div>
-      {currentUser?.length > 0 ? (
+      {userCreated ? (
         <div className={"card card-compact bg-base-200 my-1"}>
           <div className="card-body">
             <div className="font-bold text-xs">About me</div>
