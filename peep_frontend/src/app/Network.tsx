@@ -15,12 +15,20 @@
 import { FC } from "react";
 import { useConnectWallet, useSetChain } from "@web3-onboard/react";
 import configFile from "./config.json";
+import { usePeepsContext } from "./context";
 
 const config: any = configFile;
 
 export const Network: FC = () => {
-  const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
+  const { updateBaseDappAddress, wallet, connecting, connect, disconnect } =
+    usePeepsContext();
+
+  const handleWalletConnect = () => {
+    connect();
+    updateBaseDappAddress(wallet?.account[0]?.address);
+  };
 
   return (
     <div>
@@ -28,7 +36,7 @@ export const Network: FC = () => {
         <button
           type="button"
           className="btn btn-primary rounded-box"
-          onClick={() => connect()}
+          onClick={handleWalletConnect}
         >
           {connecting ? "connecting" : "connect"}
         </button>

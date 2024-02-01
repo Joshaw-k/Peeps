@@ -73,14 +73,16 @@ export default function RootLayout({
         </section> */}
         <PeepsProvider>
           <ApolloProvider client={client}>
-            <Navbar />
-            <section className={"grid grid-cols-12 py-8 h-dvh overflow-y-auto"}>
-              <section className={"col-span-3"}>
-                <UserLeft />
-              </section>
-              <section className={"col-span-6 px-4"}>{children}</section>
-              <section className={"col-span-3"}>
-                <RightComponent />
+            <section className="h-dvh overflow-y-auto">
+              <Navbar />
+              <section className={"grid grid-cols-12 py-8"}>
+                <section className={"col-span-3"}>
+                  <UserLeft />
+                </section>
+                <section className={"col-span-6 px-4"}>{children}</section>
+                <section className={"col-span-3"}>
+                  <RightComponent />
+                </section>
               </section>
             </section>
             {/* <App /> */}
