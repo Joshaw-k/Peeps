@@ -747,6 +747,8 @@ const postTexts = [
   "Organizing a virtual talent show during challenging times, bringing smiles to classmates' faces!",
 ];
 
+console.log("post-Texts", postTexts);
+
 class TrendingAlgorithm {
   trendingPostsList = [];
 

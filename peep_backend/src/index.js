@@ -2,7 +2,8 @@
 // it will be used by any DApp, so we are already including it here
 const { ethers } = require("ethers");
 const viem = require("viem");
-const { TrendingAlgorithm } = require("../getTrends");
+const TrendingAlgorithm = require("../getTrends");
+// const { TrendingAlgorithm } = require("../getTrends");
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
 
@@ -164,13 +165,16 @@ async function handle_advance(data) {
       body: JSON.stringify({ payload: hexResult }),
     });
   } else if (JSONpayload.method === "likePost") {
-    const post = database.posts.find((item) => item.id == JSONpayload.data.id);
+    const post = database.posts.find(
+      (item) => item.id == Number(JSONpayload.data.id)
+    );
     if (!post) {
       console.log("post id is incorrect");
       const result = JSON.stringify({
         error: String("Post_Id:" + JSONpayload.data.id),
       });
       const hexresult = viem.stringToHex(result);
+
       await fetch(rollup_server + "/report", {
         method: "POST",
         headers: {
