@@ -6,7 +6,7 @@ import { Network } from "../Network";
 const Navbar: React.FC = () => {
   return (
     <section className="sticky top-0 z-[10]">
-      <div className="navbar bg-base-100 px-24 h-20">
+      <div className="navbar bg-base-200 px-24 h-20">
         <div className="navbar-start">
           <div className="dropdown">
             <div tabIndex={0} role="button" className="btn btn-ghost lg:hidden">

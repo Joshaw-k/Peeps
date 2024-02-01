@@ -68,7 +68,9 @@ export const PostUser = (props: any) => {
 export const PostContainer = ({ children }: IPostContainer) => {
   return (
     <section
-      className={"card card-compact p-4 my-2 border-base-200 bg-gray-100/60"}
+      className={
+        "card card-compact p-4 my-2 border-base-200 bg-gray-100/60 dark:bg-base-200"
+      }
     >
       {children}
     </section>
@@ -141,7 +143,7 @@ export const PostActions = ({
         }
       >
         <span
-          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200"
+          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
           onClick={handleLikePost}
         >
           <svg
@@ -169,7 +171,7 @@ export const PostActions = ({
         }
       >
         <span
-          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200"
+          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
           onClick={showCommentModal}
         >
           <svg
@@ -202,7 +204,7 @@ export const PostActions = ({
           "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
         }
       >
-        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200">
+        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
           <FaRetweet width={24} height={24} className={"text-xl"} />
         </span>
         <span className={"text-xs"}>Repeep</span>

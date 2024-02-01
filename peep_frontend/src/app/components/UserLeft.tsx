@@ -53,7 +53,7 @@ export const UserLeft = () => {
   console.log(currentUser);
 
   return (
-    <section className={"sticky top-28 w-[60%] mx-auto"}>
+    <section className={"sticky top-0 w-[60%] mx-auto"}>
       <div
         className={
           "card card-bordered bg-base-200 p-4 flex flex-row items-center gap-x-4"

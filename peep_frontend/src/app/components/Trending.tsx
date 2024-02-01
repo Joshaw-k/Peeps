@@ -42,7 +42,7 @@ interface ITweet {
 
 const TrendingCard = ({ index, hashTag, repostCount }: ITweet) => {
   return (
-    <div className="card w-full gap-y-1 rounded-box px-5 py-3 my-1 bg-gray-100">
+    <div className="card w-full gap-y-1 rounded-box px-5 py-3 my-1 bg-gray-100 dark:bg-base-200">
       <div className="text-neutral-content font-bold">#{index}</div>
       <div className="font-bold">#{hashTag}</div>
       <div className="text-gray-600 text-sm">

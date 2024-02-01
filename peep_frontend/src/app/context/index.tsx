@@ -1,3 +1,5 @@
+"use client";
+
 import React, {
   createContext,
   useCallback,
@@ -17,7 +19,11 @@ interface IPeepsContext {
   children: any;
 }
 
-const PeepsContext = createContext<IPeepsContext>({});
+const PeepsContext = createContext<IPeepsContext>({
+  baseDappAddress: "",
+  updateDappAddress: "",
+  children: "",
+});
 
 /*
 function isJsonString(str) {
@@ -88,8 +94,8 @@ export interface PeepsProviderProps {
 const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
   children,
 }: PeepsProviderProps) => {
-  const searchParams = new URLSearchParams(window.location.search);
-  const searchQuery = searchParams.get("search_query");
+  // const searchParams = new URLSearchParams(window.location.search);
+  // const searchQuery = searchParams.get("search_query");
   const [baseDappAddress, setBaseDappAddress] =
     useState<string>(defaultDappAddress);
 
