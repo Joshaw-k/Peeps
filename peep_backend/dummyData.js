@@ -20,14 +20,14 @@ function getRandomEthereumAddress() {
 
 
 // Function to read the CSV file and construct the desired data format
+const postTexts = [];
 function createPostCSV(filePath) {
     const results = { post: [] };
-    const postTexts = [];
 
     fs.createReadStream(filePath)
         .pipe(csv())
         .on('data', (data) => {
-            if (results.post.length < 10) { // Read only the first 100 lines
+            if (results.post.length < 100) { // Read only the first 100 lines
                 const post = {
                     id: data.Id, // Assuming 'id' is a column in the CSV file
                     username: data.User.trim(),
@@ -42,11 +42,13 @@ function createPostCSV(filePath) {
                     date_posted: data.Timestamp,
                 };
                 results.post.push(post);
-                postTexts.push(post);
+                postTexts.push(data.Text.trim());
             }
         })
         .on('end', () => {
-            console.log(results); // Output the constructed data
+            // console.log(results); // Output the constructed data
+            console.log(postTexts);
+            // return { results, postTexts };
         });
 
     return { results, postTexts };
@@ -55,4 +57,4 @@ function createPostCSV(filePath) {
 // Usage: Call the function with the path to the CSV file
 // const filePath = './sentimentdataset.csv';
 // createPostCSV(filePath);
-module.exports = createPostCSV;
+module.exports = createPostCSV, { getRandomEthereumAddress };
