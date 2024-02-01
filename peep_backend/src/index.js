@@ -431,7 +431,7 @@ async function handle_advance(data) {
       reposts: [],
       date_commented: 0,
     };
-    comment.id = database.comments.length;
+
     const post = database.posts.find(
       (item) => item.id == JSONpayload.data.post_id
     );
@@ -452,7 +452,6 @@ async function handle_advance(data) {
         }),
       });
     }
-    comment.post_id = JSONpayload.data.post_id;
     const user = database.users.find(
       (item) => item.address === data.metadata.msg_sender
     );
@@ -490,17 +489,20 @@ async function handle_advance(data) {
         }),
       });
     }
+    comment.id = database.comments.length;
+    comment.post_id = JSONpayload.data.post_id;
     comment.username = user.username;
     comment.content = {
       message: JSONpayload.data.message,
       upload: JSONpayload.data.upload,
     };
     comment.date_posted = 0;
-    database.posts.push(comment);
-    user.comments.push(comment.id);
+    database.comments.push(comment);
+    user.comments.push(comment);
+    post.comments.push(comment);
     const result = JSON.stringify(database);
     const hexResult = viem.stringToHex(result);
-    const advance_req = await fetch(rollup_server + "/notice", {
+    advance_req = await fetch(rollup_server + "/notice", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -562,9 +564,9 @@ async function handle_advance(data) {
   const json = await advance_req?.json();
   console.log(
     "Received status " +
-    advance_req?.status +
-    " with body " +
-    JSON.stringify(json)
+      advance_req?.status +
+      " with body " +
+      JSON.stringify(json)
   );
   return "accept";
 }
