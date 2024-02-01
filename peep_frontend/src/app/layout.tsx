@@ -61,7 +61,7 @@ const client = new ApolloClient({
 export default function RootLayout({
   children,
 }: {
-  children: React.ReactNode;
+  children: React.ReactNode | React.ReactNode[];
 }) {
   return (
     <html lang="en" className={notoSansJP.className}>
@@ -71,22 +71,22 @@ export default function RootLayout({
         {/* <section className={"flex flex-col h-screen"}>
           <Navbar />
         </section> */}
-        {/* <PeepsProvider> */}
-        <ApolloProvider client={client}>
-          <Navbar />
-          <section className={"grid grid-cols-12 py-8"}>
-            <section className={"col-span-3"}>
-              <UserLeft />
+        <PeepsProvider>
+          <ApolloProvider client={client}>
+            <Navbar />
+            <section className={"grid grid-cols-12 py-8 h-dvh overflow-y-auto"}>
+              <section className={"col-span-3"}>
+                <UserLeft />
+              </section>
+              <section className={"col-span-6 px-4"}>{children}</section>
+              <section className={"col-span-3"}>
+                <RightComponent />
+              </section>
             </section>
-            <section className={"col-span-6 px-4"}>{children}</section>
-            <section className={"col-span-3"}>
-              <RightComponent />
-            </section>
-          </section>
-          {/* <App /> */}
-          {/* {children} */}
-        </ApolloProvider>
-        {/* </PeepsProvider> */}
+            {/* <App /> */}
+            {/* {children} */}
+          </ApolloProvider>
+        </PeepsProvider>
       </body>
     </html>
   );

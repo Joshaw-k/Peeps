@@ -26,7 +26,7 @@ import { Vouchers } from "./Vouchers";
 import { Reports } from "./Reports";
 import configFile from "./config.json";
 import { Home } from "./Home";
-import { Navbar } from "./components/Navbar";
+// import Navbar from "./components/Navbar";
 import { UserLeft } from "./components/UserLeft";
 import { RightComponent } from "./components/RightComponent";
 import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
@@ -75,7 +75,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
       </section> */}
       {/* <Network /> */}
       <Home />
-      {/* <GraphQLProvider>
+      <GraphQLProvider>
         <div>
           Dapp Address:{" "}
           <input
@@ -96,7 +96,7 @@ const App = ({ children }: { children: React.ReactNode }) => {
         <Notices />
         <h2>Vouchers</h2>
         <Vouchers dappAddress={dappAddress} />
-      </GraphQLProvider> */}
+      </GraphQLProvider>
     </div>
   );
 };

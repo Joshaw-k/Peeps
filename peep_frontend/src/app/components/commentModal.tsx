@@ -66,7 +66,7 @@ export const CommentModal = ({ postId, message, upload, postData }) => {
             "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
           }
         >
-          <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200">
+          <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
             <svg
               className="flex-shrink-0 w-5 h-5"
               xmlns="http://www.w3.org/2000/svg"
