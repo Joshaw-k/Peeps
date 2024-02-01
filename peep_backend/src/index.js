@@ -2,6 +2,7 @@
 // it will be used by any DApp, so we are already including it here
 const { ethers } = require("ethers");
 const viem = require("viem");
+const { TrendingAlgorithm } = require("../getTrends");
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
 
@@ -9,6 +10,7 @@ const database = {
   users: [],
   posts: [],
   comments: [],
+  trendingWords: [],
 };
 
 async function handle_advance(data) {
@@ -179,6 +181,7 @@ async function handle_advance(data) {
           payload: hexresult,
         }),
       });
+      return;
     }
     const user = database.users.find(
       (item) => item.address === data.metadata.msg_sender
@@ -186,6 +189,8 @@ async function handle_advance(data) {
     post.likes.push(user.id);
     user.likes = user.likes + 1;
     user.liked_posts.push(post.id);
+    console.log(new TrendingAlgorithm().alltrendingPosts());
+    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
     const result = JSON.stringify(database);
     const hexResult = viem.stringToHex(result);
     advance_req = await fetch(rollup_server + "/notice", {
