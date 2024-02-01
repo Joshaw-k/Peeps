@@ -12,15 +12,17 @@ import { GET_NOTICES, TNotice, useNotices } from "../components/useNotices";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
+import { usePeepsContext } from "../context";
+import { EmptyPage } from "../components/EmptyPage";
+import { MessageSquareWarning } from "lucide-react";
 
 const Profile = () => {
   // const { data, error, loading, notices } = useNotices();
-  const [dynamicNotices, setDynamicNotices] = useState(null);
   const [currentAddress, setCurrentAddress] = useState<string>("");
-  const [{ wallet }] = useConnectWallet();
+  // const [{ wallet }] = useConnectWallet();
+  const { wallet } = usePeepsContext();
 
   useEffect(() => {
-    // setDynamicNotices(notices);
     console.log("Open A", wallet?.accounts[0]);
     setCurrentAddress(wallet?.accounts[0].address);
   }, [wallet?.accounts[0].address]);
@@ -76,6 +78,14 @@ const Profile = () => {
       }
     });
 
+  if (notices?.length < 1)
+    return (
+      <EmptyPage
+        icon={<MessageSquareWarning size={48} />}
+        text={"You haven't made any post"}
+      ></EmptyPage>
+    );
+
   return (
     <section>
       <div className={"prose text-4xl font-bold text-gray-400 px-2 py-6 mt-8"}>
@@ -88,7 +98,7 @@ const Profile = () => {
           (it: any) => it.address === currentAddress
         )
       )} */}
-      {JSON.parse(notices.reverse()[0].payload)
+      {JSON.parse(notices?.reverse()[0].payload)
         .posts.filter((it: any) => it.address === currentAddress)
         .map((eachNotice: any) => (
           // .filter((it) => JSON.parse(it.payload).posts.length > 0)

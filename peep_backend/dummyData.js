@@ -20,7 +20,7 @@ function getRandomEthereumAddress() {
 
 
 // Function to read the CSV file and construct the desired data format
-export function createPostCSV(filePath) {
+function createPostCSV(filePath) {
     const results = { post: [] };
     const postTexts = [];
 
@@ -30,10 +30,10 @@ export function createPostCSV(filePath) {
             if (results.post.length < 10) { // Read only the first 100 lines
                 const post = {
                     id: data.Id, // Assuming 'id' is a column in the CSV file
-                    username: data.User,
+                    username: data.User.trim(),
                     address: getRandomEthereumAddress(),
                     content: {
-                        message: data.Text,
+                        message: data.Text.trim(),
                         upload: ""
                     }, // Assuming 'message' is a column in the CSV file
                     comments: [],
@@ -53,5 +53,6 @@ export function createPostCSV(filePath) {
 }
 
 // Usage: Call the function with the path to the CSV file
-const filePath = './sentimentdataset.csv';
-createPostCSV(filePath);
+// const filePath = './sentimentdataset.csv';
+// createPostCSV(filePath);
+module.exports = createPostCSV;

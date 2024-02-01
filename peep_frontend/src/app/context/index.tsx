@@ -9,6 +9,8 @@ import React, {
 } from "react";
 import { defaultDappAddress } from "../utils/constants";
 import { useConnectWallet } from "@web3-onboard/react";
+import { useNotices } from "../components/useNotices";
+import { Address } from "@web3-onboard/core/dist/types";
 // import {
 //   SUMMARY_HISTORY_CACHE_NAME,
 //   SUMMARY_SEARCH_CACHE_NAME,
@@ -21,6 +23,13 @@ interface IPeepsContext {
   disconnect: any;
   baseDappAddress: string;
   updateBaseDappAddress: any;
+  currentUser: ICurrentUser[];
+  updateCurrentUser: any;
+  userCreated: boolean;
+  data: any;
+  error: any;
+  loading: any;
+  notices: any;
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -30,6 +39,19 @@ const PeepsContext = createContext<IPeepsContext>({
   disconnect: null,
   baseDappAddress: "",
   updateBaseDappAddress: null,
+  currentUser: [
+    {
+      username: "",
+      address: "",
+      bio: "",
+    },
+  ],
+  updateCurrentUser: null,
+  userCreated: false,
+  data: null,
+  error: null,
+  loading: null,
+  notices: null,
 });
 
 /*
@@ -98,14 +120,49 @@ export interface PeepsProviderProps {
   children: React.ReactNode | React.ReactNode[] | null;
 }
 
+interface ICurrentUser {
+  username: string;
+  address: Address;
+  bio: string;
+}
+
 const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
   children,
 }: PeepsProviderProps) => {
-  // const searchParams = new URLSearchParams(window.location.search);
-  // const searchQuery = searchParams.get("search_query");
   const [baseDappAddress, setBaseDappAddress] =
     useState<string>(defaultDappAddress);
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const [currentUser, setCurrentUser] = useState<ICurrentUser[] | any>();
+
+  const { data, notices, loading, error } = useNotices();
+  // const [currentUser, setCurrentUser] = useState();
+  const latestNotices = notices ? notices?.reverse()[0] : null;
+  const usersInLatestNotices = latestNotices
+    ? JSON.parse(latestNotices.payload).users
+    : [];
+  // const userCreated = usersInLatestNotices
+  //   ? usersInLatestNotices.filter(
+  //       (it: any) => it.address === wallet?.accounts[0].address
+  //     ).length > 0
+  //   : false;
+  const userCreated = currentUser ? currentUser?.length > 0 : false;
+  // console.log(userCreated);
+
+  // useEffect(() => {
+  //   // console.log(notices);
+  //   if (notices !== undefined && notices?.length > 0) {
+  //     setCurrentUser(
+  //       JSON.parse(notices?.reverse()[0].payload).users.filter(
+  //         (it: any) => it.address === wallet?.accounts[0].address
+  //       )
+  //     );
+  //     // console.log(
+  //     //   JSON.parse(notices?.reverse()[0].payload).users.filter(
+  //     //     (it: any) => it.address === wallet?.accounts[0].address
+  //     //   )
+  //     // );
+  //   }
+  // }, [wallet]);
 
   /*
   const [baseData, setBaseData] = useState(getSummarySearchCache() || []);
@@ -151,8 +208,18 @@ const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
   );
   */
 
+  // useEffect(() => {
+  //   setBaseDappAddress(wallet?.accounts[0]?.address);
+  // }, [wallet]);
+
   const updateBaseDappAddress = (newDappAddress: string) => {
     setBaseDappAddress(newDappAddress);
+    console.log(baseDappAddress);
+    console.log(newDappAddress);
+  };
+
+  const updateCurrentUser = (_user: ICurrentUser) => {
+    setCurrentUser(_user);
   };
 
   /*
@@ -224,11 +291,6 @@ const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
   );
   */
 
-  // useEffect(() => {
-  //     setBaseData(baseData);
-  //     console.log(baseData);
-  // }, [baseData]);
-
   return (
     <PeepsContext.Provider
       value={{
@@ -238,20 +300,13 @@ const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
         disconnect,
         baseDappAddress,
         updateBaseDappAddress,
-        // searchQuery,
-        // summary,
-        // eventData,
-        // baseData,
-        // updateSummaryBaseData,
-        // mainQuery,
-        // query,
-        // summaryData,
-        // eventOpened,
-        // setEventOpened,
-        // isFetchingSummary,
-        // setIsFetchingSummary,
-        // moreSummary,
-        // updateMoreSummary,
+        currentUser,
+        updateCurrentUser,
+        userCreated,
+        data,
+        error,
+        loading,
+        notices,
       }}
     >
       {children}

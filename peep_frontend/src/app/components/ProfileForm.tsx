@@ -10,8 +10,8 @@ import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
 
 export const ProfileForm = () => {
-  //   const { baseDappAddress } = usePeepsContext();
-  const rollups = useRollups(defaultDappAddress);
+  const { baseDappAddress, wallet } = usePeepsContext();
+  const rollups = useRollups(baseDappAddress);
   const [dp, setDp] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
@@ -52,6 +52,7 @@ export const ProfileForm = () => {
         <button
           type="button"
           className="btn btn-block inline-flex h-[35px] items-center justify-center px-[15px] font-medium leading-none outline-none outline-0"
+          disabled={!wallet}
         >
           Create Profile
         </button>

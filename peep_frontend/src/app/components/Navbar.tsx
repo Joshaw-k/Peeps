@@ -2,6 +2,8 @@
 
 import Link from "next/link";
 import { Network } from "../Network";
+import { FaWallet } from "react-icons/fa6";
+import { LucideGamepad2, MessageSquareText } from "lucide-react";
 
 const Navbar: React.FC = () => {
   return (
@@ -56,11 +58,20 @@ const Navbar: React.FC = () => {
           </Link>
         </div>
         <div className="navbar-center hidden lg:flex">
-          <ul className="menu menu-horizontal px-1">
+          <ul className="menu menu-horizontal gap-x-6 px-1">
             <li>
-              <Link href="/">Feed</Link>
+              <Link href="/">
+                <MessageSquareText size={20} />
+                Feed
+              </Link>
             </li>
             <li>
+              <Link href="/wallet">
+                <FaWallet />
+                Wallet
+              </Link>
+            </li>
+            {/* <li>
               <details>
                 <summary>Notifications</summary>
                 <ul className="p-2">
@@ -72,9 +83,15 @@ const Navbar: React.FC = () => {
                   </li>
                 </ul>
               </details>
-            </li>
+            </li> */}
             <li>
-              <Link href={"/arcade"}>Arcade</Link>
+              <Link href={"/arcade"}>
+                <LucideGamepad2 size={20} />
+                Arcade
+                <span className="badge badge-md badge-error text-xs text-white font-semibold bg-red-600 shadow-error shadow-lg">
+                  hot
+                </span>
+              </Link>
             </li>
           </ul>
         </div>

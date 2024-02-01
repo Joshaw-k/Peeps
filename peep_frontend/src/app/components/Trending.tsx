@@ -63,6 +63,7 @@ export const Trending = () => {
 
       {trendingPosts.map((eachTrends) => (
         <TrendingCard
+          key={eachTrends.index}
           index={eachTrends.index}
           hashTag={eachTrends.hashTag}
           repostCount={eachTrends.repostCount}
