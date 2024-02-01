@@ -14,7 +14,8 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { usePeepsContext } from "../context";
 import { EmptyPage } from "../components/EmptyPage";
-import { MessageSquareWarning } from "lucide-react";
+import { LogIn, MessageSquareWarning } from "lucide-react";
+import { FaToggleOff } from "react-icons/fa6";
 
 const Profile = () => {
   // const { data, error, loading, notices } = useNotices();
@@ -36,9 +37,23 @@ const Profile = () => {
     pollInterval: 500,
   });
 
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <EmptyPage
+        icon={<span className="loading loading-dots loading-lg"></span>}
+        text={""}
+      >
+        <div className="text-xl">Loading...</div>
+      </EmptyPage>
+    );
 
-  if (!data || !data.notices) return <p>No notices</p>;
+  if (!data || !data.notices)
+    return (
+      <EmptyPage
+        icon={<FaToggleOff size={48} />}
+        text={"Connect wallet to see your posts"}
+      ></EmptyPage>
+    );
 
   const notices: TNotice[] = data?.notices.edges
     .map((node: any) => {

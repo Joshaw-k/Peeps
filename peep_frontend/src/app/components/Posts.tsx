@@ -253,10 +253,24 @@ export const Post = () => {
   });
 
   // if (fetching) return <p>Loading...</p>;
-  if (loading) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <EmptyPage
+        icon={<span className="loading loading-dots loading-lg"></span>}
+        text={""}
+      >
+        <div className="text-xl">Loading...</div>
+      </EmptyPage>
+    );
   // if (error) return <p>Oh no... {error.message}</p>;
 
-  if (!data || !data.notices) return <p>No notices</p>;
+  if (!data || !data.notices)
+    return (
+      <EmptyPage
+        icon={<MessageSquareText size={48} />}
+        text={"No posts yet"}
+      ></EmptyPage>
+    );
 
   const notices: Notice[] = data.notices.edges
     .map((node: any) => {

@@ -63,7 +63,7 @@ const arcadeData = [
 const Arcade = () => {
   return (
     <section>
-      <section className="bg-black rounded-[40px]">
+      <section className="rounded-[40px]">
         <div className="hero min-h-[360px]">
           <div className="hero-content text-center">
             {/* <div className="max-w-md">
@@ -86,7 +86,7 @@ const Arcade = () => {
           </div>
         </div>
 
-        <div className="text-base text-center text-white text-balance mx-auto pb-16 w-[80%]">
+        <div className="text-base text-center dark:text-white text-balance mx-auto pb-16 w-[80%]">
           The arcade is the first onchain game and social media platform in one
           place.
           <br />
