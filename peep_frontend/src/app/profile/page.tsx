@@ -13,6 +13,8 @@ import { ethers } from "ethers";
 import { useEffect, useState } from "react";
 import { useQuery } from "@apollo/client";
 import { usePeepsContext } from "../context";
+import { EmptyPage } from "../components/EmptyPage";
+import { MessageSquareWarning } from "lucide-react";
 
 const Profile = () => {
   // const { data, error, loading, notices } = useNotices();
@@ -75,6 +77,14 @@ const Profile = () => {
         return b.input.index - a.input.index;
       }
     });
+
+  if (notices?.length < 1)
+    return (
+      <EmptyPage
+        icon={<MessageSquareWarning size={48} />}
+        text={"You haven't made any post"}
+      ></EmptyPage>
+    );
 
   return (
     <section>

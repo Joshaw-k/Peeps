@@ -20,39 +20,40 @@ const Avatar = () => {
 
 export const UserLeft = () => {
   // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
-  const { wallet } = usePeepsContext();
-  const { data, notices } = useNotices();
-  const [currentUser, setCurrentUser] = useState();
-  const latestNotices = notices ? notices?.reverse()[0] : null;
-  const usersInLatestNotices = latestNotices
-    ? JSON.parse(latestNotices.payload).users
-    : [];
-  const userCreated = usersInLatestNotices
-    ? usersInLatestNotices.filter(
-        (it) => it.address === wallet?.accounts[0].address
-      )
-    : false;
-  // console.log(userCreated);
+  const { wallet, currentUser, userCreated } = usePeepsContext();
+  // const { data, notices } = useNotices();
+  // const [currentUser, setCurrentUser] = useState();
+  // const latestNotices = notices ? notices?.reverse()[0] : null;
+  // const usersInLatestNotices = latestNotices
+  //   ? JSON.parse(latestNotices.payload).users
+  //   : [];
+  // const userCreated = usersInLatestNotices
+  //   ? usersInLatestNotices.filter(
+  //       (it) => it.address === wallet?.accounts[0].address
+  //     )
+  //   : false;
+  // // console.log(userCreated);
 
-  useEffect(() => {
-    console.log(notices);
-    if (notices !== undefined && notices?.length > 0) {
-      // notices ??
-      setCurrentUser(
-        JSON.parse(notices?.reverse()[0].payload).users.filter(
-          (it: any) => it.address === wallet?.accounts[0].address
-        )
-      );
-      console.log(
-        JSON.parse(notices?.reverse()[0].payload).users.filter(
-          (it: any) => it.address === wallet?.accounts[0].address
-        )
-      );
-    }
-  }, [wallet?.accounts[0].address]);
+  // useEffect(() => {
+  //   console.log(notices);
+  //   if (notices !== undefined && notices?.length > 0) {
+  //     // notices ??
+  //     setCurrentUser(
+  //       JSON.parse(notices?.reverse()[0].payload).users.filter(
+  //         (it: any) => it.address === wallet?.accounts[0].address
+  //       )
+  //     );
+  //     console.log(
+  //       JSON.parse(notices?.reverse()[0].payload).users.filter(
+  //         (it: any) => it.address === wallet?.accounts[0].address
+  //       )
+  //     );
+  //   }
+  // }, [wallet?.accounts[0].address]);
 
   // console.log(notices?.reverse()[0].payload);
   console.log(currentUser);
+  console.log(userCreated);
 
   return (
     <section className={"sticky top-28 w-[60%] mx-auto"}>
@@ -90,7 +91,7 @@ export const UserLeft = () => {
           </div>
         </div>
       ) : null}
-      {userCreated.length < 1 && (
+      {!userCreated && (
         <div className={"card card-compact bg-amber-400/40 my-4"}>
           <div className="card-body">
             <div className="card-title">Action Required</div>

@@ -4,8 +4,10 @@ import { ethers } from "ethers";
 import { useRef, useState } from "react";
 import { useRollups } from "../useRollups";
 import { IInputProps } from "../Home";
+import { usePeepsContext } from "../context";
 
 const PostForm: React.FC<IInputProps> = (props) => {
+  const { currentUser } = usePeepsContext();
   // const [input, setInput] = useState<string>("");
   const [hexInput, setHexInput] = useState<boolean>(false);
   const rollups = useRollups(props.dappAddress);
@@ -31,7 +33,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
     const jsonPayload = JSON.stringify({
       method: "createPost",
       data: {
-        username: "",
+        username: currentUser[0].username,
         message: postText,
       },
     });

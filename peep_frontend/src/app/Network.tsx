@@ -12,7 +12,7 @@
 // License for the specific language governing permissions and limitations
 // under the License.
 
-import { FC } from "react";
+import { FC, useEffect } from "react";
 import { useConnectWallet, useSetChain } from "@web3-onboard/react";
 import configFile from "./config.json";
 import { usePeepsContext } from "./context";
@@ -22,12 +22,29 @@ const config: any = configFile;
 export const Network: FC = () => {
   // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const [{ chains, connectedChain, settingChain }, setChain] = useSetChain();
-  const { updateBaseDappAddress, wallet, connecting, connect, disconnect } =
-    usePeepsContext();
+  const {
+    updateBaseDappAddress,
+    updateCurrentUser,
+    wallet,
+    connecting,
+    connect,
+    disconnect,
+    notices,
+  } = usePeepsContext();
+
+  useEffect(() => {
+    if (notices) {
+      updateBaseDappAddress(wallet?.accounts[0]?.address);
+      updateCurrentUser(
+        JSON.parse(notices?.reverse()[0].payload).users.filter(
+          (it: any) => it.address === wallet?.accounts[0]?.address
+        )
+      );
+    }
+  }, [wallet]);
 
   const handleWalletConnect = () => {
     connect();
-    updateBaseDappAddress(wallet?.account[0]?.address);
   };
 
   return (

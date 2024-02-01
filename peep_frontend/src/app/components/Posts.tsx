@@ -8,6 +8,8 @@ import { useQuery, gql } from "@apollo/client";
 import { useRollups } from "../useRollups";
 import { defaultDappAddress } from "../utils/constants";
 import { CommentModal } from "./commentModal";
+import { EmptyPage } from "./EmptyPage";
+import { MessageSquareText } from "lucide-react";
 
 type Notice = {
   id: string;
@@ -290,7 +292,12 @@ export const Post = () => {
     });
 
   if (notices.length < 1) {
-    return <p>No Notices</p>;
+    return (
+      <EmptyPage
+        icon={<MessageSquareText size={48} />}
+        text={"No posts yet"}
+      ></EmptyPage>
+    );
   }
 
   return (

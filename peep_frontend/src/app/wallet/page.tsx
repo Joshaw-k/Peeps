@@ -7,6 +7,7 @@ import { SendTransaction } from "./components/sendTx";
 import { ReceiveTransaction } from "./components/receiveTx";
 import ChartTransaction from "./components/chartTx";
 import toast from "react-hot-toast";
+import { EmptyPage } from "../components/EmptyPage";
 
 const transactionsGrid = [
   {
@@ -50,15 +51,10 @@ const Wallet = () => {
 
   if (!wallet || wallet?.accounts.length < 1) {
     return (
-      <section className="hero min-h-96 card dark:bg-base-100">
-        <div className="hero-content flex-col">
-          <div>
-            {/* - Bounce animation */}
-            <FaWallet size={48} />
-          </div>
-          <div>Connect wallet first</div>
-        </div>
-      </section>
+      <EmptyPage
+        icon={<FaWallet size={48} />}
+        text={"Connect wallet first"}
+      ></EmptyPage>
     );
   }
 

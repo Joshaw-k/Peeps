@@ -73,8 +73,8 @@ export default function RootLayout({
         {/* <section className={"flex flex-col h-screen"}>
           <Navbar />
         </section> */}
-        <PeepsProvider>
-          <ApolloProvider client={client}>
+        <ApolloProvider client={client}>
+          <PeepsProvider>
             <section className="h-dvh overflow-y-auto">
               <Navbar />
               <section className={"grid grid-cols-12 py-8"}>
@@ -112,8 +112,8 @@ export default function RootLayout({
             />
             {/* <App /> */}
             {/* {children} */}
-          </ApolloProvider>
-        </PeepsProvider>
+          </PeepsProvider>
+        </ApolloProvider>
       </body>
     </html>
   );
