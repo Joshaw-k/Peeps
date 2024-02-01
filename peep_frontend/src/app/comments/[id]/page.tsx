@@ -1,16 +1,12 @@
 "use client";
-
-import { FaRetweet } from "react-icons/fa6";
-import { ethers } from "ethers";
 import React, { useState } from "react";
-import { useNoticesQuery } from "../generated/graphql";
-import { useQuery, gql } from "@apollo/client";
-import { useRollups } from "../useRollups";
-import { defaultDappAddress } from "../utils/constants";
-import { CommentModal } from "./commentModal";
-import { EmptyPage } from "./EmptyPage";
-import { MessageSquareText } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { useRollups } from "../../useRollups";
+import { defaultDappAddress } from "../../utils/constants";
+import { ethers } from "ethers";
+import { useQuery, gql } from "@apollo/client";
+import { CommentModal } from "../../components/commentModal";
+import { FaRetweet } from "react-icons/fa6";
 
 type Notice = {
   id: string;
@@ -69,24 +65,19 @@ export const PostUser = (props: any) => {
 };
 
 export const PostContainer = ({ children }: IPostContainer) => {
+  const router = useRouter();
   return (
     <section
-      className={
-        "card card-compact p-4 my-2 border-base-200 bg-gray-100/60 dark:bg-base-200"
-      }
+      className={"card card-compact p-4 my-2 border-base-200 bg-gray-100/60"}
     >
       {children}
     </section>
   );
 };
 
-export const PostBody = ({ children, postId }: IPostBody) => {
-  const router = useRouter();
+export const PostBody = ({ children }: IPostBody) => {
   return (
-    <section
-      className={"px-3 py-4 text-base leading-7 text-pretty"}
-      onClick={() => router.push("/comments/" + postId)}
-    >
+    <section className={"px-3 py-4 text-base leading-7 text-pretty"}>
       {children}
     </section>
   );
@@ -150,7 +141,7 @@ export const PostActions = ({
         }
       >
         <span
-          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
+          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200"
           onClick={handleLikePost}
         >
           <svg
@@ -178,7 +169,7 @@ export const PostActions = ({
         }
       >
         <span
-          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
+          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200"
           onClick={showCommentModal}
         >
           <svg
@@ -211,7 +202,7 @@ export const PostActions = ({
           "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
         }
       >
-        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
+        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-900 dark:border-gray-700 dark:text-gray-200">
           <FaRetweet width={24} height={24} className={"text-xl"} />
         </span>
         <span className={"text-xs"}>Repeep</span>
@@ -219,7 +210,6 @@ export const PostActions = ({
     </section>
   );
 };
-
 // GraphQL query to retrieve notices given a cursor
 const GET_NOTICES = gql`
   query GetNotices($cursor: String) {
@@ -241,11 +231,9 @@ const GET_NOTICES = gql`
     }
   }
 `;
-
-export const Post = () => {
-  // const [result, reexecuteQuery] = useNoticesQuery();
-  // const { data, fetching, error } = result;
+const page = ({ params }) => {
   const [cursor, setCursor] = useState(null);
+  console.log(params.id);
 
   const { loading, error, data } = useQuery(GET_NOTICES, {
     variables: { cursor },
@@ -297,68 +285,48 @@ export const Post = () => {
     });
 
   if (notices.length < 1) {
-    return (
-      <EmptyPage
-        icon={<MessageSquareText size={48} />}
-        text={"No posts yet"}
-      ></EmptyPage>
-    );
+    return <p>No Notices</p>;
   }
-
+  const post = JSON.parse(notices.reverse()[0].payload).posts.find(
+    (item) => item.id == params.id
+  );
+  console.log(post);
   return (
-    <>
-      {/* <button onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}>
-        Reload
-      </button> */}
-      {/* <table>
-        <thead>
-          <tr>
-            <th>Input Index</th>
-            <th>Notice Index</th>
-            <th>Input Payload</th>
-            <th>Payload</th>
-          </tr>
-        </thead>
-        <tbody>
-          {notices.length === 0 && (
-            <tr>
-              <td colSpan={4}>no notices</td>
-            </tr>
-          )}
-          {notices.map((n: any) => (
-            <tr key={`${n.input.index}-${n.index}`}>
-              <td>{n.input.index}</td>
-              <td>{n.index}</td>
-              <td>{n.input.payload}</td>
-              <td>{n.payload}</td>
-            </tr>
+    <div>
+      <PostContainer key={post}>
+        {console.log(post)}
+        <PostUser {...post} />
+        <PostBody>{post?.content?.message}</PostBody>
+        <PostActions
+          postId={post.id}
+          message={post?.content?.message}
+          upload={post?.content?.uplooad}
+          postData={post}
+        />
+        {/* {<PostContainer></PostContainer>} */}
+      </PostContainer>
+      {notices ? (
+        <div>
+          {post?.comments?.map((item) => (
+            <>
+              <PostContainer key={item}>
+                {console.log(item)}
+                <PostUser {...item} />
+                <PostBody>{item?.content?.message}</PostBody>
+                <PostActions
+                  postId={item.id}
+                  message={item?.content?.message}
+                  upload={item?.content?.uplooad}
+                  postData={item}
+                />
+                {/* {<PostContainer></PostContainer>} */}
+              </PostContainer>
+            </>
           ))}
-        </tbody>
-      </table> */}
-      {notices
-        ? JSON.parse(notices.reverse()[0].payload).posts.map(
-            (eachNotice: any) => (
-              // .filter((it) => JSON.parse(it.payload).posts.length > 0)
-              <>
-                <PostContainer key={eachNotice}>
-                  {console.log(eachNotice)}
-                  <PostUser {...eachNotice} />
-                  <PostBody postId={eachNotice.id}>
-                    {eachNotice?.content?.message}
-                  </PostBody>
-                  <PostActions
-                    postId={eachNotice.id}
-                    message={eachNotice?.content?.message}
-                    upload={eachNotice?.content?.uplooad}
-                    postData={eachNotice}
-                  />
-                  {/* {<PostContainer></PostContainer>} */}
-                </PostContainer>
-                {/* <div className="divider"></div> */}
-              </>
-            )
-          )
-        : null}
-    </>
+        </div>
+      ) : null}
+    </div>
   );
 };
+
+export default page;

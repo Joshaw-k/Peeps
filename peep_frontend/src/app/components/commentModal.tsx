@@ -11,7 +11,7 @@ import { PostActions, PostBody, PostContainer, PostUser } from "./Posts";
 import { ButtonLoader } from "./Button";
 
 export const CommentModal = ({ postId, message, upload, postData }) => {
-  //   const { baseDappAddress } = usePeepsContext();
+  //   const { baseDappAddress } = usePeepsContext()
   const rollups = useRollups(defaultDappAddress);
   const [dp, setDp] = useState<string>("");
   const [username, setUsername] = useState<string>("");
