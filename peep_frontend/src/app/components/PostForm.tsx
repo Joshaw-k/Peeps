@@ -50,12 +50,13 @@ const PostForm: React.FC<IInputProps> = (props) => {
     const event = receipt?.events?.find((e) => e.event === "InputAdded");
     console.log(event);
 
-    toast.custom((t) => (
-      <CustomToastUI
-        t={t}
-        message={"Post successfully created"}
-      ></CustomToastUI>
-    ));
+    // toast.custom((t) => (
+    //   <CustomToastUI
+    //     t={t}
+    //     message={"Post successfully created"}
+    //   ></CustomToastUI>
+    // ));
+    toast.success("Post created successfully");
 
     // wait for confirmation
     // const receipt = await tx.wait(1);

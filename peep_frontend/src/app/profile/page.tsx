@@ -22,6 +22,7 @@ const Profile = () => {
   const [currentAddress, setCurrentAddress] = useState<string>("");
   // const [{ wallet }] = useConnectWallet();
   const { wallet } = usePeepsContext();
+  const [endCursor, setEndCursor] = useState(20);
 
   useEffect(() => {
     console.log("Open A", wallet?.accounts[0]);
@@ -36,6 +37,14 @@ const Profile = () => {
     variables: { cursor },
     pollInterval: 500,
   });
+
+  if (!wallet)
+    return (
+      <EmptyPage
+        icon={<FaToggleOff size={48} />}
+        text={"Connect wallet to see your posts"}
+      ></EmptyPage>
+    );
 
   if (loading)
     return (
@@ -115,6 +124,7 @@ const Profile = () => {
       )} */}
       {JSON.parse(notices?.reverse()[0].payload)
         .posts.filter((it: any) => it.address === currentAddress)
+        .splice(0, endCursor)
         .map((eachNotice: any) => (
           // .filter((it) => JSON.parse(it.payload).posts.length > 0)
           <>
@@ -128,6 +138,16 @@ const Profile = () => {
             {/* <div className="divider"></div> */}
           </>
         ))}
+      <section className="flex flex-row justify-center w-full mx-auto">
+        <button
+          title="load more button"
+          type="button"
+          className="btn btn-wide block"
+          onClick={() => setEndCursor((endCursor) => endCursor + 20)}
+        >
+          Load more
+        </button>
+      </section>
     </section>
   );
 };

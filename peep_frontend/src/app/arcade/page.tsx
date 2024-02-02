@@ -3,11 +3,12 @@ import Link from "next/link";
 
 const arcadeData = [
   {
-    name: "Monster Hunting",
-    slug: "monster-hunting",
+    name: "Arena mayhem",
+    slug: "arena-mayhem",
     description: "",
     shortDescription: "All about monster hunting. Action packed",
-    image: "",
+    image:
+      "https://rolluplab.io/projects/arena-mayhem/a2c864869023-The_Team.png",
     category: "action, adventure",
     minAge: 12,
     popularityStatus: "low",
@@ -26,22 +27,22 @@ const arcadeData = [
     popularityStatus: "high",
   },
   {
-    name: "Arcade wars",
+    name: "Cartesian Battleship",
     slug: "arcade-wars",
     description: "",
     shortDescription: "All arcade games in one place",
-    image: "",
+    image: "https://rolluplab.io/projects/cartesian-battleship/H0D4hej.md.jpg",
     category: "adventure, casual",
     minAge: 0,
     popularityStatus: "low",
   },
   {
-    name: "Planet diplomats",
+    name: "Dazzle",
     slug: "planet-diplomats",
     description: "",
     shortDescription:
       "Find the best diplomats in this planet and others. Trying to solve problems you can't even think of.",
-    image: "",
+    image: "https://rolluplab.io/projects/dazzle/xnk08D3d_400x400.png",
     category: "adventure, casual",
     minAge: 0,
     popularityStatus: "low",
@@ -53,7 +54,8 @@ const arcadeData = [
       "The classic but on chain and with a twist. Play the same game you love and played on multiple devices finally on-chain. Cartesi makes it possible to run games like temple run on chain.",
     shortDescription:
       "The classic but on chain and with a twist. Play the same game you love and played on multiple devices finally on-chain.",
-    image: "",
+    image:
+      "https://upload.wikimedia.org/wikipedia/en/thumb/9/98/Temple_Run_2.png/220px-Temple_Run_2.png",
     category: "adventure, casual",
     minAge: 0,
     popularityStatus: "low",
@@ -100,7 +102,7 @@ const Arcade = () => {
         <header className="py-8 font-semibold">
           Games currently available
         </header>
-        <section className={"grid grid-cols-3 gap-2"}>
+        <section className={"grid grid-cols-3 gap-x-2 gap-y-4"}>
           {arcadeData.map((eachGame) => (
             <Link
               href={`/arcade/${eachGame.slug}`}
@@ -108,7 +110,7 @@ const Arcade = () => {
             >
               <div className="flex flex-col p-4">
                 {eachGame.popularityStatus === "high" && (
-                  <div className="absolute top-4 right-4 badge badge-lg text-xs text-white font-semibold badge-error bg-red-600 shadow-error shadow-lg">
+                  <div className="absolute top-2 right-2 badge badge-lg text-xs text-white font-semibold badge-error bg-red-600 shadow-error shadow-lg">
                     hot
                   </div>
                 )}
@@ -118,7 +120,7 @@ const Arcade = () => {
                   }
                 >
                   <Image
-                    className="outline-0"
+                    className="outline-0 object-cover h-full"
                     src={eachGame.image}
                     alt=""
                     width={320}

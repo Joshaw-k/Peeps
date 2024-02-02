@@ -58,7 +58,7 @@ export const UserLeft = () => {
 
   return (
     <>
-      <div className="absolute left-24 bottom-10 card max-w-[280px] bg-base-200/80">
+      <div className="absolute left-24 bottom-10 card max-w-[280px] bg-base-200/80 opacity-60">
         <div className="card-body">
           <div className="font-bold">Ad</div>
           Play your favourite games on a web3 decentralized platform.

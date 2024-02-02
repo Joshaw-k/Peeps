@@ -6,17 +6,18 @@ import {
 } from "./page";
 
 const gameData = {
-  name: "Cartesian Battleship",
-  slug: "arcade-wars",
+  name: "Dazzle",
+  slug: "planet-diplomats",
   description: "",
-  shortDescription: "All arcade games in one place",
-  image: "https://rolluplab.io/projects/cartesian-battleship/H0D4hej.md.jpg",
+  shortDescription:
+    "Find the best diplomats in this planet and others. Trying to solve problems you can't even think of.",
+  image: "https://rolluplab.io/projects/dazzle/xnk08D3d_400x400.png",
   category: "adventure, casual",
   minAge: 0,
   popularityStatus: "low",
 };
 
-export const ArcadeWars = () => {
+export const Dazzle = () => {
   return (
     <ArcadeHeroContainer>
       <ArcadeHeroContentContainer>
