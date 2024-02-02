@@ -6,6 +6,7 @@ import { useRollups } from "../useRollups";
 import { IInputProps } from "../Home";
 import { usePeepsContext } from "../context";
 import toast from "react-hot-toast";
+import { CustomToastUI } from "./ToastUI";
 
 const PostForm: React.FC<IInputProps> = (props) => {
   const { currentUser } = usePeepsContext();
@@ -49,7 +50,12 @@ const PostForm: React.FC<IInputProps> = (props) => {
     const event = receipt?.events?.find((e) => e.event === "InputAdded");
     console.log(event);
 
-    toast("Transaction successful");
+    toast.custom((t) => (
+      <CustomToastUI
+        t={t}
+        message={"Post successfully created"}
+      ></CustomToastUI>
+    ));
 
     // wait for confirmation
     // const receipt = await tx.wait(1);
