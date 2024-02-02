@@ -853,11 +853,11 @@ async function handle_advance(data) {
       message: JSONpayload.data.message,
       upload: JSONpayload.data.upload,
     };
-
     post.date_posted = 0;
     database.posts.push(post);
     database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
     user?.posts.push(post.id);
+    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
     const result = JSON.stringify(database);
     const hexResult = viem.stringToHex(result);
     advance_req = await fetch(rollup_server + "/notice", {
@@ -975,7 +975,6 @@ async function handle_advance(data) {
     post.likes.push(user.id);
     user.likes = user.likes + 1;
     user.liked_posts.push(post.id);
-    // console.log(new TrendingAlgorithm().alltrendingPosts());
     database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
     const result = JSON.stringify(database);
     const hexResult = viem.stringToHex(result);
@@ -1290,6 +1289,7 @@ async function handle_advance(data) {
     };
     comment.date_posted = 0;
     database.comments.push(comment);
+    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
     user.comments.push(comment);
     post.comments.push(comment);
     const result = JSON.stringify(database);
