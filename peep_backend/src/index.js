@@ -1387,39 +1387,39 @@ let firstTimeCounter = 0;
 (async () => {
   while (true) {
     console.log("Inside a cartesi dapp while loop");
-    if (firstTimeCounter < 1) {
-      console.log(database);
-      for (let i = 0; i < postTexts.length; i++) {
-        const post = {
-          id: i, // Assuming 'id' is a column in the CSV file
-          username: i,
-          address: getRandomEthereumAddress(),
-          content: {
-            message: postTexts[i],
-            upload: "",
-          }, // Assuming 'message' is a column in the CSV file
-          comments: [],
-          likes: [],
-          reposts: [],
-          date_posted: new Date().toLocaleDateString(),
-        };
-        // results.post.push(post);
-        // postTexts.push(data.Text.trim());
-        database.posts.push(post);
-      }
-      // database.posts.push(postTexts);
-      console.log(database.posts.length);
-      const hexResult = viem.stringToHex(database);
-      advance_req = await fetch(rollup_server + "/notice", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ payload: hexResult }),
-      });
-      firstTimeCounter++;
-      console.log("Sent first preseeded notice \n");
-    }
+    // if (firstTimeCounter < 1) {
+    //   console.log(database);
+    //   for (let i = 0; i < postTexts.length; i++) {
+    //     const post = {
+    //       id: i, // Assuming 'id' is a column in the CSV file
+    //       username: i,
+    //       address: getRandomEthereumAddress(),
+    //       content: {
+    //         message: postTexts[i],
+    //         upload: "",
+    //       }, // Assuming 'message' is a column in the CSV file
+    //       comments: [],
+    //       likes: [],
+    //       reposts: [],
+    //       date_posted: new Date().toLocaleDateString(),
+    //     };
+    //     // results.post.push(post);
+    //     // postTexts.push(data.Text.trim());
+    //     database.posts.push(post);
+    //   }
+    //   // database.posts.push(postTexts);
+    //   console.log(database.posts.length);
+    //   const hexResult = viem.stringToHex(database);
+    //   advance_req = await fetch(rollup_server + "/notice", {
+    //     method: "POST",
+    //     headers: {
+    //       "Content-Type": "application/json",
+    //     },
+    //     body: JSON.stringify({ payload: hexResult }),
+    //   });
+    //   firstTimeCounter++;
+    //   console.log("Sent first preseeded notice \n");
+    // }
 
     const finish_req = await fetch(rollup_server + "/finish", {
       method: "POST",

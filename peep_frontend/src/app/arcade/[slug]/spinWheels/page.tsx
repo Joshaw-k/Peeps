@@ -247,6 +247,12 @@
 import React from "react";
 import { wheelItems } from "./WheelItems";
 import Wheel from "./components/Wheel";
+import {
+  ArcadeHeroContainer,
+  ArcadeHeroContent,
+  ArcadeHeroContentContainer,
+  ArcadeHeroImage,
+} from "../page";
 // import Wheel from "./components/Wheel/Loadable";
 // import { Helmet } from 'react-helmet-async';
 
@@ -255,6 +261,20 @@ import Wheel from "./components/Wheel";
 // import { Wheel } from "app/components/Wheel/Loadable";
 // import { Content } from "app/components/Content/Loadable";
 // import { PowerBar } from "app/components/PowerBar/Loadable";
+
+const gameData = {
+  name: "Spin wheel",
+  slug: "spin-wheel",
+  description:
+    "You know about the spin wheel. This wheel is a community wheel. There are default prizes on the wheel but these prizes changes with time as well. Interestingly, the community can decide what goes on the wheel. We limit the number of people that can spin this wheel globally using a computation on the social media network. The lower the traffic, the higher the number of spins and the higher the traffic, the lower the number of spins.",
+  shortDescription:
+    "You know about the spin wheel. But this one is different. You can win amazing prices on this wheel for real. Real usdt, and other tokes can be won here. Even prizes set by the web3 community probably for a giveaway, etc. An algorithm computes what you win and how you win. You can spin once or multiple times, depending on the traffic on the platform.",
+  image:
+    "https://raw.githubusercontent.com/MayowaObisesan/ForImages/main/Screenshot%202024-01-31%20at%2020-47-56%20Screenshot.png",
+  category: "arcade, casual",
+  minAge: 0,
+  popularityStatus: "high",
+};
 
 export function SpinWheel() {
   // const renderHeader = ()=>{
@@ -265,6 +285,17 @@ export function SpinWheel() {
   // }
   return (
     <>
+      <ArcadeHeroContainer>
+        <ArcadeHeroContentContainer>
+          <ArcadeHeroContent
+            header={gameData.name}
+            description={gameData.shortDescription || gameData.description}
+          >
+            <button className="btn btn-primary rounded-box">Play Now</button>
+          </ArcadeHeroContent>
+          <ArcadeHeroImage src={gameData.image} />
+        </ArcadeHeroContentContainer>
+      </ArcadeHeroContainer>
       {/* {renderHeader()} */}
       <div style={{ padding: "25px 0" }}>
         <Wheel items={wheelItems} />

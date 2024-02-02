@@ -139,9 +139,12 @@ export const PostActions = ({
     console.log(event);
 
     // toast("Transaction successful");
-    toast.custom((t) => (
-      <CustomToastUI t={t} message={"Post liked"}></CustomToastUI>
-    ));
+    if (event) {
+      // toast.custom((t) => (
+      //   <CustomToastUI t={t} message={"Post liked"}></CustomToastUI>
+      // ));
+      toast.success("Post liked");
+    }
   };
 
   // const handleCommentPost = () => {
@@ -164,11 +167,9 @@ export const PostActions = ({
         className={
           "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
         }
+        onClick={handleLikePost}
       >
-        <span
-          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
-          onClick={handleLikePost}
-        >
+        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
           <svg
             className="flex-shrink-0 w-5 h-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -264,6 +265,7 @@ export const Post = () => {
   // const [result, reexecuteQuery] = useNoticesQuery();
   // const { data, fetching, error } = result;
   const [cursor, setCursor] = useState(null);
+  const [endCursor, setEndCursor] = useState(20);
 
   const { loading, error, data } = useQuery(GET_NOTICES, {
     variables: { cursor },
@@ -368,12 +370,14 @@ export const Post = () => {
         </tbody>
       </table> */}
       {notices
-        ? JSON.parse(notices.reverse()[0].payload).posts.map(
-            (eachNotice: any) => (
+        ? JSON.parse(notices.reverse()[0].payload)
+            .posts.reverse()
+            .splice(0, endCursor)
+            .map((eachNotice: any) => (
               // .filter((it) => JSON.parse(it.payload).posts.length > 0)
               <>
                 <PostContainer key={eachNotice}>
-                  {console.log(eachNotice)}
+                  {/* {console.log(eachNotice)} */}
                   <PostUser {...eachNotice} />
                   <PostBody postId={eachNotice.id}>
                     {eachNotice?.content?.message}
@@ -388,9 +392,18 @@ export const Post = () => {
                 </PostContainer>
                 {/* <div className="divider"></div> */}
               </>
-            )
-          )
+            ))
         : null}
+      <section className="flex flex-row justify-center w-full mx-auto">
+        <button
+          title="load more button"
+          type="button"
+          className="btn btn-wide block"
+          onClick={() => setEndCursor((endCursor) => endCursor + 20)}
+        >
+          Load more
+        </button>
+      </section>
     </>
   );
 };
