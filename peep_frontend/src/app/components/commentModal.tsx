@@ -9,6 +9,8 @@ import { usePeepsContext } from "../context";
 import { defaultDappAddress } from "../utils/constants";
 import { PostActions, PostBody, PostContainer, PostUser } from "./Posts";
 import { ButtonLoader } from "./Button";
+import toast from "react-hot-toast";
+import { CustomToastUI } from "./ToastUI";
 
 export const CommentModal = ({ postId, message, upload, postData }) => {
   //   const { baseDappAddress } = usePeepsContext()
@@ -25,14 +27,17 @@ export const CommentModal = ({ postId, message, upload, postData }) => {
         // if (hexInput) {
         //   payload = ethers.utils.arrayify(str);
         // }
-        await rollups.inputContract.addInput(defaultDappAddress, payload);
+        return await rollups.inputContract.addInput(
+          defaultDappAddress,
+          payload
+        );
       } catch (e) {
         console.log(`${e}`);
       }
     }
   };
 
-  const handleCreateComment = () => {
+  const handleCreateComment = async () => {
     setIsSubmit(true);
     // construct the json payload to send to addInput
     const jsonPayload = JSON.stringify({
@@ -43,8 +48,20 @@ export const CommentModal = ({ postId, message, upload, postData }) => {
         upload: upload,
       },
     });
-    addInput(JSON.stringify(jsonPayload));
-    console.log(JSON.stringify(jsonPayload));
+    // addInput(JSON.stringify(jsonPayload));
+    // console.log(JSON.stringify(jsonPayload));
+
+    const res = await addInput(JSON.stringify(jsonPayload));
+    // console.log(res);
+    const receipt = await res?.wait(1);
+    // console.log(receipt);
+    const event = receipt?.events?.find((e) => e.event === "InputAdded");
+    console.log(event);
+
+    toast("Transaction successful");
+    toast.custom((t) => (
+      <CustomToastUI t={t} message={"Address has been copied"}></CustomToastUI>
+    ));
 
     // // construct the json payload to send to addInput
     // const jsonPayload = JSON.stringify({
@@ -84,7 +101,11 @@ export const CommentModal = ({ postId, message, upload, postData }) => {
               <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
             </svg>
           </span>
-          <span className={"text-xs"}>Comment</span>
+          <span className={"text-xs"}>
+            {postData?.comments?.length > 0
+              ? postData?.comments?.length
+              : "Comment"}
+          </span>
           {/* <CommentModal
             postId={postId}
             message={message}

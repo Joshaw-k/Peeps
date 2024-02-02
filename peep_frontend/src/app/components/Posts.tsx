@@ -11,6 +11,8 @@ import { CommentModal } from "./commentModal";
 import { EmptyPage } from "./EmptyPage";
 import { MessageSquareText } from "lucide-react";
 import { useRouter } from "next/navigation";
+import { CustomToastUI } from "./ToastUI";
+import toast from "react-hot-toast";
 
 type Notice = {
   id: string;
@@ -24,6 +26,7 @@ interface IPostContainer {
 }
 
 interface IPostBody {
+  postId: number;
   children: any;
 }
 
@@ -56,7 +59,7 @@ export const PostUser = (props: any) => {
       >
         <AvatarPost />
         <span className="font-medium text-md relative dark:text-gray-400">
-          {props?.username} - {props?.id}
+          {props?.username}
         </span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
         <span className="relative dark:text-gray-400">@{props?.username}</span>
@@ -109,14 +112,17 @@ export const PostActions = ({
         // if (hexInput) {
         //   payload = ethers.utils.arrayify(str);
         // }
-        await rollups.inputContract.addInput(defaultDappAddress, payload);
+        return await rollups.inputContract.addInput(
+          defaultDappAddress,
+          payload
+        );
       } catch (e) {
         console.log(`${e}`);
       }
     }
   };
 
-  const handleLikePost = () => {
+  const handleLikePost = async () => {
     // construct the json payload to send to addInput
     const jsonPayload = JSON.stringify({
       method: "likePost",
@@ -124,8 +130,18 @@ export const PostActions = ({
         id: postId,
       },
     });
-    addInput(JSON.stringify(jsonPayload));
-    console.log(JSON.stringify(jsonPayload));
+    // addInput(JSON.stringify(jsonPayload));
+    // console.log(JSON.stringify(jsonPayload));
+
+    const res = await addInput(JSON.stringify(jsonPayload));
+    const receipt = await res?.wait(1);
+    const event = receipt?.events?.find((e) => e.event === "InputAdded");
+    console.log(event);
+
+    // toast("Transaction successful");
+    toast.custom((t) => (
+      <CustomToastUI t={t} message={"Post liked"}></CustomToastUI>
+    ));
   };
 
   // const handleCommentPost = () => {
@@ -169,7 +185,9 @@ export const PostActions = ({
             <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
           </svg>
         </span>
-        <span className={"text-xs"}>Like</span>
+        <span className={"text-xs"}>
+          {postData?.likes.length > 0 ? postData?.likes.length : "Like"}
+        </span>
       </div>
 
       {/* <div
