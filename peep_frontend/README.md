@@ -1,57 +1,34 @@
-# Cartesi frontend web
+# Getting Started with Peeps - A Create React App
 
-```
-Cartesi Rollups version: 1.0.x
-```
+This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Features
+## Install all dependencies and start  the application
+Inside the root directory of the project, hit the following commands.
 
-With this project you can test some interactions with the Cartesi Rollups project:
-
-1. Metamask integration
-2. Send Inspect state Requests and Listing Reports response
-3. Sending Dapp Address with the DApp Relay
-4. Sending inputs
-5. Depositing Ether
-6. Depositing ERC20
-7. Depositing ERC721
-8. Depositing ERC1155 Single
-9. Depositing ERC1155 Batch
-10. Listing Notices
-11. Listing Reports
-12. Listing Vouchers
-13. Executing Vouchers
-
-## Configurtion
-
-Edit src/config.json to set the testnet parameters and deployment, inspect, graphql, rpc addresses.
-
-## Available Scripts
-
-In the project directory, run:
-
-```shell
-yarn
-yarn codegen
-```
-
-to build the app.
-
-```shell
-yarn start
-```
+```npm install```<br>
+```npm start```
 
 Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
 
-## Voucher Notes
+The page will reload when you make changes.\
+You may also see any lint errors in the console.
 
-To execute Vouchers, the voucher epoch must be finalized so the rollups framework generate the proofs.
-As a reminder, you can advance time in hardhat with the command:
+### Sending inputs
 
-```shell
-curl --data '{"id":1337,"jsonrpc":"2.0","method":"evm_increaseTime","params":[864010]}' http://localhost:8545
-```
+**@ethersproject/providers**: We use `ethers` library to communicate with Cartesi rollups on-chain smart contracts.
 
-[![Open in Gitpod](https://gitpod.io/button/open-in-gitpod.svg)](https://gitpod.io/#https://github.com/lynoferraz/frontend-web-cartesi)
+**@cartesi/rollups**: To save you the hassle of creating some generic smart contracts in solidity, we have a package to get all the contracts and respective ABIs. In this project we’ll use `ERC20Portal` and `InputBox` contracts.
 
+### Reading outputs
+
+Cartesi rollups framework uses GraphQL server in the node to help developers query outputs of a dapp. This project uses Apollo graphql client.
+
+### Components
+
+Peeps front-end is divided into 3 main components that interact with each other. You can find respective .js files in `.src` directory.
+1. `Arcade` - Contains the source code upon which the arcade games would be hosted.
+2. `Profile` - Input form that sends user's data to the blockchain and read by the backend node.
+3. `Wallet` - Contains the code to handle the wallet functionality built on the examples from Cartesi rollups contracts.
+
+This project is a work in progress. Any contributions are highly appreciated. 🙏
