@@ -4,11 +4,19 @@ const { ethers } = require("ethers");
 const viem = require("viem");
 const fs = require("fs");
 const csv = require("csv-parser");
-const TrendingAlgorithm = require("../getTrends");
+const { Action } = require("./actions");
+
 // const { TrendingAlgorithm } = require("../getTrends");
 
 const rollup_server = process.env.ROLLUP_HTTP_SERVER_URL;
 console.log("HTTP rollup_server url is " + rollup_server);
+
+const database = {
+  users: [],
+  posts: [],
+  comments: [],
+  trendingWords: [],
+};
 
 const postTexts = [
   "Enjoying a beautiful day at the park!",
@@ -745,13 +753,6 @@ const postTexts = [
   "Organizing a virtual talent show during challenging times, bringing smiles to classmates' faces!",
 ];
 
-const database = {
-  users: [],
-  posts: [],
-  comments: [],
-  trendingWords: [],
-};
-
 // Array containing Ethereum addresses
 const ethereumAddresses = [
   "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
@@ -765,8 +766,8 @@ function getRandomEthereumAddress() {
   return ethereumAddresses[randomIndex];
 }
 
+const filePath = "./sentimentdataset.csv";
 
-const filePath = "./sentimentdataset.csv"
 fs.createReadStream(filePath)
   .pipe(csv())
   .on("data", (data) => {
@@ -787,7 +788,7 @@ fs.createReadStream(filePath)
     };
     // results.post.push(post);
     // postTexts.push(data.Text.trim());
-    database.posts.push(post);
+    database?.posts.push(post);
     // }
   })
   .on("end", () => {
@@ -800,567 +801,10 @@ async function handle_advance(data) {
 
   const payload = data.payload;
   let JSONpayload = {};
-  // try {
-  //   if(String(data.metadata.msg_sender).toLowerCase() === DAPP_ADDRESS_REALY.toLowerCase())
-  // }
-
   const payloadStr = viem.hexToString(payload);
   JSONpayload = JSON.parse(JSON.parse(payloadStr));
   console.log(`received request ${JSON.stringify(JSONpayload)}`);
-  console.log(database);
-
-  let advance_req;
-
-  if (JSONpayload.method === "createPost") {
-    if (JSONpayload.data.message == "" || null) {
-      console.log("message cannot be empty");
-      const result = JSON.stringify({
-        error: String("Message:" + JSONpayload.data.message),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    console.log("creating post...");
-    const post = {
-      id: 0,
-      username: "",
-      address: "",
-      content: {
-        message: "",
-        upload: "",
-      },
-      comments: [],
-      likes: [],
-      reposts: [],
-      date_posted: 0,
-    };
-    post.id = database.posts.length;
-    const user = database.users.find(
-      (item) => item.address === data.metadata.msg_sender
-    );
-    post.username = user.username;
-    post.address = user.address;
-    post.content = {
-      message: JSONpayload.data.message,
-      upload: JSONpayload.data.upload,
-    };
-    post.date_posted = 0;
-    database.posts.push(post);
-    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
-    user?.posts.push(post.id);
-    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "editPost") {
-    const post = database.posts.find((item) => item.id == JSONpayload.data.id);
-    if (!post) {
-      console.log("post id is incorrect");
-      const result = JSON.stringify({
-        error: String("Post_Id:" + JSONpayload.data.id),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    if (JSONpayload.data.message == "" || null) {
-      console.log("message cannot be empty");
-      const result = JSON.stringify({
-        error: String("Message:" + JSONpayload.data.message),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    post.content.message = JSONpayload.data.message;
-    const result = JSON.stringify(database);
-
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "deletePost") {
-    const post = database.posts.find((item) => item.id == JSONpayload.data.id);
-    if (!post) {
-      console.log("post id is incorrect");
-      const result = JSON.stringify({
-        error: String("Post_Id:" + JSONpayload.data.id),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    const newDB = database.posts.filter(
-      (item) => item.id !== JSONpayload.data.id
-    );
-    database.posts = newDB;
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "likePost") {
-    const post = database.posts.find(
-      (item) => item.id == Number(JSONpayload.data.id)
-    );
-    if (!post) {
-      console.log("post id is incorrect");
-      const result = JSON.stringify({
-        error: String("Post_Id:" + JSONpayload.data.id),
-      });
-      const hexresult = viem.stringToHex(result);
-
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-      return;
-    }
-    const user = database.users.find(
-      (item) => item.address === data.metadata.msg_sender
-    );
-    post.likes.push(user.id);
-    user.likes = user.likes + 1;
-    user.liked_posts.push(post.id);
-    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "createProfile") {
-    const userExist = database.users.find(
-      (item) => item.address == data.metadata.msg_sender
-    );
-    if (userExist) {
-      console.log("User address already mapped to a profile");
-      const result = JSON.stringify({
-        error: String("UserAddress:" + data.metadata.msg_sender),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-      return;
-    }
-    if (JSONpayload.data.username == "") {
-      console.log("username cannot be empty or null");
-      const result = JSON.stringify({
-        error: String("Username:" + JSONpayload.data.username),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-      return;
-    }
-    console.log("creating profile...");
-    const user = {
-      id: 0,
-      username: "",
-      bio: "",
-      address: "",
-      profile_pic: "",
-      posts: [],
-      comments: [],
-      reposts: [],
-      likes: 0,
-      liked_posts: [],
-      date_joined: 0,
-    };
-    user.id = database.users.length;
-    user.username = JSONpayload.data.username;
-    user.address = data.metadata.msg_sender;
-    user.bio = JSONpayload.data.bio;
-    user.profile_pic = JSONpayload.data.profile_pic;
-    user.date_joined = 0;
-    database.users.push(user);
-    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "editProfile") {
-    const user = database.users.find(
-      (item) => item.address == data.metadata.msg_sender
-    );
-    if (!user) {
-      console.log("User address doesn't exist");
-      const result = JSON.stringify({
-        error: String("UserAddress:" + data.metadata.msg_sender),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    if (JSONpayload.data.username == "" || null) {
-      console.log("username cannot be empty");
-      const result = JSON.stringify({
-        error: String("Username:" + JSONpayload.data.username),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    if (JSONpayload.data.bio == "" || null) {
-      console.log("bio cannot be empty");
-      const result = JSON.stringify({
-        error: String("Bio:" + JSONpayload.data.bio),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    user.username = JSONpayload.data.username;
-    user.bio = JSONpayload.data.bio;
-    user.profile_pic = JSONpayload.data.profile_pic;
-    const result = JSON.stringify(database);
-
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "deleteProfile") {
-    const user = database.users.find(
-      (item) => item.address == data.metadata.msg_sender
-    );
-    if (!user) {
-      console.log("User address doesn't exist");
-      const result = JSON.stringify({
-        error: String("UserAddress:" + data.metadata.msg_sender),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    const newDB = database.users.filter(
-      (item) => item.id !== JSONpayload.data.id
-    );
-    database.users = newDB;
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "repost") {
-    const post = database.posts.find((item) => item.id == JSONpayload.data.id);
-    if (!post) {
-      console.log("post id is incorrect");
-      const result = JSON.stringify({
-        error: String("Post_Id:" + JSONpayload.data.id),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    const user = database.users.find(
-      (item) => item.address === data.metadata.msg_sender
-    );
-    if (!user) {
-      console.log("User address doesn't exist");
-      const result = JSON.stringify({
-        error: String("UserAddress:" + data.metadata.msg_sender),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    post.reposts.push(user.id);
-    user.reposts.push(post.id);
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "createComment") {
-    const comment = {
-      id: 0,
-      post_id: 0,
-      username: "",
-      content: {
-        message: "",
-        upload: "",
-      },
-      comments: [],
-      likes: 0,
-      reposts: [],
-      date_commented: 0,
-    };
-
-    const post = database.posts.find(
-      (item) => item.id == JSONpayload.data.post_id
-    );
-    if (!post) {
-      console.log("post id is incorrect");
-      const result = JSON.stringify({
-        error: String("Post_Id:" + JSONpayload.data.id),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    const user = database.users.find(
-      (item) => item.address === data.metadata.msg_sender
-    );
-    if (!user) {
-      console.log("User address doesn't exist");
-      const result = JSON.stringify({
-        error: String("UserAddress:" + data.metadata.msg_sender),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    if (JSONpayload.data.message == "" || null) {
-      console.log("message cannot be empty");
-      const result = JSON.stringify({
-        error: String("Message:" + JSONpayload.data.message),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    comment.id = database.comments.length;
-    comment.post_id = JSONpayload.data.post_id;
-    comment.username = user.username;
-    comment.content = {
-      message: JSONpayload.data.message,
-      upload: JSONpayload.data.upload,
-    };
-    comment.date_posted = 0;
-    database.comments.push(comment);
-    database.trendingWords = new TrendingAlgorithm().alltrendingPosts();
-    user.comments.push(comment);
-    post.comments.push(comment);
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else if (JSONpayload.method === "deleteComment") {
-    const comment = database.comments.find(
-      (item) => item.id == JSONpayload.data.id
-    );
-    if (!comment) {
-      console.log("comment id is incorrect");
-      const result = JSON.stringify({
-        error: String("Comment_Id:" + JSONpayload.data.id),
-      });
-      const hexresult = viem.stringToHex(result);
-      await fetch(rollup_server + "/report", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          payload: hexresult,
-        }),
-      });
-    }
-    const newDB = database.comments.filter(
-      (item) => item.id !== JSONpayload.data.id
-    );
-    database.comments = newDB;
-    const result = JSON.stringify(database);
-    const hexResult = viem.stringToHex(result);
-    advance_req = await fetch(rollup_server + "/notice", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ payload: hexResult }),
-    });
-  } else {
-    console.log("Incorrect method");
-    const result = JSON.stringify({
-      error: String("Method does not exist: " + JSONpayload.method),
-    });
-    const hexresult = viem.stringToHex(result);
-    await fetch(rollup_server + "/report", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-
-      body: JSON.stringify({
-        payload: hexresult,
-      }),
-    });
-  }
-
-  const json = await advance_req?.json();
-  console.log(
-    "Received status " +
-    advance_req?.status +
-    " with body " +
-    JSON.stringify(json)
-  );
-  return "accept";
+  await Action(JSONpayload, data, database);
 }
 
 async function handle_inspect(data) {
@@ -1405,10 +849,10 @@ let firstTimeCounter = 0;
         };
         // results.post.push(post);
         // postTexts.push(data.Text.trim());
-        database.posts.push(post);
+        database?.posts.push(post);
       }
       // database.posts.push(postTexts);
-      console.log(database.posts.length);
+      console.log(database?.posts.length);
       const hexResult = viem.stringToHex(database);
       advance_req = await fetch(rollup_server + "/notice", {
         method: "POST",
