@@ -58,10 +58,12 @@ export const CommentModal = ({ postId, message, upload, postData }) => {
     const event = receipt?.events?.find((e) => e.event === "InputAdded");
     console.log(event);
 
-    toast("Transaction successful");
-    toast.custom((t) => (
-      <CustomToastUI t={t} message={"Address has been copied"}></CustomToastUI>
-    ));
+    if (event) {
+      toast.success("Comment posted");
+    }
+    // toast.custom((t) => (
+    //   <CustomToastUI t={t} message={"Address has been copied"}></CustomToastUI>
+    // ));
 
     // // construct the json payload to send to addInput
     // const jsonPayload = JSON.stringify({

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { AvatarProfile } from "./Avatar";
 import { Camera, CameraIcon, X as LucideX } from "lucide-react";
@@ -8,6 +8,7 @@ import { ethers } from "ethers";
 import { usePeepsContext } from "../context";
 import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
+import toast from "react-hot-toast";
 
 export const ProfileForm = () => {
   const { baseDappAddress, wallet } = usePeepsContext();
@@ -16,6 +17,8 @@ export const ProfileForm = () => {
   const [username, setUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const profileFormCloseButton = useRef(null);
+  const [open, setOpen] = React.useState(false);
 
   const addInput = async (str: string) => {
     if (rollups) {
@@ -24,14 +27,17 @@ export const ProfileForm = () => {
         // if (hexInput) {
         //   payload = ethers.utils.arrayify(str);
         // }
-        await rollups.inputContract.addInput(defaultDappAddress, payload);
+        return await rollups.inputContract.addInput(
+          defaultDappAddress,
+          payload
+        );
       } catch (e) {
         console.log(`${e}`);
       }
     }
   };
 
-  const handleCreateProfile = () => {
+  const handleCreateProfile = async () => {
     setIsSubmit(true);
     // construct the json payload to send to addInput
     const jsonPayload = JSON.stringify({
@@ -42,12 +48,25 @@ export const ProfileForm = () => {
         profile_pic: dp,
       },
     });
-    addInput(JSON.stringify(jsonPayload));
-    console.log(JSON.stringify(jsonPayload));
+    // addInput(JSON.stringify(jsonPayload));
+    // console.log(JSON.stringify(jsonPayload));
+
+    const res = await addInput(JSON.stringify(jsonPayload));
+    console.log(res);
+    const receipt = await res?.wait(1);
+    console.log(receipt);
+    const event = receipt?.events?.find((e) => e.event === "InputAdded");
+    console.log(event);
+
+    if (event) {
+      setOpen(false);
+    }
+
+    toast.success("Profile created");
   };
 
   return (
-    <AlertDialog.Root>
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger asChild>
         <button
           type="button"
@@ -123,6 +142,7 @@ export const ProfileForm = () => {
                 type="button"
                 className="btn size-12 rounded-full text-xl"
                 aria-label="Close"
+                ref={profileFormCloseButton}
               >
                 <Cross2Icon size={64} />
               </button>
