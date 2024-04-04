@@ -35,7 +35,7 @@ const Profile = () => {
 
   const { loading, error, data } = useQuery(GET_NOTICES, {
     variables: { cursor },
-    pollInterval: 500,
+    // pollInterval: 500,
   });
 
   if (!wallet)

@@ -42,7 +42,7 @@ const page = ({ params }) => {
 
   const { loading, error, data } = useQuery(GET_NOTICES, {
     variables: { cursor },
-    pollInterval: 500,
+    // pollInterval: 500,
   });
 
   // if (fetching) return <p>Loading...</p>;
