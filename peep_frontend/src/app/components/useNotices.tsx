@@ -36,7 +36,7 @@ export const useNotices = () => {
   const [cursor, setCursor] = useState(null);
   const { loading, error, data } = useQuery(GET_NOTICES, {
     variables: { cursor },
-    pollInterval: 500,
+    // pollInterval: 500,
   });
 
   const notices: TNotice[] = data?.notices.edges

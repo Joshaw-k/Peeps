@@ -6,12 +6,12 @@ import "./globals.css";
 import PeepsProvider from "./context";
 
 //Setup GraphQL Apollo client
-const URL_QUERY_GRAPHQL = "http://localhost:8080/graphql";
+// const URL_QUERY_GRAPHQL = "http://localhost:8080/graphql";
 
-const client = new ApolloClient({
-  uri: URL_QUERY_GRAPHQL,
-  cache: new InMemoryCache(),
-});
+// const client = new ApolloClient({
+//   uri: URL_QUERY_GRAPHQL,
+//   cache: new InMemoryCache(),
+// });
 
 export default function Home() {
   return (
