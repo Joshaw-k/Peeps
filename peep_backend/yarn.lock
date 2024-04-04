@@ -7,6 +7,11 @@
   resolved "https://registry.npmjs.org/@adraffy/ens-normalize/-/ens-normalize-1.10.0.tgz"
   integrity sha512-nA9XHtlAkYfJxY7bce8DcN7eKxWWCWkU+1GR9d+U6MbNpfwQp8TI7vqOsBsMcHoT4mBu2kypKoSKnghEzOOq5Q==
 
+"@adraffy/ens-normalize@1.10.1":
+  version "1.10.1"
+  resolved "https://registry.yarnpkg.com/@adraffy/ens-normalize/-/ens-normalize-1.10.1.tgz#63430d04bd8c5e74f8d7d049338f1cd9d4f02069"
+  integrity sha512-96Z2IP3mYmF1Xg2cDm8f1gWGf/HUVedQ3FMifV4kG/PQ4yEP51xDtRAEfhVNt5f/uzpNkZHwWQuUcu6D6K+Ekw==
+
 "@adraffy/ens-normalize@1.9.2":
   version "1.9.2"
   resolved "https://registry.npmjs.org/@adraffy/ens-normalize/-/ens-normalize-1.9.2.tgz"
@@ -48,6 +53,11 @@
   version "1.7.1"
   resolved "https://registry.npmjs.org/@noble/secp256k1/-/secp256k1-1.7.1.tgz"
   integrity sha512-hOUk6AyBFmqVrv7k5WAw/LpszxVbj9gGN4JRkIX52fdFAj1UA61KXmZDvqVEm+pOyec3+fIeZB02LYa/pWOArw==
+
+"@orama/orama@^2.0.5":
+  version "2.0.5"
+  resolved "https://registry.yarnpkg.com/@orama/orama/-/orama-2.0.5.tgz#fc0be8347ba439a7177a9acf3e086108b76bc29c"
+  integrity sha512-bkfgledz5N3quNvV3tuYA/byIA2AsLHv8+84GBkN4Pv/jOx8Lqb/6KGkJvEuCvZRabYKo7yKFoWQI6ZuTqpk2w==
 
 "@scure/base@~1.1.0", "@scure/base@~1.1.2":
   version "1.1.5"
@@ -91,6 +101,22 @@ aes-js@4.0.0-beta.5:
   resolved "https://registry.npmjs.org/aes-js/-/aes-js-4.0.0-beta.5.tgz"
   integrity sha512-G965FqalsNyrPqgEGON7nIx1e/OVENSgiEIzyC63haUMuvNnwIgIjMs52hlTCKhkBny7A2ORNlfY9Zu+jmGk1Q==
 
+cartesi-router@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/cartesi-router/-/cartesi-router-1.0.4.tgz#aee0c50e0fa8983d72778f2945996fc8fac578af"
+  integrity sha512-tRzAWPoEEP199O9Fis1/YccK14ZW4udTtdPkjAZd7Kdp1r3iBdGKKLAbIpD8Imh+kZSyXHQwNNofWD24PYewkQ==
+  dependencies:
+    cartesi-wallet "^1.0.1"
+    viem "^2.7.6"
+
+cartesi-wallet@^1.0.1, cartesi-wallet@^1.0.4:
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/cartesi-wallet/-/cartesi-wallet-1.0.4.tgz#e24be1c1c4319d0be173d5c6185a67847df23e22"
+  integrity sha512-TrAlDrRLwxbF+ZiJCmmPWNg356TaAxvlWHeBypiWhOsaCDhcuRBcsspj8xezwfUG4b+yKxnqI6g+UVHrlDadSQ==
+  dependencies:
+    ethers "^6.10.0"
+    viem "^2.7.3"
+
 csv-parser@^3.0.0:
   version "3.0.0"
   resolved "https://registry.npmjs.org/csv-parser/-/csv-parser-3.0.0.tgz"
@@ -125,6 +151,19 @@ esbuild@^0.19.2:
     "@esbuild/win32-arm64" "0.19.2"
     "@esbuild/win32-ia32" "0.19.2"
     "@esbuild/win32-x64" "0.19.2"
+
+ethers@^6.10.0:
+  version "6.11.0"
+  resolved "https://registry.yarnpkg.com/ethers/-/ethers-6.11.0.tgz#6d3e884ad36454c29d4662ae49439d5d04556c66"
+  integrity sha512-kPHNTnhVWiWU6AVo6CAeTjXEK24SpCXyZvwG9ROFjT0Vlux0EOhWKBAeC+45iDj80QNJTYaT1SDEmeunT0vDNw==
+  dependencies:
+    "@adraffy/ens-normalize" "1.10.1"
+    "@noble/curves" "1.2.0"
+    "@noble/hashes" "1.3.2"
+    "@types/node" "18.15.13"
+    aes-js "4.0.0-beta.5"
+    tslib "2.4.0"
+    ws "8.5.0"
 
 ethers@^6.7.1:
   version "6.7.1"
@@ -178,10 +217,19 @@ viem@^2.5.0:
     isows "1.0.3"
     ws "8.13.0"
 
-ws@*, ws@8.5.0:
-  version "8.5.0"
-  resolved "https://registry.npmjs.org/ws/-/ws-8.5.0.tgz"
-  integrity sha512-BWX0SWVgLPzYwF8lTzEy1egjhS4S4OEAHfsO8o65WOVsrnSRGaSiUaa9e0ggGlkMTtBlmOpEXiie9RUcBO86qg==
+viem@^2.7.3, viem@^2.7.6:
+  version "2.7.8"
+  resolved "https://registry.yarnpkg.com/viem/-/viem-2.7.8.tgz#ca60552190cdc501cf4e1d1140d8da7625b1b1f4"
+  integrity sha512-5r5pkBDBmihCvMx4b3MqtP0FoZCRWE2ML1DssU80+vhJQur0PKd4yHdLbbvoiGGVD6bYiA394juhfdSvXIGgFA==
+  dependencies:
+    "@adraffy/ens-normalize" "1.10.0"
+    "@noble/curves" "1.2.0"
+    "@noble/hashes" "1.3.2"
+    "@scure/bip32" "1.3.2"
+    "@scure/bip39" "1.2.1"
+    abitype "1.0.0"
+    isows "1.0.3"
+    ws "8.13.0"
 
 ws@8.13.0:
   version "8.13.0"
