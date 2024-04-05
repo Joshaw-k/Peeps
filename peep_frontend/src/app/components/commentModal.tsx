@@ -7,12 +7,19 @@ import { useRollups } from "../useRollups";
 import { ethers } from "ethers";
 import { usePeepsContext } from "../context";
 import { defaultDappAddress } from "../utils/constants";
-import { PostActions, PostBody, PostContainer, PostUser } from "./Posts";
 import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
 import { CustomToastUI } from "./ToastUI";
+import {PostBody, PostContainer, PostUser} from "./Posts";
 
-export const CommentModal = ({ postId, message, upload, postData }) => {
+interface ICommentModal {
+  postId: number;
+  message: string;
+  upload: string;
+  postData: any;
+}
+
+export const CommentModal = ({ postId, message, upload, postData }: ICommentModal) => {
   //   const { baseDappAddress } = usePeepsContext()
   const rollups = useRollups(defaultDappAddress);
   const [dp, setDp] = useState<string>("");
@@ -104,8 +111,8 @@ export const CommentModal = ({ postId, message, upload, postData }) => {
             </svg>
           </span>
           <span className={"text-xs"}>
-            {postData?.comments?.length > 0
-              ? postData?.comments?.length
+            {postData?.post_comments > 0
+              ? postData?.post_comments
               : "Comment"}
           </span>
           {/* <CommentModal
@@ -161,7 +168,7 @@ export const CommentModal = ({ postId, message, upload, postData }) => {
                 className="btn size-12 rounded-full text-xl"
                 aria-label="Close"
               >
-                <Cross2Icon size={64} />
+                <LucideX size={64} />
               </button>
             </AlertDialog.Cancel>
             {/* <AlertDialog.Action asChild>
