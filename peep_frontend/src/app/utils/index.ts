@@ -5,3 +5,7 @@ export const calculateRepost = (value: number) => {
 export const shortenAddress = (addr: string) => {
     return `${addr?.substring(0, 6)}...${addr?.substring(addr.length - 4)}`;
 };
+
+export function classNames(...classes: []) {
+    return classes.filter(Boolean).join(' ')
+}

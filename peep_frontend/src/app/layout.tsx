@@ -20,7 +20,7 @@ import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoSansJP = Noto_Sans_JP({
-  subsets: ["cyrillic"],
+  subsets: ["latin", "cyrillic"],
   display: "swap",
   preload: true,
   variable: "--font-noto-sans-jp",
@@ -43,9 +43,9 @@ init({
     rpcUrl: v.rpcUrl,
   })),
   appMetadata: {
-    name: "Cartesi Rollups Test DApp",
+    name: "Peeps - Built on Cartesi",
     icon: "<svg><svg/>",
-    description: "Demo app for Cartesi Rollups",
+    description: "Peeps is a decentralized social platform",
     recommendedInjectedWallets: [
       { name: "MetaMask", url: "https://metamask.io" },
     ],
