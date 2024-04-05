@@ -9,7 +9,7 @@ import { CommentModal } from "../../components/commentModal";
 import { FaRetweet } from "react-icons/fa6";
 import { TNotice } from "../../components/useNotices";
 import {
-  PostActions,
+  PostActionsContainer,
   PostBody,
   PostContainer,
   PostUser,
@@ -36,7 +36,7 @@ const GET_NOTICES = gql`
     }
   }
 `;
-const page = ({ params }) => {
+const page = ({ params }: {params: any}) => {
   const [cursor, setCursor] = useState(null);
   console.log(params.id);
 
@@ -93,7 +93,7 @@ const page = ({ params }) => {
     return <p>No Notices</p>;
   }
   const post = JSON.parse(notices.reverse()[0].payload).posts.find(
-    (item) => item.id == params.id
+    (item: any) => item.id == params.id
   );
   console.log(post);
   return (
@@ -101,12 +101,13 @@ const page = ({ params }) => {
       <PostContainer key={post}>
         {console.log(post)}
         <PostUser {...post} />
-        <PostBody>{post?.content?.message}</PostBody>
-        <PostActions
+        <PostBody>{post?.post_content}</PostBody>
+        <PostActionsContainer
           postId={post.id}
-          message={post?.content?.message}
-          upload={post?.content?.uplooad}
+          message={post?.post_content}
+          upload={post?.post_media}
           postData={post}
+          postMetaData={null}
         />
         {/* {<PostContainer></PostContainer>} */}
       </PostContainer>
@@ -115,19 +116,19 @@ const page = ({ params }) => {
       </div>
       {notices ? (
         <div>
-          {post?.comments?.map((item) => (
+          {post?.comments?.map((item: any, index: number) => (
             <>
               <PostContainer key={item}>
-                {console.log(item)}
+                {/*{console.log(item)}*/}
                 <PostUser {...item} />
-                <PostBody>{item?.content?.message}</PostBody>
-                <PostActions
-                  postId={item.id}
-                  message={item?.content?.message}
-                  upload={item?.content?.uplooad}
+                <PostBody>{item?.post_content}</PostBody>
+                <PostActionsContainer
+                  postId={index}
+                  message={item?.post_content}
+                  upload={item?.post_media}
                   postData={item}
+                  postMetaData={null}
                 />
-                {/* {<PostContainer></PostContainer>} */}
               </PostContainer>
             </>
           ))}

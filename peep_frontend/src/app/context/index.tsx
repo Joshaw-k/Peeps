@@ -126,7 +126,7 @@ interface ICurrentUser {
   bio: string;
 }
 
-const PeepsProvider: React.FC<PeepsProviderProps<any>> = ({
+const PeepsProvider: React.FC<PeepsProviderProps> = ({
   children,
 }: PeepsProviderProps) => {
   const [baseDappAddress, setBaseDappAddress] =

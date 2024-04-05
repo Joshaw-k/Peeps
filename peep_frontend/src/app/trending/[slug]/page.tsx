@@ -7,7 +7,7 @@ import {
   PostBody,
   PostContainer,
   PostUser,
-} from "../../components/Posts";
+} from "../../components/Posts/Posts";
 import { usePeepsContext } from "../../context";
 
 const TrendingPosts = ({ params }: { params: { slug: string } }) => {
