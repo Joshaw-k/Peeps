@@ -402,28 +402,11 @@ export const Post = () => {
             name: "PEEPS_LIKES",
             keyvalues: {
               addr: `${wallet?.accounts[0]?.address}`,
+              post_uuid: `${post_uuid}`,
             },
           },
           pinataContent: {
-            post_uuid: `${post_uuid}`,
             liked_post: true,
-          },
-        });
-      }
-      if (action == "unlike") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_LIKES",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            liked_post: false,
           },
         });
       }
@@ -436,28 +419,11 @@ export const Post = () => {
             name: "PEEPS_REPEEP",
             keyvalues: {
               addr: `${wallet?.accounts[0]?.address}`,
+              post_uuid: `${post_uuid}`,
             },
           },
           pinataContent: {
-            post_uuid: `${post_uuid}`,
             repeeped_post: true,
-          },
-        });
-      }
-      if (action == "unrepeep") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_REPEEP",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            repeeped_post: false,
           },
         });
       }
@@ -470,10 +436,10 @@ export const Post = () => {
             name: "PEEPS_COMMENT",
             keyvalues: {
               addr: `${wallet?.accounts[0]?.address}`,
+              parent_post_uuid: `${post_uuid}`,
             },
           },
           pinataContent: {
-            parent_post_uuid: `${post_uuid}`,
             comment_username: "username",
             comment_content: "commentText",
             comment_media: "",
@@ -481,23 +447,6 @@ export const Post = () => {
             comment_repeeps: 0,
             comment_likes: 0,
             createdAt: new Date(),
-          },
-        });
-      }
-      if (action == "uncomment") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_COMMENT",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            commented_post: false,
           },
         });
       }
