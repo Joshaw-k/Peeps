@@ -7,7 +7,7 @@ import {
   PostBody,
   PostContainer,
   PostUser,
-} from "../components/Posts";
+} from "../components/Posts/Posts";
 import { GET_NOTICES, TNotice, useNotices } from "../components/useNotices";
 import { ethers } from "ethers";
 import { useEffect, useState } from "react";

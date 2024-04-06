@@ -1,6 +1,6 @@
 "use client";
 
-import { Post } from "./components/Posts";
+import { Post } from "./components/Posts/Posts";
 import PostForm from "./components/PostForm";
 import { useState } from "react";
 

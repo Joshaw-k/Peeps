@@ -9,6 +9,7 @@ import toast from "react-hot-toast";
 import { CustomToastUI } from "./ToastUI";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
+import { ButtonLoader } from "./Button";
 
 const PostForm: React.FC<IInputProps> = (props) => {
   const { wallet } = usePeepsContext();
@@ -20,6 +21,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
   const [address, setAdress] = useState(null);
   const [userIpfsHash, setUserIpfsHash] = useState(null);
   const [username, setUsername] = useState(null);
+  const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
   // const addInput = async (str: string) => {
   //   if (rollups) {
@@ -40,6 +42,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
   // };
 
   const handlePost = async () => {
+    setIsSubmit(true);
     // construct the json payload to send to addInput
     if (wallet) {
       try {
@@ -75,18 +78,17 @@ const PostForm: React.FC<IInputProps> = (props) => {
             },
           }
         );
-        console.log(res.data);
-        console.log(
-          `View the file here: https://gateway.pinata.cloud/ipfs/${res.data.IpfsHash}`
-        );
         if (res.data.IpfsHash) toast.success("Post created");
+        setIsSubmit(false);
       } catch (error) {
         console.log(error);
         toast.error("Post not created");
+        setIsSubmit(false);
       }
     } else {
       toast.error("Error, Can't make post!");
       toast.error("Please connect your wallet!");
+      setIsSubmit(false);
     }
   };
 
@@ -152,7 +154,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
           className="flex-grow-0 btn btn-sm btn-primary rounded-xl disabled:btn-disabled"
           onClick={handlePost}
         >
-          Post
+          {isSubmit ? <ButtonLoader /> : "Post"}
         </button>
       </div>
     </div>
