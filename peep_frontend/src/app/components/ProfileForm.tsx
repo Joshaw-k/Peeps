@@ -18,6 +18,7 @@ export const ProfileForm = () => {
   const [dp, setDp] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
+  const [displayName, setDisplayName] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const profileFormCloseButton = useRef(null);
   const [open, setOpen] = React.useState(false);
@@ -40,7 +41,7 @@ export const ProfileForm = () => {
           pinataContent: {
             username: username,
             wallet: `${wallet?.accounts[0]?.address}`,
-            displayName: "displayName",
+            displayName: displayName,
             profilePicture: "",
             bio: bio,
             following: 0,
@@ -114,14 +115,26 @@ export const ProfileForm = () => {
               <form className="card-body w-full">
                 <div className="form-control">
                   <label className="label">
+                    <span className="label-text">Display Name</span>
+                  </label>
+                  <input
+                      type="text"
+                      placeholder="display_name"
+                      className="input input-bordered"
+                      onChange={(e) => setDisplayName(e.target.value)}
+                      required
+                  />
+                </div>
+                <div className="form-control">
+                  <label className="label">
                     <span className="label-text">Username</span>
                   </label>
                   <input
-                    type="username"
-                    placeholder="username"
-                    className="input input-bordered"
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
+                      type="username"
+                      placeholder="username"
+                      className="input input-bordered"
+                      onChange={(e) => setUsername(e.target.value)}
+                      required
                   />
                 </div>
                 <div className="form-control">
@@ -129,18 +142,18 @@ export const ProfileForm = () => {
                     <span className="label-text">About yourself</span>
                   </label>
                   <textarea
-                    className="textarea textarea-lg textarea-bordered text-base resize-none"
-                    placeholder="Tell the world something about yourself"
-                    onChange={(e) => setBio(e.target.value)}
+                      className="textarea textarea-lg textarea-bordered text-base resize-none"
+                      placeholder="Tell the world something about yourself"
+                      onChange={(e) => setBio(e.target.value)}
                   ></textarea>
                 </div>
                 <div className="form-control mt-6">
                   <button
-                    type="button"
-                    className="btn btn-primary rounded-xl"
-                    onClick={handleCreateProfile}
+                      type="button"
+                      className="btn btn-primary rounded-xl"
+                      onClick={handleCreateProfile}
                   >
-                    {isSubmit ? <ButtonLoader /> : "Create Profile"}
+                    {isSubmit ? <ButtonLoader/> : "Create Profile"}
                   </button>
                 </div>
               </form>
@@ -149,11 +162,11 @@ export const ProfileForm = () => {
           <div className="absolute top-8 right-4 flex justify-end gap-[25px]">
             <AlertDialog.Cancel asChild>
               <button
-                title="Close profile dialog"
-                type="button"
-                className="btn size-12 rounded-full text-xl"
-                aria-label="Close"
-                ref={profileFormCloseButton}
+                  title="Close profile dialog"
+                  type="button"
+                  className="btn size-12 rounded-full text-xl"
+                  aria-label="Close"
+                  ref={profileFormCloseButton}
               >
                 <Cross2Icon size={64} />
               </button>
