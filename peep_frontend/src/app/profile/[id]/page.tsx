@@ -41,6 +41,7 @@ const Profile = ({ params }: { params: any }) => {
         );
         if (res.data) {
           setUserProfileData(res.data);
+          console.log(res.data.rows);
         }
       } catch (error) {
         console.log(error);
@@ -311,7 +312,7 @@ const Profile = ({ params }: { params: any }) => {
   const fetchPosts = async () => {
     try {
       const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["addr"]={"value":"${userData?.wallet}","op":"eq"}&status=pinned`,
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userProfileData?.wallet}","op":"eq"}&status=pinned`,
         {
           headers: {
             Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
@@ -362,6 +363,7 @@ const Profile = ({ params }: { params: any }) => {
             );
             data.push(res1.data.rows[0]);
           }
+          console.log(data);
           if (data.length > 0) {
             setLikedPosts(data);
             let dataOne = [];
@@ -384,7 +386,7 @@ const Profile = ({ params }: { params: any }) => {
   const fetchFollowers = async () => {
     try {
       const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&?metadata[keyvalues]["following"]={"value":"${userProfileData?.username}","op":"eq"}&status=pinned`,
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${userProfileData?.username}","op":"eq"}&status=pinned`,
         {
           headers: {
             Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
@@ -404,6 +406,7 @@ const Profile = ({ params }: { params: any }) => {
                 },
               }
             );
+
             data.push(res1.data.rows[0]);
           }
           if (data.length > 0) {
@@ -451,7 +454,7 @@ const Profile = ({ params }: { params: any }) => {
 
   useEffect(() => {
     fetchProfileUser();
-  }, []);
+  }, [params.id]);
 
   useEffect(() => {
     fetchProfileData();
@@ -597,7 +600,7 @@ const Profile = ({ params }: { params: any }) => {
                 likedpostsData.map((eachPost: any, index: number) => (
                   <PostContainer key={index}>
                     <PostUser {...eachPost} />
-                    <PostBody postMetaData={posts[index]}>
+                    <PostBody postMetaData={likedposts?.[index]}>
                       {eachPost?.post_content}
                     </PostBody>
                     <PostActionsContainer

@@ -46,7 +46,7 @@ export const UserLeft = () => {
           Play your favourite games on a web3 decentralized platform.
         </div>
       </div>
-      <section className={"sticky top-28 w-[60%] mx-auto"}>
+      <section className={`sticky top-28 w-[60%] mx-auto`}>
         <div
           className={
             "card card-bordered bg-base-200 p-4 flex flex-row items-center gap-x-4"
