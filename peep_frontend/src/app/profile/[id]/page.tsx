@@ -19,6 +19,7 @@ import { Tab } from "@headlessui/react";
 import classNames from "classnames";
 import axios from "axios";
 import toast from "react-hot-toast";
+import Link from "next/link";
 
 const Profile = ({ params }: { params: any }) => {
   const { wallet, userData, userIpfsHash } = usePeepsContext();
@@ -142,7 +143,7 @@ const Profile = ({ params }: { params: any }) => {
           pinataContent: {
             username: current_username,
             wallet: current_walletAddrress,
-            displayName: "displayName",
+            displayName: "",
             profilePicture: current_profilePicture,
             bio: current_bio,
             following:
@@ -506,7 +507,7 @@ const Profile = ({ params }: { params: any }) => {
               <div>@{userProfileData?.username}</div>
             </div>
             <div className={""}>{userProfileData?.bio}</div>
-            <div>{userProfileData?.createdAt}</div>
+            <div>{new Date(userProfileData?.createdAt).toDateString()}</div>
             <div>
               <span>Followers: {userProfileData?.followers}</span> |
               <span>Following: {userProfileData?.following}</span>
@@ -569,6 +570,7 @@ const Profile = ({ params }: { params: any }) => {
               {postsData ? (
                 postsData.map((eachPost: any, index: number) => (
                   <PostContainer key={index}>
+                    {console.log(eachPost)}
                     <PostUser {...eachPost} />
                     <PostBody postMetaData={posts[index]}>
                       {eachPost?.post_content}
@@ -622,10 +624,21 @@ const Profile = ({ params }: { params: any }) => {
             >
               {followersListData ? (
                 followersListData.map((eachFollower: any, index: number) => (
-                  <p>{eachFollower?.username}</p>
+                    <Link href={`/profile/${eachFollower?.username}`} className={"card card-compact p-4 flex flex-row gap-x-3 bg-base-200"}>
+                      <div className="avatar">
+                        <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-1 ring-offset-1">
+                          {
+                            eachFollower?.displayPicture
+                              ? <img src="" alt={""}/>
+                              : <span className="text-3xl"></span>
+                          }
+                        </div>
+                      </div>
+                      {eachFollower?.username}
+                    </Link>
                 ))
               ) : (
-                <div>No Posts</div>
+                  <div>No Posts</div>
               )}
             </Tab.Panel>
           </Tab.Panels>
