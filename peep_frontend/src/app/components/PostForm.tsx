@@ -12,34 +12,10 @@ import { v4 as uuidv4 } from "uuid";
 import { ButtonLoader } from "./Button";
 
 const PostForm: React.FC<IInputProps> = (props) => {
-  const { wallet } = usePeepsContext();
-  // const [input, setInput] = useState<string>("");
-  const [hexInput, setHexInput] = useState<boolean>(false);
-  const rollups = useRollups(props.dappAddress);
+  const { wallet, userData } = usePeepsContext();
   const postTextField = useRef(null);
   const [postText, setPostText] = useState<string>("");
-  const [address, setAdress] = useState(null);
-  const [userIpfsHash, setUserIpfsHash] = useState(null);
-  const [username, setUsername] = useState(null);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-
-  // const addInput = async (str: string) => {
-  //   if (rollups) {
-  //     try {
-  //       let payload = ethers.utils.toUtf8Bytes(str);
-  //       if (hexInput) {
-  //         payload = ethers.utils.arrayify(str);
-  //       }
-  //       return await rollups.inputContract.addInput(props.dappAddress, payload);
-  //       // const tx =
-  //       // console.log(tx);
-  //       // const receipt = await tx.wait(1);
-  //       // console.log(receipt);
-  //     } catch (e) {
-  //       console.log(`${e}`);
-  //     }
-  //   }
-  // };
 
   const handlePost = async () => {
     setIsSubmit(true);
@@ -58,7 +34,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
             },
           },
           pinataContent: {
-            post_username: username,
+            post_username: userData?.username,
             post_content: postText,
             post_media: "",
             post_comments: 0,
@@ -91,51 +67,6 @@ const PostForm: React.FC<IInputProps> = (props) => {
       setIsSubmit(false);
     }
   };
-
-  const fetchUsername = async () => {
-    if (userIpfsHash) {
-      try {
-        const res = await axios.get(
-          `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${userIpfsHash}`
-        );
-        if (res.data) {
-          setUsername(res.data.username);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}`,
-        {
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
-          },
-        }
-      );
-      if (res.data.rows.length > 0) {
-        setUserIpfsHash(res.data.rows[0].ipfs_pin_hash);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  useEffect(() => {
-    setAdress(wallet?.accounts[0]?.address);
-  }, [wallet]);
-
-  useEffect(() => {
-    fetchUser();
-  }, [address]);
-
-  useEffect(() => {
-    fetchUsername();
-  }, [userIpfsHash]);
 
   return (
     <div className="bg-base-200 rounded-box focus-within:ring-2 focus-within:ring-primary">
