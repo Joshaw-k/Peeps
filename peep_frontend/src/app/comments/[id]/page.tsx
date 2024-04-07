@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { useRollups } from "../../useRollups";
 import { defaultDappAddress } from "../../utils/constants";
@@ -14,120 +14,112 @@ import {
   PostContainer,
   PostUser,
 } from "../../components/Posts";
+import axios from "axios";
+import toast from "react-hot-toast";
 
-// GraphQL query to retrieve notices given a cursor
-const GET_NOTICES = gql`
-  query GetNotices($cursor: String) {
-    notices(first: 10, after: $cursor) {
-      totalCount
-      pageInfo {
-        hasNextPage
-        endCursor
-      }
-      edges {
-        node {
-          index
-          input {
-            index
+const page = ({ params }: { params: any }) => {
+  const [post, setPost] = useState<any>();
+  const [postMetadata, setPostMetadata] = useState<any>();
+  const [comments, setComments] = useState<any>();
+  const [commentsData, setCommentsData] = useState<any>();
+
+  const fetchPost = async () => {
+    const res1 = await axios.get(
+      `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${params.id}`
+    );
+    setPost(res1.data);
+  };
+
+  const fetchComments = async () => {
+    try {
+      const res1 = await axios.get(
+        `https://api.pinata.cloud/data/pinList?hashContains=${params.id}`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+          },
+        }
+      );
+      if (res1.data.rows.length > 0) {
+        setPostMetadata(res1.data.rows);
+        try {
+          const res2 = await axios.get(
+            `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_COMMENT&?metadata[keyvalues]={"parent_post_uuid":{"value":${res1.data.rows[0].metadata.keyvalues.parent_post_uuid},"op":"eq"}}
+    &status=pinned`,
+            {
+              headers: {
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+              },
+            }
+          );
+          if (res2.data) {
+            if (res2.data.rows.length > 0) {
+              setComments(res2.data.rows);
+              let data = [];
+              for (let index = 0; index < res2.data.rows.length; index++) {
+                const res3 = await axios.get(
+                  `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${res2.data.rows[index].ipfs_pin_hash}`
+                );
+                data.push(res3.data);
+              }
+              // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+              setCommentsData(data);
+            }
           }
-          payload
+        } catch (error) {
+          console.log(error);
         }
+      } else {
+        toast.error("Could not find data with hash");
       }
+    } catch (error) {
+      console.log(error);
     }
-  }
-`;
-const page = ({ params }: {params: any}) => {
-  const [cursor, setCursor] = useState(null);
-  console.log(params.id);
+  };
 
-  const { loading, error, data } = useQuery(GET_NOTICES, {
-    variables: { cursor },
-    // pollInterval: 500,
-  });
+  useEffect(() => {
+    // Increase the pageLoadCount by 1. This is used to calculate when the page loader should be displayed.
+    setInterval(() => {
+      fetchComments();
+    }, 6000);
+  }, []);
 
-  // if (fetching) return <p>Loading...</p>;
-  if (loading) return <p>Loading...</p>;
-  // if (error) return <p>Oh no... {error.message}</p>;
-
-  if (!data || !data.notices) return <p>No notices</p>;
-
-  const notices: TNotice[] = data.notices.edges
-    .map((node: any) => {
-      const n = node.node;
-      let inputPayload = n?.input.payload;
-      if (inputPayload) {
-        try {
-          inputPayload = ethers.utils.toUtf8String(inputPayload);
-        } catch (e) {
-          inputPayload = inputPayload + " (hex)";
-        }
-      } else {
-        inputPayload = "(empty)";
-      }
-      let payload = n?.payload;
-      if (payload) {
-        try {
-          payload = ethers.utils.toUtf8String(payload);
-        } catch (e) {
-          payload = payload + " (hex)";
-        }
-      } else {
-        payload = "(empty)";
-      }
-      return {
-        id: `${n?.id}`,
-        index: parseInt(n?.index),
-        payload: `${payload}`,
-        input: n ? { index: n.input.index, payload: inputPayload } : {},
-      };
-    })
-    .sort((b: any, a: any) => {
-      if (a.input.index === b.input.index) {
-        return b.index - a.index;
-      } else {
-        return b.input.index - a.input.index;
-      }
-    });
-
-  if (notices.length < 1) {
-    return <p>No Notices</p>;
-  }
-  const post = JSON.parse(notices.reverse()[0].payload).posts.find(
-    (item: any) => item.id == params.id
-  );
-  console.log(post);
+  useEffect(() => {
+    fetchPost();
+  }, []);
   return (
     <div>
-      <PostContainer key={post}>
-        {console.log(post)}
-        <PostUser {...post} />
-        <PostBody>{post?.post_content}</PostBody>
-        <PostActionsContainer
-          postId={post.id}
-          message={post?.post_content}
-          upload={post?.post_media}
-          postData={post}
-          postMetaData={null}
-        />
-        {/* {<PostContainer></PostContainer>} */}
-      </PostContainer>
+      {post && (
+        <PostContainer key={post}>
+          <PostUser {...post} />
+          <PostBody postMetaData={postMetadata?.[0]}>
+            {post?.post_content}
+          </PostBody>
+          <PostActionsContainer
+            postId={0}
+            message={post?.post_content}
+            upload={post?.post_media}
+            postData={post}
+            postMetaData={postMetadata}
+          />
+        </PostContainer>
+      )}
       <div className={"prose text-4xl font-bold text-gray-400 px-2 py-6 mt-8"}>
         Comments
       </div>
-      {notices ? (
+      {commentsData ? (
         <div>
-          {post?.comments?.map((item: any, index: number) => (
+          {commentsData?.map((item: any, index: number) => (
             <>
               <PostContainer key={item}>
-                {/*{console.log(item)}*/}
                 <PostUser {...item} />
-                <PostBody>{item?.post_content}</PostBody>
+                <PostBody postMetaData={null}>{item?.comment_content}</PostBody>
                 <PostActionsContainer
                   postId={index}
-                  message={item?.post_content}
-                  upload={item?.post_media}
+                  message={item?.comment_content}
+                  upload={item?.comment_media}
                   postData={item}
-                  postMetaData={null}
+                  postMetaData={comments}
                 />
               </PostContainer>
             </>

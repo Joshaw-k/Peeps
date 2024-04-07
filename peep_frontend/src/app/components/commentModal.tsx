@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { AvatarProfile } from "./Avatar";
 import { Camera, CameraIcon, X as LucideX } from "lucide-react";
@@ -10,64 +10,211 @@ import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
 import { CustomToastUI } from "./ToastUI";
-import {PostBody, PostContainer, PostUser} from "./Posts";
+import { PostBody, PostContainer, PostUser } from "./Posts";
+import axios from "axios";
 
 interface ICommentModal {
-  postId: number;
+  postUuid: number;
   message: string;
   upload: string;
   postData: any;
+  postMetaData: any;
 }
 
-export const CommentModal = ({ postId, message, upload, postData }: ICommentModal) => {
-  //   const { baseDappAddress } = usePeepsContext()
-  const rollups = useRollups(defaultDappAddress);
-  const [dp, setDp] = useState<string>("");
-  const [username, setUsername] = useState<string>("");
+export const CommentModal = ({
+  postUuid,
+  message,
+  upload,
+  postData,
+  postMetaData,
+}: ICommentModal) => {
+  const { wallet, userData } = usePeepsContext();
   const [commentText, setCommentText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-  const addInput = async (str: string) => {
-    if (rollups) {
-      try {
-        let payload = ethers.utils.toUtf8Bytes(str);
-        // if (hexInput) {
-        //   payload = ethers.utils.arrayify(str);
-        // }
-        return await rollups.inputContract.addInput(
-          defaultDappAddress,
-          payload
-        );
-      } catch (e) {
-        console.log(`${e}`);
+  // const addInput = async (str: string) => {
+  //   if (rollups) {
+  //     try {
+  //       let payload = ethers.utils.toUtf8Bytes(str);
+  //       // if (hexInput) {
+  //       //   payload = ethers.utils.arrayify(str);
+  //       // }
+  //       return await rollups.inputContract.addInput(
+  //         defaultDappAddress,
+  //         payload
+  //       );
+  //     } catch (e) {
+  //       console.log(`${e}`);
+  //     }
+  //   }
+  // };
+
+  const unPin = async (postMetaData: any) => {
+    console.log("POST METADATA", postMetaData);
+    try {
+      const res = await axios.delete(
+        `https://api.pinata.cloud/pinning/unpin/${postMetaData.ipfs_pin_hash}`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+          },
+        }
+      );
+      console.log(res);
+      toast.success("unpinning successful");
+      return true;
+    } catch (error) {
+      console.log(error);
+      toast.success("unpinning failed");
+      return false;
+    }
+  };
+
+  const pinPost = async (postData: any, postMetaData: any, action: string) => {
+    const likelist = postData?.post_likes;
+    const post_creator = postMetaData.metadata?.keyvalues?.addr;
+    const post_uuid = postMetaData.metadata?.keyvalues?.uuid;
+    const username = postData?.post_username;
+    const postContent = postData?.post_content;
+    const postMedia = postData?.post_media;
+    const commentList = postData?.post_comments;
+    const repeepList = postData?.post_repeeps;
+    const createdAt = postData?.createdAt;
+    try {
+      const data = JSON.stringify({
+        pinataOptions: {
+          cidVersion: 0,
+        },
+        pinataMetadata: {
+          name: "PEEPS_POSTS",
+          keyvalues: {
+            addr: `${post_creator}`,
+            uuid: `${post_uuid}`,
+          },
+        },
+        pinataContent: {
+          post_username: username,
+          post_content: postContent,
+          post_media: postMedia,
+          post_comments:
+            action == "comment"
+              ? commentList + 1
+              : action == "uncomment"
+              ? commentList - 1
+              : commentList,
+          post_repeeps:
+            action == "repeep"
+              ? repeepList + 1
+              : action == "unrepeep"
+              ? repeepList - 1
+              : repeepList,
+          post_likes:
+            action == "like"
+              ? likelist + 1
+              : action == "unlike"
+              ? likelist - 1
+              : likelist,
+          createdAt: createdAt,
+        },
+      });
+
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+          },
+        }
+      );
+      if (res.data.IpfsHash) {
+        toast.success("Repinning successful");
+        return res.data;
       }
+    } catch (error) {
+      console.log(error);
+      toast.error("Repinning failed");
     }
   };
 
   const handleCreateComment = async () => {
-    setIsSubmit(true);
+    if (wallet) {
+      setIsSubmit(true);
+      //unpin from ipfs
+      const unPinRes = await unPin(postMetaData);
+
+      if (unPinRes) {
+        try {
+          const data = JSON.stringify({
+            pinataOptions: {
+              cidVersion: 0,
+            },
+            pinataMetadata: {
+              name: "PEEPS_COMMENT",
+              keyvalues: {
+                addr: `${wallet?.accounts[0]?.address}`,
+                parent_post_uuid: `${postMetaData.metadata?.keyvalues?.uuid}`,
+              },
+            },
+            pinataContent: {
+              comment_username: userData?.username,
+              comment_content: commentText,
+              comment_media: "",
+              comment_comments: 0,
+              comment_repeeps: 0,
+              comment_likes: 0,
+              createdAt: new Date(),
+            },
+          });
+          const res = await axios.post(
+            "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+            data,
+            {
+              headers: {
+                "Content-Type": "application/json",
+                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+              },
+            }
+          );
+          if (res.data.IpfsHash) {
+            const pinRes = await pinPost(postData, postMetaData, "comment");
+            if (pinRes.IpfsHash) {
+              setIsSubmit(false);
+              toast.success(`commented successful`);
+            }
+          }
+        } catch (error) {
+          console.log(error);
+          setIsSubmit(false);
+          toast.error(`commenting failed`);
+        }
+        // Then repin on ipfs
+      } else {
+        toast.error(
+          "Something went wrong at our end. We are working to resolve it as we speak."
+        );
+        toast.error("Please try again in a few minutes.");
+      }
+    } else {
+      toast.error("Error, Can't make post!");
+      toast.error("Please connect your wallet!");
+    }
     // construct the json payload to send to addInput
-    const jsonPayload = JSON.stringify({
-      method: "createComment",
-      data: {
-        post_id: postId,
-        message: commentText,
-        upload: upload,
-      },
-    });
+
     // addInput(JSON.stringify(jsonPayload));
     // console.log(JSON.stringify(jsonPayload));
 
-    const res = await addInput(JSON.stringify(jsonPayload));
-    // console.log(res);
-    const receipt = await res?.wait(1);
-    // console.log(receipt);
-    const event = receipt?.events?.find((e) => e.event === "InputAdded");
-    console.log(event);
+    // const res = await addInput(JSON.stringify(jsonPayload));
+    // // console.log(res);
+    // const receipt = await res?.wait(1);
+    // // console.log(receipt);
+    // const event = receipt?.events?.find((e) => e.event === "InputAdded");
+    // console.log(event);
 
-    if (event) {
-      toast.success("Comment posted");
-    }
+    // if (event) {
+    //   toast.success("Comment posted");
+    // }
     // toast.custom((t) => (
     //   <CustomToastUI t={t} message={"Address has been copied"}></CustomToastUI>
     // ));
@@ -111,9 +258,7 @@ export const CommentModal = ({ postId, message, upload, postData }: ICommentModa
             </svg>
           </span>
           <span className={"text-xs"}>
-            {postData?.post_comments > 0
-              ? postData?.post_comments
-              : "Comment"}
+            {postData?.post_comments > 0 ? postData?.post_comments : "Comment"}
           </span>
           {/* <CommentModal
             postId={postId}
@@ -132,7 +277,7 @@ export const CommentModal = ({ postId, message, upload, postData }: ICommentModa
           <AlertDialog.Description className="text-[15px] leading-normal">
             <PostContainer>
               <PostUser {...postData} />
-              <PostBody>{message}</PostBody>
+              <PostBody postMetaData={postMetaData}>{message}</PostBody>
               {/* <PostActions postId={postData.id} /> */}
             </PostContainer>
             {/* We require this to serve the best experience */}

@@ -1,4 +1,4 @@
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { AvatarProfile } from "./Avatar";
 import { Camera, CameraIcon, X as LucideX } from "lucide-react";
@@ -12,7 +12,8 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 export const ProfileForm = () => {
-  const { baseDappAddress, wallet } = usePeepsContext();
+  const { baseDappAddress, wallet, checkProfileExist, setHasProfile } =
+    usePeepsContext();
   const rollups = useRollups(baseDappAddress);
   const [dp, setDp] = useState<string>("");
   const [username, setUsername] = useState<string>("");
@@ -20,23 +21,6 @@ export const ProfileForm = () => {
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const profileFormCloseButton = useRef(null);
   const [open, setOpen] = React.useState(false);
-
-  const addInput = async (str: string) => {
-    if (rollups) {
-      try {
-        let payload = ethers.utils.toUtf8Bytes(str);
-        // if (hexInput) {
-        //   payload = ethers.utils.arrayify(str);
-        // }
-        return await rollups.inputContract.addInput(
-          defaultDappAddress,
-          payload
-        );
-      } catch (e) {
-        console.log(`${e}`);
-      }
-    }
-  };
 
   const handleCreateProfile = async () => {
     if (wallet) {
@@ -50,13 +34,17 @@ export const ProfileForm = () => {
             name: "PEEPS_USER",
             keyvalues: {
               addr: `${wallet?.accounts[0]?.address}`,
+              username: username,
             },
           },
           pinataContent: {
             username: username,
-            walletAddr: `${wallet?.accounts[0]?.address}`,
+            wallet: `${wallet?.accounts[0]?.address}`,
+            displayName: "displayName",
             profilePicture: "",
-            Bio: bio,
+            bio: bio,
+            following: 0,
+            followers: 0,
             createdAt: new Date(),
           },
         });
@@ -75,6 +63,7 @@ export const ProfileForm = () => {
           setIsSubmit(false);
           toast.success("Profile created");
           setOpen(false);
+          setHasProfile(true);
         }
       } catch (error) {
         console.log(error);
@@ -84,26 +73,6 @@ export const ProfileForm = () => {
     } else {
       toast.error("Error, Can't make post!");
       toast.error("Please connect your wallet!");
-    }
-  };
-
-  const fetchUser = async () => {
-    try {
-      const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"0x1111","op":"eq"}`,
-        {
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
-          },
-        }
-      );
-      if (res.data.rows < 1) {
-        console.log("No account associated with this address");
-      } else {
-        console.log("User has a profile");
-      }
-    } catch (error) {
-      console.log(error);
     }
   };
 

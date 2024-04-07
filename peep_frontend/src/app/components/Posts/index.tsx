@@ -1,19 +1,20 @@
-import {useRouter} from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useRollups } from "../../useRollups";
-import {defaultDappAddress} from "../../utils/constants";
-import {ethers} from "ethers";
+import { defaultDappAddress } from "../../utils/constants";
+import { ethers } from "ethers";
 import toast from "react-hot-toast";
-import {CommentModal} from "../commentModal";
-import {FaRetweet} from "react-icons/fa6";
+import { CommentModal } from "../commentModal";
+import { FaRetweet } from "react-icons/fa6";
 import axios from "axios";
-import {usePeepsContext} from "../../context";
+import { usePeepsContext } from "../../context";
+import { useState } from "react";
 
 interface IPostContainer {
   children: any;
 }
 
 interface IPostBody {
-  postId?: number;
+  postMetaData: any;
   children: any;
 }
 
@@ -50,7 +51,9 @@ export const PostUser = (props: any) => {
           {props?.post_username ?? "Anonymous"}
         </span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-        <span className="relative dark:text-gray-400">@{props?.post_username ?? "Anonymous"}</span>
+        <span className="relative dark:text-gray-400">
+          @{props?.post_username ?? "Anonymous"}
+        </span>
       </div>
       <div className={"flex-grow-0 px-6 text-gray-500"}>
         {/* {new Date().toLocaleTimeString()} */}
@@ -71,322 +74,108 @@ export const PostContainer = ({ children }: IPostContainer) => {
   );
 };
 
-export const PostBody = ({ children, postId }: IPostBody) => {
+export const PostBody = ({ children, postMetaData }: IPostBody) => {
   const router = useRouter();
+  const post_hash = postMetaData?.ipfs_pin_hash;
   return (
     <section
       className={"px-3 py-4 text-base leading-7 text-pretty"}
-      onClick={() => router.push("/comments/" + postId)}
+      onClick={() => router.push("/comments/" + post_hash)}
     >
       {children}
     </section>
   );
 };
 
-
-export const unPin = async (postMetaData: any) => {
-  console.log("POST METADATA", postMetaData);
-  try {
-    const res = await axios.delete(
-        `https://api.pinata.cloud/pinning/unpin/${postMetaData.ipfs_pin_hash}`,
-        {
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
-          },
-        }
-    );
-    console.log(res);
-    toast.success("unpinning successful");
-    return true;
-  } catch (error) {
-    console.log(error);
-    toast.success("unpinning failed");
-    return false;
-  }
-};
-
-
 export const PostActionsContainer = ({
   postId,
   message,
   upload,
   postData,
-    postMetaData,
+  postMetaData,
   children,
 }: IPostActions) => {
   const rollups = useRollups(defaultDappAddress);
-  const { wallet } = usePeepsContext();
+  const { wallet, unPin, PostActions, userData } = usePeepsContext();
+  const [like, setLike] = useState(false);
+  const [repeep, setRepeep] = useState(false);
 
-  const pinActionPost = async (post_uuid: any, action: string) => {
-    try {
-      let data;
-      if (action == "like") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_LIKES",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            liked_post: true,
-          },
-        });
-      }
-      if (action == "unlike") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_LIKES",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            liked_post: false,
-          },
-        });
-      }
-      if (action == "repeep") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_REPEEP",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            repeeped_post: true,
-          },
-        });
-      }
-      if (action == "unrepeep") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_REPEEP",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            repeeped_post: false,
-          },
-        });
-      }
-      if (action == "comment") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_COMMENT",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            parent_post_uuid: `${post_uuid}`,
-            comment_username: "username",
-            comment_content: "commentText",
-            comment_media: "",
-            comment_comments: 0,
-            comment_repeeps: 0,
-            comment_likes: 0,
-            createdAt: new Date(),
-          },
-        });
-      }
-      if (action == "uncomment") {
-        data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_COMMENT",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-            },
-          },
-          pinataContent: {
-            post_uuid: `${post_uuid}`,
-            commented_post: false,
-          },
-        });
-      }
-
-      const res = await axios.post(
-          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-          data,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
-            },
-          }
-      );
-      if (res.data.IpfsHash) toast.success(`${action} successful`);
-    } catch (error) {
-      console.log(error);
-      toast.error(`${action} failed`);
-    }
-  };
-
-  const pinPost = async (postData: any, postMetaData: any, action: string) => {
-    const likelist = postData?.post_likes;
-    const post_creator = postMetaData.metadata?.keyvalues?.addr;
-    const post_uuid = postMetaData.metadata?.keyvalues?.uuid;
-    const username = postData?.post_username;
-    const postContent = postData?.post_content;
-    const postMedia = postData?.post_media;
-    const commentList = postData?.post_comments;
-    const repeepList = postData?.post_repeeps;
-    const createdAt = postData?.createdAt;
-    try {
-      const data = JSON.stringify({
-        pinataOptions: {
-          cidVersion: 0,
-        },
-        pinataMetadata: {
-          name: "PEEPS_POSTS",
-          keyvalues: {
-            addr: `${post_creator}`,
-            uuid: `${post_uuid}`,
-          },
-        },
-        pinataContent: {
-          post_username: username,
-          post_content: postContent,
-          post_media: postMedia,
-          post_comments:
-              action == "comment"
-                  ? commentList + 1
-                  : action == "uncomment"
-                      ? commentList - 1
-                      : commentList,
-          post_repeeps:
-              action == "repeep"
-                  ? repeepList + 1
-                  : action == "unrepeep"
-                      ? repeepList - 1
-                      : repeepList,
-          post_likes:
-              action == "like"
-                  ? likelist + 1
-                  : action == "unlike"
-                      ? likelist - 1
-                      : likelist,
-          createdAt: createdAt,
-        },
-      });
-
-      const res = await axios.post(
-          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-          data,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
-            },
-          }
-      );
-      if (res.data.IpfsHash) pinActionPost(post_uuid, action);
-      toast.success("Repinning successful");
-    } catch (error) {
-      console.log(error);
-      toast.error("Repinning failed");
-    }
-  };
-
-  const PostActions = async (postData: any, postMetaData: any, action: string) => {
-    if (wallet) {
-      //unpin from ipfs
-      const unPinRes = await unPin(postMetaData[postId]);
-
-      if (unPinRes) {
-        // Then repin on ipfs
-        await pinPost(postData, postMetaData, action);
-      } else {
-        toast.error("Something went wrong at our end. We are working to resolve it as we speak.");
-        toast.error("Please try again in a few minutes.");
-      }
-    } else {
-      toast.error("Error, Can't make post!");
-      toast.error("Please connect your wallet!");
-    }
-  };
-
-  const addInput = async (str: string) => {
-    if (rollups) {
+  const revertReactions = async (
+    address: string,
+    uuid: string,
+    actionData: string
+  ) => {
+    if (actionData == "unlike") {
       try {
-        let payload = ethers.utils.toUtf8Bytes(str);
-        // if (hexInput) {
-        //   payload = ethers.utils.arrayify(str);
-        // }
-        return await rollups.inputContract.addInput(
-          defaultDappAddress,
-          payload
+        const res1 = await axios.get(
+          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]={"addr":{"value":"${address}","op":"eq"},"post_uuid":{"value":"${uuid}","op":"eq"}}
+&status=pinned`,
+          {
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            },
+          }
         );
-      } catch (e) {
-        console.log(`${e}`);
+        console.log(res1.data);
+        if (res1.data.rows.length > 0) {
+          const resOne = await unPin(res1.data.rows[0].ipfs_pin_hash);
+          if (resOne) {
+            await PostActions(postId, postData, postMetaData, actionData);
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
+    }
+    if (actionData == "unrepeep") {
+      try {
+        const res1 = await axios.get(
+          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_REPEEP&metadata[keyvalues]={"addr":{"value":"${address}","op":"eq"},"post_uuid":{"value":"${uuid}","op":"eq"}}
+&status=pinned`,
+          {
+            headers: {
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            },
+          }
+        );
+        console.log(res1.data);
+        if (res1.data.rows.length > 0) {
+          const resOne = await unPin(res1.data.rows[0].ipfs_pin_hash);
+          if (resOne) {
+            await PostActions(postId, postData, postMetaData, actionData);
+          }
+        }
+      } catch (error) {
+        console.log(error);
       }
     }
   };
 
-  const handleLikePost = async () => {
-    await PostActions(postData, postMetaData, "like");
-
-    /*
-    // Previous implementation
-    // construct the json payload to send to addInput
-    const jsonPayload = JSON.stringify({
-      method: "likePost",
-      data: {
-        id: postId,
-      },
-    });
-
-    const res = await addInput(JSON.stringify(jsonPayload));
-    const receipt = await res?.wait(1);
-    const event = receipt?.events?.find((e) => e.event === "InputAdded");
-    console.log(event);
-
-    // toast("Transaction successful");
-    if (event) {
-      // toast.custom((t) => (
-      //   <CustomToastUI t={t} message={"Post liked"}></CustomToastUI>
-      // ));
-      toast.success("Post liked");
-    }*/
+  const handleLikePost = async (action: boolean) => {
+    const actionData = action ? "like" : "unlike";
+    if (actionData == "like") {
+      await PostActions(postId, postData, postMetaData, actionData);
+    } else {
+      await revertReactions(
+        userData?.wallet,
+        postMetaData[postId].metadata?.keyvalues?.uuid,
+        actionData
+      );
+    }
   };
 
-  // const handleCommentPost = () => {
-  //   // construct the json payload to send to addInput
-  //   const jsonPayload = JSON.stringify({
-  //     method: "likePost",
-  //     data: {
-  //       post_id: postId,
-  //       message: commentMessage,
-  //       upload: upload,
-  //     },
-  //   });
-  //   addInput(JSON.stringify(jsonPayload));
-  //   console.log(JSON.stringify(jsonPayload));
-  // };
+  const handleRepeepPost = async (action: boolean) => {
+    const actionData = action ? "repeep" : "unrepeep";
+    if (actionData == "repeep") {
+      await PostActions(postId, postData, postMetaData, actionData);
+    } else {
+      await revertReactions(
+        userData?.wallet,
+        postMetaData[postId].metadata?.keyvalues?.uuid,
+        actionData
+      );
+    }
+  };
 
   return (
     <section className={"flex flex-row gap-x-6 p-2"}>
@@ -394,7 +183,7 @@ export const PostActionsContainer = ({
         className={
           "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
         }
-        onClick={handleLikePost}
+        onClick={() => handleLikePost(!like)}
       >
         <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
           <svg
@@ -446,22 +235,25 @@ export const PostActionsContainer = ({
         <span className={"text-xs"}>Comment</span>
       </div> */}
       <CommentModal
-        postId={postId}
+        postUuid={postId}
         message={message}
         upload={upload}
         postData={postData}
+        postMetaData={postMetaData?.[postId]}
       />
 
       <div
         className={
           "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
         }
+        onClick={() => handleRepeepPost(!repeep)}
       >
         <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
           <FaRetweet width={24} height={24} className={"text-xl"} />
         </span>
         <span className={"text-xs"}>
-          {postData?.post_repeeps > 0 ? postData?.post_repeeps : "Repeep"}</span>
+          {postData?.post_repeeps > 0 ? postData?.post_repeeps : "Repeep"}
+        </span>
       </div>
     </section>
   );

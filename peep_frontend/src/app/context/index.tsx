@@ -11,6 +11,8 @@ import { defaultDappAddress } from "../utils/constants";
 import { useConnectWallet } from "@web3-onboard/react";
 import { useNotices } from "../components/useNotices";
 import { Address } from "@web3-onboard/core/dist/types";
+import axios from "axios";
+import toast from "react-hot-toast";
 // import {
 //   SUMMARY_HISTORY_CACHE_NAME,
 //   SUMMARY_SEARCH_CACHE_NAME,
@@ -30,6 +32,13 @@ interface IPeepsContext {
   error: any;
   loading: any;
   notices: any;
+  checkProfileExist: any;
+  userData: any;
+  unPin: any;
+  PostActions: any;
+  hasProfile: boolean;
+  setHasProfile: any;
+  userIpfsHash: any;
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -52,69 +61,14 @@ const PeepsContext = createContext<IPeepsContext>({
   error: null,
   loading: null,
   notices: null,
+  checkProfileExist: null,
+  userData: null,
+  unPin: null,
+  PostActions: null,
+  hasProfile: false,
+  setHasProfile: null,
+  userIpfsHash: null,
 });
-
-/*
-function isJsonString(str) {
-  try {
-    JSON.parse(str);
-  } catch (e) {
-    return false;
-  }
-  return true;
-}
-
-export const getSummarySearchCache = () => {
-  const defaultSummarySearchCache = null;
-  let currentSearchCache = localStorage.getItem(SUMMARY_SEARCH_CACHE_NAME);
-  if (!currentSearchCache) {
-    currentSearchCache = localStorage.setItem(
-      SUMMARY_SEARCH_CACHE_NAME,
-      JSON.stringify(defaultSummarySearchCache)
-    );
-  }
-  // console.log(isJsonString(currentSearchCache));
-  // console.log(typeof currentSearchCache);
-
-  return isJsonString(currentSearchCache)
-    ? JSON.parse(currentSearchCache)
-    : null;
-};
-
-export const updateSummarySearchCache = (rawData) => {
-  // Save summary data to localStorage
-  localStorage.setItem(SUMMARY_SEARCH_CACHE_NAME, JSON.stringify(rawData));
-};
-
-export const getSummaryHistoryCache = () => {
-  let currentHistoryCache = localStorage.getItem(SUMMARY_HISTORY_CACHE_NAME);
-  // console.log(currentHistoryCache);
-  if (!currentHistoryCache) {
-    currentHistoryCache = localStorage.setItem(SUMMARY_HISTORY_CACHE_NAME, []);
-  }
-
-  return isJsonString(currentHistoryCache)
-    ? JSON.parse(currentHistoryCache)
-    : [];
-};
-
-export const updateSummaryHistoryCache = (rawData) => {
-  // Save search history data to localStorage
-  // 1. Search query
-  // 2. Search datetime
-  const currentHistory = getSummaryHistoryCache();
-  // console.log(currentHistory);
-  currentHistory.push(rawData);
-  localStorage.setItem(
-    SUMMARY_HISTORY_CACHE_NAME,
-    JSON.stringify(currentHistory)
-  );
-  // if (currentHistory) {
-  // } else {
-  //     localStorage.setItem(SUMMARY_HISTORY_CACHE_NAME, JSON.stringify(rawData));
-  // }
-};
-*/
 
 export interface PeepsProviderProps {
   children: React.ReactNode | React.ReactNode[] | null;
@@ -133,6 +87,11 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     useState<string>(defaultDappAddress);
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const [currentUser, setCurrentUser] = useState<ICurrentUser[] | any>();
+  const [profileExist, setProfileExist] = useState<ICurrentUser[] | any>();
+  const [address, setAdress] = useState<any>();
+  const [userData, setUserData] = useState<any>();
+  const [hasProfile, setHasProfile] = useState(false);
+  const [userIpfsHash, setUserIpfsHash] = useState(null);
 
   const { data, notices, loading, error } = useNotices();
   // const [currentUser, setCurrentUser] = useState();
@@ -140,77 +99,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const usersInLatestNotices = latestNotices
     ? JSON.parse(latestNotices.payload).users
     : [];
-  // const userCreated = usersInLatestNotices
-  //   ? usersInLatestNotices.filter(
-  //       (it: any) => it.address === wallet?.accounts[0].address
-  //     ).length > 0
-  //   : false;
+
   const userCreated = currentUser ? currentUser?.length > 0 : false;
-  // console.log(userCreated);
-
-  // useEffect(() => {
-  //   // console.log(notices);
-  //   if (notices !== undefined && notices?.length > 0) {
-  //     setCurrentUser(
-  //       JSON.parse(notices?.reverse()[0].payload).users.filter(
-  //         (it: any) => it.address === wallet?.accounts[0].address
-  //       )
-  //     );
-  //     // console.log(
-  //     //   JSON.parse(notices?.reverse()[0].payload).users.filter(
-  //     //     (it: any) => it.address === wallet?.accounts[0].address
-  //     //   )
-  //     // );
-  //   }
-  // }, [wallet]);
-
-  /*
-  const [baseData, setBaseData] = useState(getSummarySearchCache() || []);
-  const [eventData, setEventData] = useState(null);
-  const [mainQuery, setMainQuery] = useState("");
-  const [eventOpened, setEventOpened] = useState(false);
-  const [isFetchingSummary, setIsFetchingSummary] = useState(false);
-  const [moreSummary, setMoreSummary] = useState(baseData);
-
-  const deleteSummarySearchCache = () => {
-    localStorage.removeItem(SUMMARY_SEARCH_CACHE_NAME);
-  };
-
-  const readSummarySearchCache = (key) => {
-    const parsedSummarySearchCache = getSummarySearchCache();
-    return parsedSummarySearchCache ? parsedSummarySearchCache[key] : null;
-  };
-
-  const query = useCallback((searchInput) => {
-    setMainQuery(searchInput);
-  }, []);
-
-  const updateSummaryBaseData = (newSummaryData) => {
-    setBaseData(newSummaryData);
-    // if (!newSummaryData.streaming) {
-    //     updateSummarySearchCache(JSON.stringify(newSummaryData));
-    // }
-  };
-
-  const updateMoreSummary = (moreSummaryData) => {
-    setMoreSummary(moreSummaryData);
-    // rewrite the localStorage
-    // if (!moreSummaryData.streaming) {
-    //     updateSummarySearchCache(JSON.stringify(moreSummaryData));
-    // }
-  };
-
-  const summaryData = useCallback(
-    (res) => {
-      setBaseData(res);
-    },
-    [mainQuery]
-  );
-  */
-
-  // useEffect(() => {
-  //   setBaseDappAddress(wallet?.accounts[0]?.address);
-  // }, [wallet]);
 
   const updateBaseDappAddress = (newDappAddress: string) => {
     setBaseDappAddress(newDappAddress);
@@ -222,74 +112,265 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     setCurrentUser(_user);
   };
 
-  /*
-  const summary = useCallback(
-    (searchQuery: string) => {
-      let isLoading = true;
-      let isError = false;
-      let nextPageData = null;
-
-      const fetchConfig = {
-        method: "GET",
-        headers: {
-          Accept: "application/json",
-          // 'Origin': '*',
-          // 'Authorization': `Bearer ${window.localStorage.getItem('nine_login')}`
-        },
-        modes: "cors", // options: cors, no-cors, same-origin
-        withCredentials: false,
-        cache: "default", // options: default, no-store, reload, no-cache, force-cache, only-if-cached
-        params: {
-          search_input: searchQuery,
-        },
-      };
-
-      console.log("summary use callback");
-
-      // Create a result dict and a result array to store the offline data from the streamed summary response
-      let group_data;
-      let resultArray = [];
-      let resultGroupArray = [];
-      let resultDict = { data: resultGroupArray };
-      console.log(resultDict);
-
-      console.log(searchQuery);
-
-      if (!searchQuery) return;
-      console.log(searchQuery);
-
-      try {
-        const eventSource = new EventSource(
-          `${process.env.REACT_APP_BASE_URL}/summary?search_input=${searchQuery}`,
-          { fetchConfig }
-        );
-        eventSource.onopen = (event) => {
-          console.log("Opened Event stream useSummaryContext");
-        };
-        console.log(eventSource);
-        if (eventSource.readyState === 1 || EventSource.CLOSED) {
-          eventSource.close();
+  const checkProfileExist = async () => {
+    try {
+      const res = await axios.get(
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+          },
         }
+      );
+      if (res.data.rows.length > 0) {
+        setHasProfile(true);
+      } else {
+        setHasProfile(false);
+      }
+    } catch (error) {
+      console.log(error);
+      setHasProfile(false);
+    }
+  };
 
-        eventSource.onmessage = (event) => {
-          console.log(event.data);
-          setEventData(event.data);
-        };
-      } catch (err) {
-        console.error(err);
-        return;
+  const fetchUserData = async () => {
+    try {
+      const res1 = await axios.get(
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+          },
+        }
+      );
+      if (res1.data.rows.length > 0) {
+        setUserIpfsHash(res1.data.rows[0].ipfs_pin_hash);
+        try {
+          const res2 = await axios.get(
+            `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${res1.data.rows[0].ipfs_pin_hash}`
+          );
+          if (res2.data) {
+            setUserData(res2.data);
+          }
+        } catch (error) {
+          console.log(error);
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const unPin = async (postMetaData: any) => {
+    try {
+      const res = await axios.delete(
+        `https://api.pinata.cloud/pinning/unpin/${postMetaData.ipfs_pin_hash}`,
+        {
+          headers: {
+            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+          },
+        }
+      );
+      toast.success("unpinning successful");
+      return true;
+    } catch (error) {
+      console.log(error);
+      toast.success("unpinning failed");
+      return false;
+    }
+  };
+
+  const pinActionPost = async (post_uuid: any, action: string) => {
+    try {
+      let data;
+      if (action == "like") {
+        data = JSON.stringify({
+          pinataOptions: {
+            cidVersion: 0,
+          },
+          pinataMetadata: {
+            name: "PEEPS_LIKES",
+            keyvalues: {
+              addr: `${wallet?.accounts[0]?.address}`,
+              post_uuid: `${post_uuid}`,
+            },
+          },
+          pinataContent: {
+            liked_post: true,
+          },
+        });
+      }
+      if (action == "repeep") {
+        data = JSON.stringify({
+          pinataOptions: {
+            cidVersion: 0,
+          },
+          pinataMetadata: {
+            name: "PEEPS_REPEEP",
+            keyvalues: {
+              addr: `${wallet?.accounts[0]?.address}`,
+              post_uuid: `${post_uuid}`,
+            },
+          },
+          pinataContent: {
+            repeeped_post: true,
+          },
+        });
+      }
+      if (action == "comment") {
+        data = JSON.stringify({
+          pinataOptions: {
+            cidVersion: 0,
+          },
+          pinataMetadata: {
+            name: "PEEPS_COMMENT",
+            keyvalues: {
+              addr: `${wallet?.accounts[0]?.address}`,
+              parent_post_uuid: `${post_uuid}`,
+            },
+          },
+          pinataContent: {
+            comment_username: "username",
+            comment_content: "commentText",
+            comment_media: "",
+            comment_comments: 0,
+            comment_repeeps: 0,
+            comment_likes: 0,
+            createdAt: new Date(),
+          },
+        });
       }
 
-      // return () => {
-      //     eventSource.close();
-      //     console.log("Closed event source - event streaming");
-      // }
+      if (data) {
+        const res = await axios.post(
+          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            },
+          }
+        );
+        if (res.data.IpfsHash) {
+          toast.success(`${action} successful`);
+          return true;
+        }
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error(`${action} failed`);
+    }
+  };
 
-      return { eventData, baseData };
-    },
-    [searchQuery]
-  );
-  */
+  const pinPost = async (postData: any, postMetaData: any, action: string) => {
+    const likelist = postData?.post_likes;
+    const post_creator = postMetaData.metadata?.keyvalues?.addr;
+    const post_uuid = postMetaData.metadata?.keyvalues?.uuid;
+    const username = postData?.post_username;
+    const postContent = postData?.post_content;
+    const postMedia = postData?.post_media;
+    const commentList = postData?.post_comments;
+    const repeepList = postData?.post_repeeps;
+    const createdAt = postData?.createdAt;
+
+    const resOne = await pinActionPost(post_uuid, action);
+    if (resOne) {
+      try {
+        const data = JSON.stringify({
+          pinataOptions: {
+            cidVersion: 0,
+          },
+          pinataMetadata: {
+            name: "PEEPS_POSTS",
+            keyvalues: {
+              addr: `${post_creator}`,
+              uuid: `${post_uuid}`,
+            },
+          },
+          pinataContent: {
+            post_username: username,
+            post_content: postContent,
+            post_media: postMedia,
+            post_comments:
+              action == "comment"
+                ? commentList + 1
+                : action == "uncomment"
+                ? commentList - 1
+                : commentList,
+            post_repeeps:
+              action == "repeep"
+                ? repeepList + 1
+                : action == "unrepeep"
+                ? repeepList - 1
+                : repeepList,
+            post_likes:
+              action == "like"
+                ? likelist + 1
+                : action == "unlike"
+                ? likelist - 1
+                : likelist,
+            createdAt: createdAt,
+          },
+        });
+
+        const res = await axios.post(
+          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+          data,
+          {
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            },
+          }
+        );
+        if (res.data.IpfsHash) pinActionPost(post_uuid, action);
+        toast.success("Repinning successful");
+      } catch (error) {
+        console.log(error);
+        toast.error("Repinning failed");
+      }
+    }
+  };
+
+  const PostActions = async (
+    postId: number,
+    postData: any,
+    postMetaData: any,
+    action: string
+  ) => {
+    if (wallet) {
+      //unpin from ipfs
+      const unPinRes = await unPin(postMetaData[postId]);
+
+      if (unPinRes) {
+        // Then repin on ipfs
+        await pinPost(postData, postMetaData[postId], action);
+      } else {
+        toast.error(
+          "Something went wrong at our end. We are working to resolve it as we speak."
+        );
+        toast.error("Please try again in a few minutes.");
+      }
+    } else {
+      toast.error("Error, Can't make post!");
+      toast.error("Please connect your wallet!");
+    }
+  };
+
+  useEffect(() => {
+    setAdress(wallet?.accounts[0]?.address);
+  }, [wallet]);
+
+  useEffect(() => {
+    fetchUserData();
+    checkProfileExist();
+  }, [address]);
+
+  useEffect(() => {
+    fetchUserData();
+    checkProfileExist();
+  }, [hasProfile]);
 
   return (
     <PeepsContext.Provider
@@ -307,6 +388,13 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         error,
         loading,
         notices,
+        checkProfileExist,
+        userData,
+        unPin,
+        PostActions,
+        hasProfile,
+        setHasProfile,
+        userIpfsHash,
       }}
     >
       {children}

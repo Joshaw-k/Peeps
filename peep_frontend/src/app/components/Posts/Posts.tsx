@@ -9,13 +9,18 @@ import { useRollups } from "../../useRollups";
 import { defaultDappAddress } from "../../utils/constants";
 import { CommentModal } from "../commentModal";
 import { EmptyPage } from "../EmptyPage";
-import {LucideWifiOff, MessageSquareText} from "lucide-react";
+import { LucideWifiOff, MessageSquareText } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { CustomToastUI } from "../ToastUI";
 import toast from "react-hot-toast";
 import axios from "axios";
 import { usePeepsContext } from "../../context";
-import {PostActionsContainer, PostBody, PostContainer, PostUser} from "./index";
+import {
+  PostActionsContainer,
+  PostBody,
+  PostContainer,
+  PostUser,
+} from "./index";
 
 // type Notice = {
 //   id: string;
@@ -23,8 +28,6 @@ import {PostActionsContainer, PostBody, PostContainer, PostUser} from "./index";
 //   input: any; //{index: number; epoch: {index: number; }
 //   payload: string;
 // };
-
-
 
 // // GraphQL query to retrieve notices given a cursor
 // const GET_NOTICES = gql`
@@ -152,11 +155,11 @@ export const Post = () => {
             );
             data.push(res1.data);
           }
-          data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+          // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
           setPostsData(data);
           setIsPageLoading(false);
           setIsPageError(false);
-          pageLoadCount === 0 && setPageLoadCount(value => value + 1);
+          pageLoadCount === 0 && setPageLoadCount((value) => value + 1);
         }
       }
     } catch (error) {
@@ -188,10 +191,7 @@ export const Post = () => {
 
   if (isPageError)
     return (
-      <EmptyPage
-        icon={<LucideWifiOff size={64} />}
-        text={""}
-      >
+      <EmptyPage icon={<LucideWifiOff size={64} />} text={""}>
         <div className="text-xl">Error Fetching posts...</div>
       </EmptyPage>
     );
@@ -269,39 +269,38 @@ export const Post = () => {
       {/*  )}*/}
       {/*</div>*/}
 
-      {
-        postsData
-            ? postsData.map((eachPost: any, index: number) => (
-                <PostContainer key={index}>
-                  <PostUser {...eachPost} />
-                  <PostBody postId={index}>
-                    {eachPost?.post_content}
-                  </PostBody>
-                  <PostActionsContainer
-                      postId={index}
-                      message={eachPost?.post_content}
-                      upload={eachPost?.post_media}
-                      postData={eachPost}
-                      postMetaData={posts}
-                  />
-                  {/*{<PostContainer></PostContainer>}*/}
-                </PostContainer>
-            ))
-            : <div>No posts</div>
-      }
-      {
-          postsData && postsData.length > 20 &&
-          <section className="flex flex-row justify-center w-full mx-auto">
-            <button
-                title="load more button"
-                type="button"
-                className="btn btn-wide block"
-                // onClick={() => setEndCursor((endCursor) => endCursor + 20)}
-            >
-              Load more
-            </button>
-          </section>
-      }
+      {postsData ? (
+        postsData.map((eachPost: any, index: number) => (
+          <PostContainer key={index}>
+            <PostUser {...eachPost} />
+            <PostBody postMetaData={posts[index]}>
+              {eachPost?.post_content}
+            </PostBody>
+            <PostActionsContainer
+              postId={index}
+              message={eachPost?.post_content}
+              upload={eachPost?.post_media}
+              postData={eachPost}
+              postMetaData={posts}
+            />
+            {/*{<PostContainer></PostContainer>}*/}
+          </PostContainer>
+        ))
+      ) : (
+        <div>No posts</div>
+      )}
+      {postsData && postsData.length > 20 && (
+        <section className="flex flex-row justify-center w-full mx-auto">
+          <button
+            title="load more button"
+            type="button"
+            className="btn btn-wide block"
+            // onClick={() => setEndCursor((endCursor) => endCursor + 20)}
+          >
+            Load more
+          </button>
+        </section>
+      )}
     </>
   );
 };
