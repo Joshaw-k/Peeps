@@ -10,6 +10,8 @@ import { CustomToastUI } from "./ToastUI";
 import axios from "axios";
 import { v4 as uuidv4 } from "uuid";
 import { ButtonLoader } from "./Button";
+import { LucideImagePlus, LucideUpload, LucideX } from "lucide-react";
+import Image from "next/image";
 
 const PostForm: React.FC<IInputProps> = (props) => {
   const { wallet, userData, refreshPost, setRefreshPost } = usePeepsContext();
@@ -21,6 +23,11 @@ const PostForm: React.FC<IInputProps> = (props) => {
       setTimeout(resolve, milliseconds);
     });
   };
+  const [formImage, setFormImage] = useState("");
+  const [formVideo, setFormVideo] = useState("");
+  const [formImagePreview, setFormImagePreview] = useState("");
+  const [formVideoPreview, setFormVideoPreview] = useState("");
+
   const handlePost = async () => {
     setIsSubmit(true);
     // construct the json payload to send to addInput
@@ -76,6 +83,28 @@ const PostForm: React.FC<IInputProps> = (props) => {
     }
   };
 
+  const handleTriggerFormImage = (event: any) => {
+    const selectedMedia = event.target.files[0];
+    if (selectedMedia.type.startsWith("image/")) {
+      setFormImage(selectedMedia);
+      setFormImagePreview(URL.createObjectURL(selectedMedia));
+    } else if (selectedMedia.type.startsWith("video/")) {
+      setFormVideo(selectedMedia);
+      setFormVideoPreview(URL.createObjectURL(selectedMedia));
+      console.log(URL.createObjectURL(selectedMedia));
+    }
+  };
+
+  const removeFormImage = () => {
+    setFormImage("");
+    setFormImagePreview("");
+  };
+
+  const removeFormVideo = () => {
+    setFormVideo("");
+    setFormVideoPreview("");
+  };
+
   return (
     <div className="bg-base-200 rounded-box focus-within:ring-2 focus-within:ring-primary">
       <textarea
@@ -84,8 +113,55 @@ const PostForm: React.FC<IInputProps> = (props) => {
         ref={postTextField}
         onChange={(e) => setPostText(e.target.value)}
       ></textarea>
-      <div className="flex flex-row px-2 py-2">
-        <span className="flex-1"></span>
+      <div>
+        {formImagePreview && (
+          <div className={"relative inline-block bg-pink-400 mx-8"}>
+            <Image
+              src={formImagePreview}
+              alt={"formImagePreview"}
+              width={320}
+              height={320}
+              className={"shadow-xl"}
+            />
+            <span
+              className={
+                "absolute -top-2 -right-2 btn btn-sm btn-circle btn-error"
+              }
+              onClick={removeFormImage}
+            >
+              <LucideX size={16} strokeWidth={4} />
+            </span>
+          </div>
+        )}
+        {formVideoPreview && (
+          <div className={"relative inline-block mx-8"}>
+            <video width={320} height={320} className={"shadow-2xl"}>
+              <source src={formVideoPreview} />
+            </video>
+            <span
+              className={
+                "absolute -top-2 -right-2 btn btn-sm btn-circle btn-error"
+              }
+              onClick={removeFormVideo}
+            >
+              <LucideX size={16} strokeWidth={4} />
+            </span>
+          </div>
+        )}
+      </div>
+      <div className="flex flex-row items-center px-2 py-2">
+        <span className="flex-1 px-2">
+          <label htmlFor={"id-form-image-trigger"} className={"btn btn-circle"}>
+            <LucideUpload size={24} />
+            <input
+              type="file"
+              id={"id-form-image-trigger"}
+              className={"hidden"}
+              accept={"*/*"}
+              onChange={handleTriggerFormImage}
+            />
+          </label>
+        </span>
         <button
           title="Submit post"
           type="button"
