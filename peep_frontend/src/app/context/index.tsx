@@ -39,6 +39,8 @@ interface IPeepsContext {
   hasProfile: boolean;
   setHasProfile: any;
   userIpfsHash: any;
+  refreshPost: any;
+  setRefreshPost: any;
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -68,6 +70,8 @@ const PeepsContext = createContext<IPeepsContext>({
   hasProfile: false,
   setHasProfile: null,
   userIpfsHash: null,
+  refreshPost: false,
+  setRefreshPost: null,
 });
 
 export interface PeepsProviderProps {
@@ -92,6 +96,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [userData, setUserData] = useState<any>();
   const [hasProfile, setHasProfile] = useState(false);
   const [userIpfsHash, setUserIpfsHash] = useState(null);
+  const [refreshPost, setRefreshPost] = useState(false);
 
   const { data, notices, loading, error } = useNotices();
   // const [currentUser, setCurrentUser] = useState();
@@ -397,6 +402,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         hasProfile,
         setHasProfile,
         userIpfsHash,
+        refreshPost,
+        setRefreshPost,
       }}
     >
       {children}

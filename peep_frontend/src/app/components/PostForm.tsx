@@ -12,11 +12,15 @@ import { v4 as uuidv4 } from "uuid";
 import { ButtonLoader } from "./Button";
 
 const PostForm: React.FC<IInputProps> = (props) => {
-  const { wallet, userData } = usePeepsContext();
+  const { wallet, userData, refreshPost, setRefreshPost } = usePeepsContext();
   const postTextField = useRef(null);
   const [postText, setPostText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
-
+  const wait = (milliseconds: any) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
+  };
   const handlePost = async () => {
     setIsSubmit(true);
     // construct the json payload to send to addInput
@@ -54,8 +58,12 @@ const PostForm: React.FC<IInputProps> = (props) => {
             },
           }
         );
-        if (res.data.IpfsHash) toast.success("Post created");
-        setIsSubmit(false);
+        if (res.data.IpfsHash) {
+          toast.success("Post created");
+          setIsSubmit(false);
+          await wait(300);
+          setRefreshPost(!refreshPost);
+        }
       } catch (error) {
         console.log(error);
         toast.error("Post not created");

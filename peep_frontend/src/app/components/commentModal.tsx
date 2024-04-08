@@ -28,7 +28,7 @@ export const CommentModal = ({
   postData,
   postMetaData,
 }: ICommentModal) => {
-  const { wallet, userData } = usePeepsContext();
+  const { wallet, userData, setRefreshPost, refreshPost } = usePeepsContext();
   const [commentText, setCommentText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
@@ -50,7 +50,6 @@ export const CommentModal = ({
   // };
 
   const unPin = async (postMetaData: any) => {
-    console.log("POST METADATA", postMetaData);
     try {
       const res = await axios.delete(
         `https://api.pinata.cloud/pinning/unpin/${postMetaData.ipfs_pin_hash}`,
@@ -60,7 +59,6 @@ export const CommentModal = ({
           },
         }
       );
-      console.log(res);
       toast.success("unpinning successful");
       return true;
     } catch (error) {
@@ -138,6 +136,12 @@ export const CommentModal = ({
     }
   };
 
+  const wait = (milliseconds: any) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
+  };
+
   const handleCreateComment = async () => {
     if (wallet) {
       setIsSubmit(true);
@@ -158,12 +162,12 @@ export const CommentModal = ({
               },
             },
             pinataContent: {
-              comment_username: userData?.username,
-              comment_content: commentText,
-              comment_media: "",
-              comment_comments: 0,
-              comment_repeeps: 0,
-              comment_likes: 0,
+              post_username: userData?.username,
+              post_content: commentText,
+              post_media: "",
+              post_comments: 0,
+              post_repeeps: 0,
+              post_likes: 0,
               createdAt: new Date(),
             },
           });
@@ -182,6 +186,8 @@ export const CommentModal = ({
             if (pinRes.IpfsHash) {
               setIsSubmit(false);
               toast.success(`commented successful`);
+              await wait(300);
+              setRefreshPost(!refreshPost);
             }
           }
         } catch (error) {
@@ -231,6 +237,8 @@ export const CommentModal = ({
     // addInput(JSON.stringify(jsonPayload));
     // console.log(JSON.stringify(jsonPayload));
   };
+
+  useEffect(() => {}, [postData]);
 
   return (
     <AlertDialog.Root>

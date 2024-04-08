@@ -133,6 +133,7 @@ export const Post = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isPageError, setIsPageError] = useState<boolean>(false);
   const [pageLoadCount, setPageLoadCount] = useState<number>(0);
+  const { refreshPost } = usePeepsContext();
 
   const fetchPosts = async () => {
     setIsPageLoading(true);
@@ -178,6 +179,12 @@ export const Post = () => {
       fetchPosts();
     }, 6000);
   }, []);
+
+  useEffect(() => {
+    fetchPosts();
+  }, [refreshPost]);
+
+  useEffect(() => {}, [postsData]);
 
   if (isPageLoading && pageLoadCount === 0)
     return (

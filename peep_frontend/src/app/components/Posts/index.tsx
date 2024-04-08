@@ -152,28 +152,36 @@ export const PostActionsContainer = ({
   };
 
   const handleLikePost = async (action: boolean) => {
-    const actionData = action ? "like" : "unlike";
-    if (actionData == "like") {
-      await PostActions(postId, postData, postMetaData, actionData);
+    if (wallet) {
+      const actionData = action ? "like" : "unlike";
+      if (actionData == "like") {
+        await PostActions(postId, postData, postMetaData, actionData);
+      } else {
+        await revertReactions(
+          userData?.wallet,
+          postMetaData[postId].metadata?.keyvalues?.uuid,
+          actionData
+        );
+      }
     } else {
-      await revertReactions(
-        userData?.wallet,
-        postMetaData[postId].metadata?.keyvalues?.uuid,
-        actionData
-      );
+      toast.error("connect your wallet");
     }
   };
 
   const handleRepeepPost = async (action: boolean) => {
-    const actionData = action ? "repeep" : "unrepeep";
-    if (actionData == "repeep") {
-      await PostActions(postId, postData, postMetaData, actionData);
+    if (wallet) {
+      const actionData = action ? "repeep" : "unrepeep";
+      if (actionData == "repeep") {
+        await PostActions(postId, postData, postMetaData, actionData);
+      } else {
+        await revertReactions(
+          userData?.wallet,
+          postMetaData[postId].metadata?.keyvalues?.uuid,
+          actionData
+        );
+      }
     } else {
-      await revertReactions(
-        userData?.wallet,
-        postMetaData[postId].metadata?.keyvalues?.uuid,
-        actionData
-      );
+      toast.error("connect your wallet");
     }
   };
 
