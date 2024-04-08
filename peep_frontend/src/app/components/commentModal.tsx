@@ -28,7 +28,7 @@ export const CommentModal = ({
   postData,
   postMetaData,
 }: ICommentModal) => {
-  const { wallet, userData } = usePeepsContext();
+  const { wallet, userData, setRefreshPost, refreshPost } = usePeepsContext();
   const [commentText, setCommentText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
@@ -50,17 +50,15 @@ export const CommentModal = ({
   // };
 
   const unPin = async (postMetaData: any) => {
-    console.log("POST METADATA", postMetaData);
     try {
       const res = await axios.delete(
         `https://api.pinata.cloud/pinning/unpin/${postMetaData.ipfs_pin_hash}`,
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
           },
         }
       );
-      console.log(res);
       toast.success("unpinning successful");
       return true;
     } catch (error) {
@@ -124,7 +122,7 @@ export const CommentModal = ({
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
           },
         }
       );
@@ -136,6 +134,12 @@ export const CommentModal = ({
       console.log(error);
       toast.error("Repinning failed");
     }
+  };
+
+  const wait = (milliseconds: any) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
   };
 
   const handleCreateComment = async () => {
@@ -158,12 +162,12 @@ export const CommentModal = ({
               },
             },
             pinataContent: {
-              comment_username: userData?.username,
-              comment_content: commentText,
-              comment_media: "",
-              comment_comments: 0,
-              comment_repeeps: 0,
-              comment_likes: 0,
+              post_username: userData?.username,
+              post_content: commentText,
+              post_media: "",
+              post_comments: 0,
+              post_repeeps: 0,
+              post_likes: 0,
               createdAt: new Date(),
             },
           });
@@ -173,7 +177,7 @@ export const CommentModal = ({
             {
               headers: {
                 "Content-Type": "application/json",
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
               },
             }
           );
@@ -182,6 +186,8 @@ export const CommentModal = ({
             if (pinRes.IpfsHash) {
               setIsSubmit(false);
               toast.success(`commented successful`);
+              await wait(300);
+              setRefreshPost(!refreshPost);
             }
           }
         } catch (error) {
@@ -231,6 +237,8 @@ export const CommentModal = ({
     // addInput(JSON.stringify(jsonPayload));
     // console.log(JSON.stringify(jsonPayload));
   };
+
+  useEffect(() => {}, [postData]);
 
   return (
     <AlertDialog.Root>

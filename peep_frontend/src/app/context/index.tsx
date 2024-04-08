@@ -39,6 +39,11 @@ interface IPeepsContext {
   hasProfile: boolean;
   setHasProfile: any;
   userIpfsHash: any;
+  refreshPost: any;
+  setRefreshPost: any;
+  pinFileToIPFS: any;
+  profileChanged: boolean;
+  setProfileChanged: any;
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -68,6 +73,11 @@ const PeepsContext = createContext<IPeepsContext>({
   hasProfile: false,
   setHasProfile: null,
   userIpfsHash: null,
+  refreshPost: false,
+  setRefreshPost: null,
+  pinFileToIPFS: null,
+  profileChanged: false,
+  setProfileChanged: null,
 });
 
 export interface PeepsProviderProps {
@@ -87,11 +97,12 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     useState<string>(defaultDappAddress);
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const [currentUser, setCurrentUser] = useState<ICurrentUser[] | any>();
-  const [profileExist, setProfileExist] = useState<ICurrentUser[] | any>();
   const [address, setAdress] = useState<any>();
   const [userData, setUserData] = useState<any>();
   const [hasProfile, setHasProfile] = useState(false);
   const [userIpfsHash, setUserIpfsHash] = useState(null);
+  const [refreshPost, setRefreshPost] = useState(false);
+  const [profileChanged, setProfileChanged] = useState(false);
 
   const { data, notices, loading, error } = useNotices();
   // const [currentUser, setCurrentUser] = useState();
@@ -116,10 +127,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     if (wallet) {
       try {
         const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}`,
+          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
             },
           }
         );
@@ -130,8 +141,34 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         }
       } catch (error) {
         console.log(error);
-        setHasProfile(false);
       }
+    }
+  };
+
+  const pinFileToIPFS = async (files: any) => {
+    try {
+      let data = new FormData();
+      data.append("file", files);
+      data.append("pinataOptions", '{"cidVersion": 0}');
+      data.append("pinataMetadata", '{"name": "peeps"}');
+      toast.success("Uploading event image to IPFS .....");
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinFileToIPFS",
+        data,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
+      );
+      toast.success("Event Image upload complete");
+      return {
+        uploaded: true,
+        image: `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${res.data.IpfsHash}`,
+      };
+    } catch (error) {
+      console.log(error);
+      return { uploaded: false, image: `` };
     }
   };
 
@@ -141,7 +178,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
           },
         }
       );
@@ -149,7 +186,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         setUserIpfsHash(res1.data.rows[0].ipfs_pin_hash);
         try {
           const res2 = await axios.get(
-            `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${res1.data.rows[0].ipfs_pin_hash}`
+            `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res1.data.rows[0].ipfs_pin_hash}`
           );
           if (res2.data) {
             setUserData(res2.data);
@@ -166,10 +203,14 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const unPin = async (postMetaData: any) => {
     try {
       const res = await axios.delete(
-        `https://api.pinata.cloud/pinning/unpin/${postMetaData.ipfs_pin_hash}`,
+        `https://api.pinata.cloud/pinning/unpin/${
+          postMetaData?.ipfs_pin_hash
+            ? postMetaData?.ipfs_pin_hash
+            : postMetaData
+        }`,
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
           },
         }
       );
@@ -250,7 +291,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
             },
           }
         );
@@ -322,7 +363,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           {
             headers: {
               "Content-Type": "application/json",
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
             },
           }
         );
@@ -374,6 +415,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     checkProfileExist();
   }, [hasProfile]);
 
+  useEffect(() => {
+    fetchUserData();
+  }, [profileChanged]);
+
   return (
     <PeepsContext.Provider
       value={{
@@ -397,6 +442,11 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         hasProfile,
         setHasProfile,
         userIpfsHash,
+        refreshPost,
+        setRefreshPost,
+        pinFileToIPFS,
+        profileChanged,
+        setProfileChanged,
       }}
     >
       {children}
