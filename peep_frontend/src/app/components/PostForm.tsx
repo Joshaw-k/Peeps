@@ -46,6 +46,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
         },
         pinataContent: {
           post_username: userData?.username,
+          post_displayName: userData?.displayName,
           post_content: postText,
           post_media: imgUrl,
           post_comments: 0,
@@ -144,6 +145,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
         className="textarea textarea-lg border-0 w-full resize-none bg-transparent focus:outline-0"
         ref={postTextField}
         onChange={(e) => setPostText(e.target.value)}
+        value={postText}
       ></textarea>
       <div>
         {formImagePreview && (
