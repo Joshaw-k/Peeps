@@ -27,14 +27,14 @@ interface IPostActions {
   children?: any;
 }
 
-const AvatarPost = () => {
+const defaultImage =
+  "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
+
+const AvatarPost = (props: any) => {
   return (
     <div className="avatar">
       <div className="w-7 rounded-full">
-        <img
-          src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"
-          alt={""}
-        />
+        <img src={props.img} alt={""} />
       </div>
     </div>
   );
@@ -46,9 +46,11 @@ export const PostUser = (props: any) => {
       <div
         className={"flex-1 flex flex-row items-center gap-x-4 leading-normal"}
       >
-        <AvatarPost />
+        <AvatarPost
+          img={props?.post_media ? props?.post_media : defaultImage}
+        />
         <span className="font-medium text-md relative dark:text-gray-400">
-          {props?.post_username ?? "Anonymous"}
+          {props?.post_displayName ?? "Anonymous"}
         </span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
         <span className="relative dark:text-gray-400">
