@@ -8,13 +8,8 @@ import {
   PostUser,
 } from "../../components/Posts";
 import { GET_NOTICES, TNotice, useNotices } from "../../components/useNotices";
-import { ethers } from "ethers";
 import { useEffect, useState } from "react";
-import { useQuery } from "@apollo/client";
 import { usePeepsContext } from "../../context";
-import { EmptyPage } from "../../components/EmptyPage";
-import { LogIn, MessageSquareWarning } from "lucide-react";
-import { FaToggleOff } from "react-icons/fa6";
 import { Tab } from "@headlessui/react";
 import classNames from "classnames";
 import axios from "axios";
@@ -317,7 +312,9 @@ const Profile = ({ params }: { params: any }) => {
   const fetchPosts = async () => {
     try {
       const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userProfileData?.wallet}","op":"eq"}&status=pinned`,
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
+          (userProfileData as any)?.wallet
+        }","op":"eq"}&status=pinned`,
         {
           headers: {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
@@ -346,7 +343,9 @@ const Profile = ({ params }: { params: any }) => {
   const fetchLikePosts = async () => {
     try {
       const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${userProfileData?.wallet}","op":"eq"}&status=pinned`,
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${
+          (userProfileData as any)?.wallet
+        }","op":"eq"}&status=pinned`,
         {
           headers: {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
@@ -391,7 +390,9 @@ const Profile = ({ params }: { params: any }) => {
   const fetchFollowers = async () => {
     try {
       const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${userProfileData?.username}","op":"eq"}&status=pinned`,
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${
+          (userProfileData as any)?.username
+        }","op":"eq"}&status=pinned`,
         {
           headers: {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
@@ -487,8 +488,8 @@ const Profile = ({ params }: { params: any }) => {
                   width={100}
                   height={100}
                   src={
-                    userProfileData?.profilePicture
-                      ? userProfileData?.profilePicture
+                    (userProfileData as any)?.profilePicture
+                      ? (userProfileData as any)?.profilePicture
                       : defaultImage
                   }
                   alt=""
@@ -520,15 +521,17 @@ const Profile = ({ params }: { params: any }) => {
           <div className={"relative pt-20 pb-16 space-y-4 bg-base-100"}>
             <div className={""}>
               <div className={"font-bold text-2xl"}>
-                {userProfileData?.displayName}
+                {(userProfileData as any)?.displayName}
               </div>
-              <div>@{userProfileData?.username}</div>
+              <div>@{(userProfileData as any)?.username}</div>
             </div>
-            <div className={""}>{userProfileData?.bio}</div>
-            <div>{new Date(userProfileData?.createdAt).toDateString()}</div>
+            <div className={""}>{(userProfileData as any)?.bio}</div>
             <div>
-              <span>Followers: {userProfileData?.followers}</span> |
-              <span>Following: {userProfileData?.following}</span>
+              {new Date((userProfileData as any)?.createdAt).toDateString()}
+            </div>
+            <div>
+              <span>Followers: {(userProfileData as any)?.followers}</span> |
+              <span>Following: {(userProfileData as any)?.following}</span>
             </div>
           </div>
         </div>

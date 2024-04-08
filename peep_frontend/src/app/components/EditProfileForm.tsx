@@ -270,7 +270,7 @@ export const EditProfileForm = () => {
                 aria-label="Close"
                 ref={profileFormCloseButton}
               >
-                <Cross2Icon size={64} />
+                <LucideX size={64} />
               </button>
             </AlertDialog.Cancel>
             {/* <AlertDialog.Action asChild>

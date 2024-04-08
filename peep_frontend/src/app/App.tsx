@@ -17,7 +17,7 @@ import injectedModule from "@web3-onboard/injected-wallets";
 import { init } from "@web3-onboard/react";
 import { useState } from "react";
 
-import { GraphQLProvider } from "./GraphQL";
+// import { GraphQLProvider } from "./GraphQL";
 import { Notices } from "./Notices";
 import { Input } from "./Input";
 import { Inspect } from "./Inspect";
