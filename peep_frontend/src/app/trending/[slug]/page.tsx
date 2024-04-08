@@ -3,15 +3,15 @@
 import { TrendingUp } from "lucide-react";
 import { EmptyPage } from "../../components/EmptyPage";
 import {
-  PostActions,
+  PostActionsContainer,
   PostBody,
   PostContainer,
   PostUser,
-} from "../../components/Posts/Posts";
+} from "../../components/Posts";
 import { usePeepsContext } from "../../context";
 
 const TrendingPosts = ({ params }: { params: { slug: string } }) => {
-  const { notices, wallet } = usePeepsContext();
+  const { notices } = usePeepsContext();
 
   if (!notices)
     return (
@@ -56,12 +56,15 @@ const TrendingPosts = ({ params }: { params: { slug: string } }) => {
                 {/* {console.log(eachNotice)} */}
                 {/* {console.log(wallet?.accounts[0])} */}
                 <PostUser {...eachNotice} />
-                <PostBody>{eachNotice?.content?.message}</PostBody>
-                <PostActions
+                <PostBody postMetaData={undefined}>
+                  {eachNotice?.content?.message}
+                </PostBody>
+                <PostActionsContainer
                   postId={eachNotice.id}
                   message={eachNotice?.content.message}
                   upload={""}
                   postData={eachNotice}
+                  postMetaData={undefined}
                 />
               </PostContainer>
               {/* <div className="divider"></div> */}

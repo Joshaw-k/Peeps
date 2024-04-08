@@ -1,13 +1,6 @@
 "use client";
 import React, { useEffect, useState } from "react";
-import { useRouter } from "next/navigation";
-import { useRollups } from "../../useRollups";
-import { defaultDappAddress } from "../../utils/constants";
-import { ethers } from "ethers";
-import { useQuery, gql } from "@apollo/client";
-import { CommentModal } from "../../components/commentModal";
-import { FaRetweet } from "react-icons/fa6";
-import { TNotice } from "../../components/useNotices";
+
 import {
   PostActionsContainer,
   PostBody,
@@ -18,7 +11,7 @@ import axios from "axios";
 import toast from "react-hot-toast";
 import { usePeepsContext } from "../../context";
 
-const page = ({ params }: { params: any }) => {
+const Page = ({ params }: { params: any }) => {
   const [post, setPost] = useState<any>();
   const [postMetadata, setPostMetadata] = useState<any>();
   const [comments, setComments] = useState<any>();
@@ -136,4 +129,4 @@ const page = ({ params }: { params: any }) => {
   );
 };
 
-export default page;
+export default Page;

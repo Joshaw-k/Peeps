@@ -18,11 +18,11 @@ import Navbar from "./components/Navbar";
 
 import { Toaster } from "react-hot-toast";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+// const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin", "cyrillic"],
   display: "swap",
-  preload: true,
+  preload: false,
   variable: "--font-noto-sans-jp",
 });
 

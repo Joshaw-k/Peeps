@@ -93,7 +93,7 @@ export const Trending = () => {
       <h2 className="">Trending Posts</h2>
 
       {JSON.parse(notices.reverse()[0].payload).trendingWords.map(
-        (eachTrends: any, index) => (
+        (eachTrends: any, index: number) => (
           <TrendingCard
             key={eachTrends[0]}
             index={index + 1}
