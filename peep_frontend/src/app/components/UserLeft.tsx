@@ -35,6 +35,8 @@ export const UserLeft = () => {
     profileChanged,
   } = usePeepsContext();
 
+  console.log(userData);
+
   useEffect(() => {
     checkProfileExist();
   }, [wallet, hasProfile, profileChanged]);

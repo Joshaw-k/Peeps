@@ -190,6 +190,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           );
           if (res2.data) {
             setUserData(res2.data);
+            console.log(res2.data);
           }
         } catch (error) {
           console.log(error);
