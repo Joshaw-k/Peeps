@@ -27,7 +27,7 @@ const page = ({ params }: { params: any }) => {
 
   const fetchPost = async () => {
     const res1 = await axios.get(
-      `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${params.id}`
+      `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${params.id}`
     );
     setPost(res1.data);
   };
@@ -38,7 +38,7 @@ const page = ({ params }: { params: any }) => {
         `https://api.pinata.cloud/data/pinList?hashContains=${params.id}`,
         {
           headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
           },
         }
       );
@@ -49,7 +49,7 @@ const page = ({ params }: { params: any }) => {
             `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_COMMENT&metadata[keyvalues]={"parent_post_uuid":{"value":"${res1.data.rows[0]?.metadata?.keyvalues?.uuid}","op":"eq"}}&status=pinned`,
             {
               headers: {
-                Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+                Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
               },
             }
           );
@@ -60,7 +60,7 @@ const page = ({ params }: { params: any }) => {
               let data = [];
               for (let index = 0; index < res2.data.rows.length; index++) {
                 const res3 = await axios.get(
-                  `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${res2.data.rows[index].ipfs_pin_hash}`
+                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res2.data.rows[index].ipfs_pin_hash}`
                 );
                 data.push(res3.data);
               }

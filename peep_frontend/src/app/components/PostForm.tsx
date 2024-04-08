@@ -14,7 +14,8 @@ import { LucideImagePlus, LucideUpload, LucideX } from "lucide-react";
 import Image from "next/image";
 
 const PostForm: React.FC<IInputProps> = (props) => {
-  const { wallet, userData, refreshPost, setRefreshPost } = usePeepsContext();
+  const { wallet, userData, refreshPost, setRefreshPost, pinFileToIPFS } =
+    usePeepsContext();
   const postTextField = useRef(null);
   const [postText, setPostText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
@@ -28,37 +29,6 @@ const PostForm: React.FC<IInputProps> = (props) => {
     return new Promise((resolve) => {
       setTimeout(resolve, milliseconds);
     });
-  };
-
-  const pinFileToIPFS = async (files: any) => {
-    try {
-      let data = new FormData();
-      data.append("file", files);
-      data.append("pinataOptions", '{"cidVersion": 0}');
-      data.append("pinataMetadata", '{"name": "peeps"}');
-      toast.success("Uploading event image to IPFS .....");
-      const res = await axios.post(
-        "https://api.pinata.cloud/pinning/pinFileToIPFS",
-        data,
-        {
-          headers: {
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
-          },
-        }
-      );
-      console.log(res.data);
-      console.log(
-        `View the file here: https://gateway.pinata.cloud/ipfs/${res.data.IpfsHash}`
-      );
-      toast.success("Event Image upload complete");
-      return {
-        uploaded: true,
-        image: `https://gateway.pinata.cloud/ipfs/${res.data.IpfsHash}`,
-      };
-    } catch (error) {
-      console.log(error);
-      return { uploaded: false, image: `` };
-    }
   };
 
   const sendPost = async (imgUrl: string = "") => {
@@ -91,7 +61,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
         {
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
           },
         }
       );

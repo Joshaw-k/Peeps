@@ -12,8 +12,14 @@ import toast from "react-hot-toast";
 import axios from "axios";
 
 export const ProfileForm = () => {
-  const { baseDappAddress, wallet, checkProfileExist, setHasProfile } =
-    usePeepsContext();
+  const {
+    baseDappAddress,
+    wallet,
+    setHasProfile,
+    pinFileToIPFS,
+    profileChanged,
+    setProfileChanged,
+  } = usePeepsContext();
   const rollups = useRollups(baseDappAddress);
   const [dp, setDp] = useState<string>("");
   const [dpPreview, setDpPreview] = useState<string>("");
@@ -24,53 +30,80 @@ export const ProfileForm = () => {
   const profileFormCloseButton = useRef(null);
   const [open, setOpen] = React.useState(false);
 
+  const wait = (milliseconds: any) => {
+    return new Promise((resolve) => {
+      setTimeout(resolve, milliseconds);
+    });
+  };
+
+  const createProfile = async (imgUrl: string = "") => {
+    try {
+      const data = JSON.stringify({
+        pinataOptions: {
+          cidVersion: 0,
+        },
+        pinataMetadata: {
+          name: "PEEPS_USER",
+          keyvalues: {
+            addr: `${wallet?.accounts[0]?.address}`,
+            username: username,
+          },
+        },
+        pinataContent: {
+          username: username,
+          wallet: `${wallet?.accounts[0]?.address}`,
+          displayName: displayName,
+          profilePicture: imgUrl,
+          bio: bio,
+          following: 0,
+          followers: 0,
+          createdAt: new Date(),
+        },
+      });
+      setIsSubmit(true);
+      const res = await axios.post(
+        "https://api.pinata.cloud/pinning/pinJSONToIPFS",
+        data,
+        {
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
+      );
+      if (res.data.IpfsHash) {
+        setIsSubmit(false);
+        toast.success("Profile created");
+        setOpen(false);
+        setHasProfile(true);
+        await wait(800);
+        setProfileChanged(!profileChanged);
+      }
+    } catch (error) {
+      console.log(error);
+      setIsSubmit(false);
+      toast.error("Profile not created");
+    }
+  };
+
   const handleCreateProfile = async () => {
     if (wallet) {
       // Creating userProfile
       try {
-        const data = JSON.stringify({
-          pinataOptions: {
-            cidVersion: 0,
-          },
-          pinataMetadata: {
-            name: "PEEPS_USER",
-            keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
-              username: username,
-            },
-          },
-          pinataContent: {
-            username: username,
-            wallet: `${wallet?.accounts[0]?.address}`,
-            displayName: displayName,
-            profilePicture: "",
-            bio: bio,
-            following: 0,
-            followers: 0,
-            createdAt: new Date(),
-          },
-        });
-        setIsSubmit(true);
-        const res = await axios.post(
-          "https://api.pinata.cloud/pinning/pinJSONToIPFS",
-          data,
-          {
-            headers: {
-              "Content-Type": "application/json",
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
-            },
+        if (dp == "") {
+          await createProfile();
+        } else {
+          const imgUploadRes = await pinFileToIPFS(dp);
+          await wait(600);
+          if (imgUploadRes.uploaded) {
+            setDp("");
+            await createProfile(
+              imgUploadRes.uploaded ? imgUploadRes.image : ""
+            );
           }
-        );
-        if (res.data.IpfsHash) {
-          setIsSubmit(false);
-          toast.success("Profile created");
-          setOpen(false);
-          setHasProfile(true);
         }
       } catch (error) {
         console.log(error);
-        setIsSubmit(false);
-        toast.error("Profile not created");
       }
     } else {
       toast.error("Error, Can't make post!");
@@ -87,7 +120,7 @@ export const ProfileForm = () => {
   const removeProfileUpload = () => {
     setDp("");
     setDpPreview("");
-  }
+  };
 
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
@@ -110,22 +143,24 @@ export const ProfileForm = () => {
             {/* We require this to serve the best experience */}
             <div className="card items-center shrink-0 my-4 w-full bg-base-100">
               <div className={"relative inline-block"}>
-                <AvatarProfile src={dpPreview}/>
-                {
-                    dpPreview &&
-                    <span
-                        className={"absolute -top-0 -right-0 btn btn-sm btn-circle btn-error"}
-                        onClick={removeProfileUpload}>
-                      <LucideX size={16} strokeWidth={4}/>
-                    </span>
-                }
+                <AvatarProfile src={dpPreview} />
+                {dpPreview && (
+                  <span
+                    className={
+                      "absolute -top-0 -right-0 btn btn-sm btn-circle btn-error"
+                    }
+                    onClick={removeProfileUpload}
+                  >
+                    <LucideX size={16} strokeWidth={4} />
+                  </span>
+                )}
               </div>
               <label
-                  htmlFor={"id-avatar-dp"}
-                  title="Select dp"
-                  className="btn btn-sm mt-4"
+                htmlFor={"id-avatar-dp"}
+                title="Select dp"
+                className="btn btn-sm mt-4"
               >
-                <CameraIcon/>
+                <CameraIcon />
                 Select display picture
                 <input
                   type="file"
@@ -141,11 +176,11 @@ export const ProfileForm = () => {
                     <span className="label-text">Display Name</span>
                   </label>
                   <input
-                      type="text"
-                      placeholder="display_name"
-                      className="input input-bordered"
-                      onChange={(e) => setDisplayName(e.target.value)}
-                      required
+                    type="text"
+                    placeholder="display_name"
+                    className="input input-bordered"
+                    onChange={(e) => setDisplayName(e.target.value)}
+                    required
                   />
                 </div>
                 <div className="form-control">
@@ -153,11 +188,11 @@ export const ProfileForm = () => {
                     <span className="label-text">Username</span>
                   </label>
                   <input
-                      type="username"
-                      placeholder="username"
-                      className="input input-bordered"
-                      onChange={(e) => setUsername(e.target.value)}
-                      required
+                    type="username"
+                    placeholder="username"
+                    className="input input-bordered"
+                    onChange={(e) => setUsername(e.target.value)}
+                    required
                   />
                 </div>
                 <div className="form-control">
@@ -165,18 +200,18 @@ export const ProfileForm = () => {
                     <span className="label-text">About yourself</span>
                   </label>
                   <textarea
-                      className="textarea textarea-lg textarea-bordered text-base resize-none"
-                      placeholder="Tell the world something about yourself"
-                      onChange={(e) => setBio(e.target.value)}
+                    className="textarea textarea-lg textarea-bordered text-base resize-none"
+                    placeholder="Tell the world something about yourself"
+                    onChange={(e) => setBio(e.target.value)}
                   ></textarea>
                 </div>
                 <div className="form-control mt-6">
                   <button
-                      type="button"
-                      className="btn btn-primary rounded-xl"
-                      onClick={handleCreateProfile}
+                    type="button"
+                    className="btn btn-primary rounded-xl"
+                    onClick={handleCreateProfile}
                   >
-                    {isSubmit ? <ButtonLoader/> : "Create Profile"}
+                    {isSubmit ? <ButtonLoader /> : "Create Profile"}
                   </button>
                 </div>
               </form>
@@ -185,11 +220,11 @@ export const ProfileForm = () => {
           <div className="absolute top-8 right-4 flex justify-end gap-[25px]">
             <AlertDialog.Cancel asChild>
               <button
-                  title="Close profile dialog"
-                  type="button"
-                  className="btn size-12 rounded-full text-xl"
-                  aria-label="Close"
-                  ref={profileFormCloseButton}
+                title="Close profile dialog"
+                type="button"
+                className="btn size-12 rounded-full text-xl"
+                aria-label="Close"
+                ref={profileFormCloseButton}
               >
                 <Cross2Icon size={64} />
               </button>
