@@ -16,6 +16,7 @@ export const ProfileForm = () => {
     usePeepsContext();
   const rollups = useRollups(baseDappAddress);
   const [dp, setDp] = useState<string>("");
+  const [dpPreview, setDpPreview] = useState<string>("");
   const [username, setUsername] = useState<string>("");
   const [bio, setBio] = useState<string>("");
   const [displayName, setDisplayName] = useState<string>("");
@@ -77,6 +78,17 @@ export const ProfileForm = () => {
     }
   };
 
+  const handleTriggerDpChange = (event: any) => {
+    const selectedImage = event.target.files[0];
+    setDp(selectedImage);
+    setDpPreview(URL.createObjectURL(selectedImage));
+  };
+
+  const removeProfileUpload = () => {
+    setDp("");
+    setDpPreview("");
+  }
+
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger asChild>
@@ -97,19 +109,30 @@ export const ProfileForm = () => {
           <AlertDialog.Description className="text-[15px] text-center leading-normal">
             {/* We require this to serve the best experience */}
             <div className="card items-center shrink-0 my-4 w-full bg-base-100">
-              <AvatarProfile src={dp} />
+              <div className={"relative inline-block"}>
+                <AvatarProfile src={dpPreview}/>
+                {
+                    dpPreview &&
+                    <span
+                        className={"absolute -top-0 -right-0 btn btn-sm btn-circle btn-error"}
+                        onClick={removeProfileUpload}>
+                      <LucideX size={16} strokeWidth={4}/>
+                    </span>
+                }
+              </div>
               <label
-                htmlFor={"id-avatar-dp"}
-                title="Select dp"
-                className="btn btn-sm mt-4"
+                  htmlFor={"id-avatar-dp"}
+                  title="Select dp"
+                  className="btn btn-sm mt-4"
               >
-                <CameraIcon />
+                <CameraIcon/>
                 Select display picture
                 <input
                   type="file"
                   name=""
                   id="id-avatar-dp"
                   className="hidden"
+                  onChange={handleTriggerDpChange}
                 />
               </label>
               <form className="card-body w-full">
