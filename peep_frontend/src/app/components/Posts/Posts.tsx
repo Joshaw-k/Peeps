@@ -173,15 +173,15 @@ export const Post = () => {
     }
   };
 
-  useEffect(() => {
-    // Increase the pageLoadCount by 1. This is used to calculate when the page loader should be displayed.
-    if (pageLoadCount === 0) {
-      fetchPosts();
-    }
-    setInterval(() => {
-      fetchPosts();
-    }, 6000);
-  }, []);
+  // useEffect(() => {
+  //   // Increase the pageLoadCount by 1. This is used to calculate when the page loader should be displayed.
+  //   if (pageLoadCount === 0) {
+  //     fetchPosts();
+  //   }
+  //   setInterval(() => {
+  //     fetchPosts();
+  //   }, 6000);
+  // }, []);
 
   useEffect(() => {
     fetchPosts();

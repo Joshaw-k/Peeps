@@ -72,12 +72,12 @@ const Page = ({ params }: { params: any }) => {
     }
   };
 
-  useEffect(() => {
-    // Increase the pageLoadCount by 1. This is used to calculate when the page loader should be displayed.
-    setInterval(() => {
-      fetchComments();
-    }, 6000);
-  }, []);
+  // useEffect(() => {
+  //   // Increase the pageLoadCount by 1. This is used to calculate when the page loader should be displayed.
+  //   setInterval(() => {
+  //     fetchComments();
+  //   }, 6000);
+  // }, []);
 
   useEffect(() => {
     // Increase the pageLoadCount by 1. This is used to calculate when the page loader should be displayed.
