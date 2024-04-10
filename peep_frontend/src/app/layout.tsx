@@ -24,11 +24,11 @@ import {rainbowKitConfig, wagmiConfig} from "../../wagmi";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {darkTheme, lightTheme, RainbowKitProvider} from "@rainbow-me/rainbowkit";
 
-const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
+// const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoSansJP = Noto_Sans_JP({
   subsets: ["latin", "cyrillic"],
   display: "swap",
-  preload: true,
+  preload: false,
   variable: "--font-noto-sans-jp",
 });
 

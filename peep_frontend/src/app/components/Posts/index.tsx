@@ -27,6 +27,9 @@ interface IPostActions {
   children?: any;
 }
 
+const defaultImage =
+  "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
+
 const AvatarPost = ({ src }: {src: string}) => {
   return (
     <div className="avatar">
@@ -46,9 +49,11 @@ export const PostUser = (props: any) => {
       <div
         className={"flex-1 flex flex-row items-center gap-x-4 leading-normal"}
       >
-        <AvatarPost src={""}/>
+          <AvatarPost
+              src={props?.post_media ? props?.post_media : defaultImage}
+          />
         <span className="font-medium text-md relative dark:text-gray-400">
-          {props?.post_username ?? "Anonymous"}
+          {props?.post_displayName ?? "Anonymous"}
         </span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
         <span className="relative dark:text-gray-400">
@@ -112,7 +117,7 @@ export const PostActionsContainer = ({
 &status=pinned`,
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
             },
           }
         );
@@ -134,7 +139,7 @@ export const PostActionsContainer = ({
 &status=pinned`,
           {
             headers: {
-              Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySW5mb3JtYXRpb24iOnsiaWQiOiJkMjEwODYwOC01YzRhLTQ2MDQtOTJjMi1jNTkyMjg1ZGViNzYiLCJlbWFpbCI6ImF3aW5yaW40Ymxlc3NAZ21haWwuY29tIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsInBpbl9wb2xpY3kiOnsicmVnaW9ucyI6W3siaWQiOiJGUkExIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9LHsiaWQiOiJOWUMxIiwiZGVzaXJlZFJlcGxpY2F0aW9uQ291bnQiOjF9XSwidmVyc2lvbiI6MX0sIm1mYV9lbmFibGVkIjpmYWxzZSwic3RhdHVzIjoiQUNUSVZFIn0sImF1dGhlbnRpY2F0aW9uVHlwZSI6InNjb3BlZEtleSIsInNjb3BlZEtleUtleSI6IjJjYmE4MzNkYmM1MjQyNjFiNjU4Iiwic2NvcGVkS2V5U2VjcmV0IjoiZGE2ZWMwZDZlNjBmYmI0ZWY5MTdmOTkzMmFjZWEwZGUyNGFjZTU1NDZmYWQyMTNmYThmZTVlY2RhMDI2NDQ0OCIsImlhdCI6MTcxMTkwODAxNX0.3RVKCUnhqQlgvfy9lxmAa1ltR_sLHVhHSZtvNJj7aik`,
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
             },
           }
         );
@@ -152,28 +157,36 @@ export const PostActionsContainer = ({
   };
 
   const handleLikePost = async (action: boolean) => {
-    const actionData = action ? "like" : "unlike";
-    if (actionData == "like") {
-      await PostActions(postId, postData, postMetaData, actionData);
+    if (wallet) {
+      const actionData = action ? "like" : "unlike";
+      if (actionData == "like") {
+        await PostActions(postId, postData, postMetaData, actionData);
+      } else {
+        await revertReactions(
+          userData?.wallet,
+          postMetaData[postId].metadata?.keyvalues?.uuid,
+          actionData
+        );
+      }
     } else {
-      await revertReactions(
-        userData?.wallet,
-        postMetaData[postId].metadata?.keyvalues?.uuid,
-        actionData
-      );
+      toast.error("connect your wallet");
     }
   };
 
   const handleRepeepPost = async (action: boolean) => {
-    const actionData = action ? "repeep" : "unrepeep";
-    if (actionData == "repeep") {
-      await PostActions(postId, postData, postMetaData, actionData);
+    if (wallet) {
+      const actionData = action ? "repeep" : "unrepeep";
+      if (actionData == "repeep") {
+        await PostActions(postId, postData, postMetaData, actionData);
+      } else {
+        await revertReactions(
+          userData?.wallet,
+          postMetaData[postId].metadata?.keyvalues?.uuid,
+          actionData
+        );
+      }
     } else {
-      await revertReactions(
-        userData?.wallet,
-        postMetaData[postId].metadata?.keyvalues?.uuid,
-        actionData
-      );
+      toast.error("connect your wallet");
     }
   };
 

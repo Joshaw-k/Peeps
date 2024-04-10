@@ -11,7 +11,7 @@ import {
 import { usePeepsContext } from "../../context";
 
 const TrendingPosts = ({ params }: { params: { slug: string } }) => {
-  const { notices, wallet } = usePeepsContext();
+  const { notices } = usePeepsContext();
 
   if (!notices)
     return (

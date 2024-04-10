@@ -10,15 +10,17 @@ import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
 import axios from "axios";
-import { useAccount } from "wagmi";
+import Image from "next/image";
 
-export const ProfileForm = () => {
-  const {isConnected} = useAccount();
+export const EditProfileForm = () => {
   const {
     baseDappAddress,
     wallet,
     setHasProfile,
     pinFileToIPFS,
+    userData,
+    unPin,
+    userIpfsHash,
     profileChanged,
     setProfileChanged,
   } = usePeepsContext();
@@ -26,11 +28,17 @@ export const ProfileForm = () => {
   const [dp, setDp] = useState<string>("");
   const [dpPreview, setDpPreview] = useState<string>("");
   const [username, setUsername] = useState<string>("");
-  const [bio, setBio] = useState<string>("");
-  const [displayName, setDisplayName] = useState<string>("");
+  const [bio, setBio] = useState<string>(userData.bio);
+  const [displayName, setDisplayName] = useState<string>(userData.displayName);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const profileFormCloseButton = useRef(null);
   const [open, setOpen] = React.useState(false);
+  const [disableSave, setDisableSave] = React.useState(true);
+
+  const defaultImage: string =
+    "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
+
+  const profileImageRef = useRef(null);
 
   const wait = (milliseconds: any) => {
     return new Promise((resolve) => {
@@ -38,7 +46,7 @@ export const ProfileForm = () => {
     });
   };
 
-  const createProfile = async (imgUrl: string = "") => {
+  const editProfile = async (imgUrl: string = "") => {
     try {
       const data = JSON.stringify({
         pinataOptions: {
@@ -48,11 +56,11 @@ export const ProfileForm = () => {
           name: "PEEPS_USER",
           keyvalues: {
             addr: `${wallet?.accounts[0]?.address}`,
-            username: username,
+            username: userData.username,
           },
         },
         pinataContent: {
-          username: username,
+          username: userData.username,
           wallet: `${wallet?.accounts[0]?.address}`,
           displayName: displayName,
           profilePicture: imgUrl,
@@ -75,7 +83,7 @@ export const ProfileForm = () => {
       );
       if (res.data.IpfsHash) {
         setIsSubmit(false);
-        toast.success("Profile created");
+        toast.success("Profile edited");
         setOpen(false);
         setHasProfile(true);
         await wait(800);
@@ -84,28 +92,31 @@ export const ProfileForm = () => {
     } catch (error) {
       console.log(error);
       setIsSubmit(false);
-      toast.error("Profile not created");
+      toast.error("Profile not edited");
     }
   };
 
-  const handleCreateProfile = async () => {
+  const handleEditProfile = async () => {
     if (wallet) {
       // Creating userProfile
-      try {
-        if (dp == "") {
-          await createProfile();
-        } else {
-          const imgUploadRes = await pinFileToIPFS(dp);
-          await wait(600);
-          if (imgUploadRes.uploaded) {
-            setDp("");
-            await createProfile(
-              imgUploadRes.uploaded ? imgUploadRes.image : ""
-            );
+      const unpinRes = await unPin(userIpfsHash);
+      if (unpinRes) {
+        try {
+          if (dp == "") {
+            await editProfile(userData.profilePicture);
+          } else {
+            const imgUploadRes = await pinFileToIPFS(dp);
+            await wait(600);
+            if (imgUploadRes.uploaded) {
+              setDp("");
+              await editProfile(
+                imgUploadRes.uploaded ? imgUploadRes.image : ""
+              );
+            }
           }
+        } catch (error) {
+          console.log(error);
         }
-      } catch (error) {
-        console.log(error);
       }
     } else {
       toast.error("Error, Can't make post!");
@@ -124,15 +135,27 @@ export const ProfileForm = () => {
     setDpPreview("");
   };
 
+  useEffect(() => {
+    if (
+      dpPreview != "" ||
+      displayName != userData.displayName ||
+      bio != userData.bio
+    ) {
+      setDisableSave(false);
+    } else {
+      setDisableSave(true);
+    }
+  }, [dp, displayName, bio]);
+
   return (
     <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger asChild>
         <button
           type="button"
-          className="btn btn-block inline-flex h-[35px] items-center justify-center px-[15px] font-medium leading-none outline-none outline-0"
-          disabled={!isConnected}
+          className="btn btn-block btn-primary inline-flex h-[35px] items-center justify-center px-[15px] font-semibold leading-none outline-none outline-0"
+          disabled={!wallet}
         >
-          Create Profile
+          Edit Profile
         </button>
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
@@ -145,7 +168,35 @@ export const ProfileForm = () => {
             {/* We require this to serve the best experience */}
             <div className="card items-center shrink-0 my-4 w-full bg-base-100">
               <div className={"relative inline-block"}>
-                <AvatarProfile src={dpPreview} />
+                <div className="avatar">
+                  {dpPreview ? (
+                    <AvatarProfile src={dpPreview} />
+                  ) : (
+                    <AvatarProfile
+                      src={
+                        userData.profilePicture == ""
+                          ? defaultImage
+                          : userData.profilePicture
+                      }
+                    />
+                  )}
+                  {/* <div
+                    className="w-32 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2"
+                    ref={profileImageRef}
+                  >
+                    <Image
+                      width={100}
+                      height={100}
+                      alt=""
+                      src={
+                        userData.profilePicture == ""
+                          ? defaultImage
+                          : userData.profilePicture
+                      }
+                      className="bg-base-300"
+                    />
+                  </div> */}
+                </div>
                 {dpPreview && (
                   <span
                     className={
@@ -170,6 +221,7 @@ export const ProfileForm = () => {
                   id="id-avatar-dp"
                   className="hidden"
                   onChange={handleTriggerDpChange}
+                  ref={profileImageRef}
                 />
               </label>
               <form className="card-body w-full">
@@ -182,19 +234,7 @@ export const ProfileForm = () => {
                     placeholder="display_name"
                     className="input input-bordered"
                     onChange={(e) => setDisplayName(e.target.value)}
-                    required
-                  />
-                </div>
-                <div className="form-control">
-                  <label className="label">
-                    <span className="label-text">Username</span>
-                  </label>
-                  <input
-                    type="username"
-                    placeholder="username"
-                    className="input input-bordered"
-                    onChange={(e) => setUsername(e.target.value)}
-                    required
+                    value={displayName}
                   />
                 </div>
                 <div className="form-control">
@@ -205,15 +245,17 @@ export const ProfileForm = () => {
                     className="textarea textarea-lg textarea-bordered text-base resize-none"
                     placeholder="Tell the world something about yourself"
                     onChange={(e) => setBio(e.target.value)}
+                    value={bio}
                   ></textarea>
                 </div>
                 <div className="form-control mt-6">
                   <button
                     type="button"
                     className="btn btn-primary rounded-xl"
-                    onClick={handleCreateProfile}
+                    onClick={handleEditProfile}
+                    disabled={disableSave}
                   >
-                    {isSubmit ? <ButtonLoader /> : "Create Profile"}
+                    {isSubmit ? <ButtonLoader /> : "Save Profile"}
                   </button>
                 </div>
               </form>
@@ -228,7 +270,7 @@ export const ProfileForm = () => {
                 aria-label="Close"
                 ref={profileFormCloseButton}
               >
-                <LucideX size={64} strokeWidth={4} />
+                <LucideX size={64} />
               </button>
             </AlertDialog.Cancel>
             {/* <AlertDialog.Action asChild>

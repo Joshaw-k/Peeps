@@ -8,12 +8,20 @@ import { useNotices } from "./useNotices";
 import { useEffect, useState } from "react";
 import { usePeepsContext } from "../context";
 import {useAccount} from "wagmi";
+import Image from "next/image";
 
-export const Avatar = () => {
+const defaultImage: string =
+  "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
+
+export const Avatar = ({profileImage}: {profileImage: string}) => {
   return (
-    <div className="avatar">
+    <div className="avatar placeholder">
       <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
-        <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+          {
+              profileImage
+              ? <Image width={30} height={30} src={profileImage} alt=""/>
+              : <span></span>
+          }
       </div>
     </div>
   );
@@ -41,16 +49,15 @@ export const UserLeft = () => {
     userData,
     setHasProfile,
     hasProfile,
+    profileChanged,
   } = usePeepsContext();
   const {address, isConnected} = useAccount();
 
   useEffect(() => {
     checkProfileExist();
-  }, [isConnected]);
+  }, [isConnected, hasProfile, profileChanged]);
 
-  useEffect(() => {
-    checkProfileExist();
-  }, [hasProfile]);
+  useEffect(() => {}, [userData]);
 
   return (
     <>
@@ -66,32 +73,41 @@ export const UserLeft = () => {
             "card card-bordered bg-base-200 p-4 flex flex-row items-center gap-x-4"
           }
         >
-          <Avatar />
           {isConnected && hasProfile ? (
-            <div className="grow">
-              <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
-                {userData?.username}
-              </h4>
-              <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
-                @{userData?.username}
-              </p>
-            </div>
+              <>
+                  <Avatar profileImage={userData?.profilePicture}/>
+                  <div className="grow">
+                      <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
+                          {userData?.displayName ? userData?.displayName : "Anonymous"}
+                      </h4>
+                      <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
+                          @{userData?.username ? userData?.username : "Anonymous"}
+                      </p>
+                  </div>
+              </>
           ) : (
-            <div className="grow">
-              <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
-                {"Anonymous"}
-              </h4>
-              <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
-                ...
-              </p>
-            </div>
+            <>
+              <div className="avatar">
+                <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
+                  <Image width={30} height={30} src={defaultImage} alt="" />
+                </div>
+              </div>
+              <div className="grow">
+                <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
+                  {"Anonymous"}
+                </h4>
+                <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
+                  @Anonymous
+                </p>
+              </div>
+            </>
           )}
         </div>
         {isConnected && hasProfile ? (
           <div className={"card card-compact bg-base-200 my-1"}>
             <div className="card-body">
               <div className="font-bold text-xs">About me</div>
-              {userData?.bio}
+              {userData?.bio ? userData?.bio : "*********"}
             </div>
           </div>
         ) : null}
