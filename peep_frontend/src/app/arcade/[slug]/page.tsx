@@ -56,16 +56,13 @@ const TrendingPosts = ({ params }: { params: { slug: string } }) => {
                 {/* {console.log(eachNotice)} */}
                 {/* {console.log(wallet?.accounts[0])} */}
                 <PostUser {...eachNotice} />
-                <PostBody postMetaData={undefined}>
-                  {eachNotice?.content?.message}
-                </PostBody>
+                <PostBody postMetaData={undefined}>{eachNotice?.content?.message}</PostBody>
                 <PostActionsContainer
                   postId={eachNotice.id}
                   message={eachNotice?.content.message}
                   upload={""}
                   postData={eachNotice}
-                  postMetaData={undefined}
-                />
+                 postMetaData={undefined}/>
               </PostContainer>
               {/* <div className="divider"></div> */}
             </>

@@ -14,7 +14,7 @@ export const RightComponent = () => {
   if (segments[0] === "settings") return null;
 
   return (
-    <section className="max-w-xs mx-auto h-screen overflow-y-auto">
+    <section className="hidden lg:block max-w-xs mx-auto h-screen overflow-y-auto">
       <Search />
       <section>
         <Trending></Trending>

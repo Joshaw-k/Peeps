@@ -30,9 +30,9 @@ export const Home = () => {
     //     <RightComponent />
     //   </section>
     // </section>
-    <div>
+    <div className={"lg:py-0"}>
       <PostForm dappAddress={dappAddress} />
-      <div className={"prose text-4xl font-bold text-gray-400 px-2 py-6 mt-8"}>
+      <div className={"prose text-2xl lg:text-4xl font-bold text-gray-400 px-2 py-6 lg:mt-8"}>
         Posts
       </div>
       <Post />

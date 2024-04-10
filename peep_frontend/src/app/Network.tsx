@@ -40,7 +40,7 @@ export const Network: FC = () => {
           JSON.parse(notices?.reverse()[0].payload).users.filter(
             (it: any) => it.address === wallet?.accounts[0]?.address
           )
-        );
+      );
     }
   }, [wallet]);
 

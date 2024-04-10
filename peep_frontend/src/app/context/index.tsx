@@ -13,6 +13,7 @@ import { useNotices } from "../components/useNotices";
 import { Address } from "@web3-onboard/core/dist/types";
 import axios from "axios";
 import toast from "react-hot-toast";
+import {useAccount} from "wagmi";
 // import {
 //   SUMMARY_HISTORY_CACHE_NAME,
 //   SUMMARY_SEARCH_CACHE_NAME,
@@ -96,8 +97,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [baseDappAddress, setBaseDappAddress] =
     useState<string>(defaultDappAddress);
   const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
+  const {address, isConnecting, isConnected} = useAccount();
   const [currentUser, setCurrentUser] = useState<ICurrentUser[] | any>();
-  const [address, setAdress] = useState<any>();
+  // const [profileExist, setProfileExist] = useState<ICurrentUser[] | any>();
+  // const [address, setAdress] = useState<any>();
   const [userData, setUserData] = useState<any>();
   const [hasProfile, setHasProfile] = useState(false);
   const [userIpfsHash, setUserIpfsHash] = useState(null);
@@ -124,7 +127,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   const checkProfileExist = async () => {
-    if (wallet) {
+    // if (wallet) {
+    if (address) {
       try {
         const res = await axios.get(
           `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
@@ -235,7 +239,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           pinataMetadata: {
             name: "PEEPS_LIKES",
             keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
+              addr: `${address}`,
               post_uuid: `${post_uuid}`,
             },
           },
@@ -252,7 +256,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           pinataMetadata: {
             name: "PEEPS_REPEEP",
             keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
+              addr: `${address}`,
               post_uuid: `${post_uuid}`,
             },
           },
@@ -269,7 +273,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           pinataMetadata: {
             name: "PEEPS_COMMENT",
             keyvalues: {
-              addr: `${wallet?.accounts[0]?.address}`,
+              addr: `${address}`,
               parent_post_uuid: `${post_uuid}`,
             },
           },
@@ -383,7 +387,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     postMetaData: any,
     action: string
   ) => {
-    if (wallet) {
+    // if (wallet) {
+    if (address) {
       //unpin from ipfs
       const unPinRes = await unPin(postMetaData[postId]);
 
@@ -402,9 +407,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     }
   };
 
-  useEffect(() => {
-    setAdress(wallet?.accounts[0]?.address);
-  }, [wallet]);
+  // useEffect(() => {
+  //   setAdress(address);
+  // }, [wallet]);
 
   useEffect(() => {
     fetchUserData();
