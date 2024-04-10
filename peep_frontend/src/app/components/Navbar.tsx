@@ -15,11 +15,11 @@ const Navbar: React.FC = () => {
 
   return (
     <section className="sticky top-0 z-[10]">
-      <div className="navbar bg-base-200 px-6 lg:px-24 h-20">
+      <div className="navbar bg-base-200 px-3 md:px-6 lg:px-16 lg:px-24 h-16 lg:h-20">
         <div className="navbar-start">
           <Link
             href={"/"}
-            className="text-xl font-black bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent"
+            className="text-base lg:text-xl font-black bg-clip-text bg-gradient-to-tl from-blue-600 to-violet-600 text-transparent"
           >
             Peeps
           </Link>

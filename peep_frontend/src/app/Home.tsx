@@ -32,7 +32,7 @@ export const Home = () => {
     // </section>
     <div className={"lg:py-0"}>
       <PostForm dappAddress={dappAddress} />
-      <div className={"prose text-2xl lg:text-4xl font-bold text-gray-400 px-2 py-6 lg:mt-8"}>
+      <div className={"prose text-xl lg:text-4xl font-bold text-gray-400 px-2 py-6 lg:mt-8"}>
         Posts
       </div>
       <Post />

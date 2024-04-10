@@ -13,7 +13,7 @@ import axios from "axios";
 import { useAccount } from "wagmi";
 
 export const ProfileForm = () => {
-  const {isConnected} = useAccount();
+  const {address, isConnecting, isConnected} = useAccount();
   const {
     baseDappAddress,
     wallet,
@@ -47,13 +47,13 @@ export const ProfileForm = () => {
         pinataMetadata: {
           name: "PEEPS_USER",
           keyvalues: {
-            addr: `${wallet?.accounts[0]?.address}`,
+            addr: `${address}`,
             username: username,
           },
         },
         pinataContent: {
           username: username,
-          wallet: `${wallet?.accounts[0]?.address}`,
+          wallet: `${address}`,
           displayName: displayName,
           profilePicture: imgUrl,
           bio: bio,
@@ -89,7 +89,7 @@ export const ProfileForm = () => {
   };
 
   const handleCreateProfile = async () => {
-    if (wallet) {
+    if (isConnected) {
       // Creating userProfile
       try {
         if (dp == "") {
@@ -137,8 +137,8 @@ export const ProfileForm = () => {
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="bg-black/40 bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 dark:bg-base-300/80 dark:backdrop-blur-sm z-30" />
-        <AlertDialog.Content className="z-40 data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[500px] bg-base-100 translate-x-[-50%] translate-y-[-50%] rounded-[6px] p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
-          <AlertDialog.Title className="text-mauve12 mt-4 mb-12 text-xl text-center font-bold">
+        <AlertDialog.Content className="z-40 data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[96vw] lg:w-[90vw] max-w-[500px] bg-base-100 translate-x-[-50%] translate-y-[-50%] rounded-box lg:rounded-[6px] lg:p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100 overflow-y-auto">
+          <AlertDialog.Title className="text-mauve12 mt-8 lg:mt-4 mb-12 text-lg lg:text-xl text-center font-bold">
             Create your Profile
           </AlertDialog.Title>
           <AlertDialog.Description className="text-[15px] text-center leading-normal">
@@ -160,7 +160,7 @@ export const ProfileForm = () => {
               <label
                 htmlFor={"id-avatar-dp"}
                 title="Select dp"
-                className="btn btn-sm mt-4"
+                className="btn btn-sm mt-4 text-sm lg:text-base"
               >
                 <CameraIcon />
                 Select display picture
@@ -219,16 +219,16 @@ export const ProfileForm = () => {
               </form>
             </div>
           </AlertDialog.Description>
-          <div className="absolute top-8 right-4 flex justify-end gap-[25px]">
+          <div className="absolute top-4 lg:top-8 right-4 flex justify-end gap-[25px]">
             <AlertDialog.Cancel asChild>
               <button
                 title="Close profile dialog"
                 type="button"
-                className="btn size-12 rounded-full text-xl"
+                className="btn py-0 size-12 rounded-full text-xl leading-normal"
                 aria-label="Close"
                 ref={profileFormCloseButton}
               >
-                <LucideX size={64} strokeWidth={4} />
+                <LucideX size={48}  strokeWidth={4} />
               </button>
             </AlertDialog.Cancel>
             {/* <AlertDialog.Action asChild>

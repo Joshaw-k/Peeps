@@ -11,8 +11,10 @@ import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
 import axios from "axios";
 import Image from "next/image";
+import {useAccount} from "wagmi";
 
 export const EditProfileForm = () => {
+  const {address, isConnected} = useAccount();
   const {
     baseDappAddress,
     wallet,
@@ -55,13 +57,13 @@ export const EditProfileForm = () => {
         pinataMetadata: {
           name: "PEEPS_USER",
           keyvalues: {
-            addr: `${wallet?.accounts[0]?.address}`,
+            addr: `${address}`,
             username: userData.username,
           },
         },
         pinataContent: {
           username: userData.username,
-          wallet: `${wallet?.accounts[0]?.address}`,
+          wallet: `${address}`,
           displayName: displayName,
           profilePicture: imgUrl,
           bio: bio,
@@ -97,7 +99,7 @@ export const EditProfileForm = () => {
   };
 
   const handleEditProfile = async () => {
-    if (wallet) {
+    if (isConnected) {
       // Creating userProfile
       const unpinRes = await unPin(userIpfsHash);
       if (unpinRes) {
@@ -153,7 +155,7 @@ export const EditProfileForm = () => {
         <button
           type="button"
           className="btn btn-block btn-primary inline-flex h-[35px] items-center justify-center px-[15px] font-semibold leading-none outline-none outline-0"
-          disabled={!wallet}
+          disabled={!isConnected}
         >
           Edit Profile
         </button>

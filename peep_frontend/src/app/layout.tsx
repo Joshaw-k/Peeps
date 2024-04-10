@@ -20,9 +20,10 @@ import Navbar from "./components/Navbar";
 import { Toaster } from "react-hot-toast";
 import { MobileNavigation } from "./components/MobileNavigation";
 import {WagmiProvider} from "wagmi";
-import {rainbowKitConfig, wagmiConfig} from "../../wagmi";
+import {rainbowKitConfig} from "../../wagmi";
 import {QueryClient, QueryClientProvider} from "@tanstack/react-query";
 import {darkTheme, lightTheme, RainbowKitProvider} from "@rainbow-me/rainbowkit";
+import Head from "next/head";
 
 // const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const notoSansJP = Noto_Sans_JP({
@@ -75,7 +76,10 @@ export default function RootLayout({
 }) {
   return (
     <html lang="en" className={notoSansJP.className}>
-      <body
+    <Head>
+      <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no" />
+    </Head>
+    <body
         className={`${notoSansJP.className} flex flex-col h-dvh overflow-y-auto`}
       >
         {/* <section className={"flex flex-col h-screen"}>

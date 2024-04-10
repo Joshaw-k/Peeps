@@ -27,6 +27,7 @@ const Profile = ({ params }: { params: any }) => {
   const [relationshipIpfsHash, setRelationshipIpfsHash] = useState(null);
   const [userProfileData, setUserProfileData] = useState({
     wallet: "",
+    profilePicture: "",
     displayName: "",
     username: "",
     bio: "",
@@ -248,7 +249,7 @@ const Profile = ({ params }: { params: any }) => {
   };
 
   const followerUser = async () => {
-    if (wallet) {
+    if (isConnected) {
       //unpin from ipfs
       const unPinResOne = await unPin(userIpfsHash);
       if (unPinResOne) {
@@ -272,7 +273,7 @@ const Profile = ({ params }: { params: any }) => {
   };
 
   const unfollowerUser = async () => {
-    if (wallet) {
+    if (isConnected) {
       //unpin from ipfs
       const unPinResOne = await unPin(userIpfsHash);
       if (unPinResOne) {
@@ -324,7 +325,7 @@ const Profile = ({ params }: { params: any }) => {
     try {
       const res = await axios.get(
         `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
-          (userProfileData as any)?.wallet
+          userProfileData?.wallet
         }","op":"eq"}&status=pinned`,
         {
           headers: {
@@ -355,7 +356,7 @@ const Profile = ({ params }: { params: any }) => {
     try {
       const res = await axios.get(
         `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${
-          (userProfileData as any)?.wallet
+          userProfileData?.wallet
         }","op":"eq"}&status=pinned`,
         {
           headers: {
@@ -402,7 +403,7 @@ const Profile = ({ params }: { params: any }) => {
     try {
       const res = await axios.get(
         `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${
-          (userProfileData as any)?.username
+          userProfileData?.username
         }","op":"eq"}&status=pinned`,
         {
           headers: {
@@ -519,8 +520,8 @@ const Profile = ({ params }: { params: any }) => {
                             width={100}
                             height={100}
                             src={
-                              (userProfileData as any)?.profilePicture
-                                  ? (userProfileData as any)?.profilePicture
+                              userProfileData?.profilePicture
+                                  ? userProfileData?.profilePicture
                                   : defaultImage
                             }
                             alt=""

@@ -165,7 +165,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           },
         }
       );
-      toast.success("Event Image upload complete");
+      toast.success("Image upload complete");
       return {
         uploaded: true,
         image: `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${res.data.IpfsHash}`,
@@ -194,7 +194,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           );
           if (res2.data) {
             setUserData(res2.data);
-            console.log(res2.data);
+            // console.log(res2.data);
           }
         } catch (error) {
           console.log(error);
@@ -219,11 +219,12 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           },
         }
       );
-      toast.success("unpinning successful");
+      // toast.success("unpinning successful");
       return true;
     } catch (error) {
       console.log(error);
-      toast.success("unpinning failed");
+      // toast.success("unpinning failed");
+      toast.success("Unable to complete request. Kindly try again.");
       return false;
     }
   };
@@ -301,13 +302,13 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           }
         );
         if (res.data.IpfsHash) {
-          toast.success(`${action} successful`);
+          // toast.success(`${action} successful`);
           return true;
         }
       }
     } catch (error) {
       console.log(error);
-      toast.error(`${action} failed`);
+      // toast.error(`${action} failed`);
     }
   };
 
@@ -373,10 +374,11 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           }
         );
         if (res.data.IpfsHash) pinActionPost(post_uuid, action);
-        toast.success("Repinning successful");
+        // toast.success("Repinning successful");
       } catch (error) {
         console.log(error);
-        toast.error("Repinning failed");
+        // toast.error("Repinning failed");
+        toast.error("We couldn't complete your request.");
       }
     }
   };
@@ -414,7 +416,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   useEffect(() => {
     fetchUserData();
     checkProfileExist();
-  }, [address]);
+  }, [isConnected, address]);
 
   useEffect(() => {
     fetchUserData();

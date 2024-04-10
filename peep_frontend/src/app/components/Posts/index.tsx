@@ -8,6 +8,9 @@ import { FaRetweet } from "react-icons/fa6";
 import axios from "axios";
 import { usePeepsContext } from "../../context";
 import { useState } from "react";
+import {useAccount} from "wagmi";
+import classNames from "classnames";
+import Link from "next/link";
 
 interface IPostContainer {
   children: any;
@@ -32,12 +35,16 @@ const defaultImage =
 
 const AvatarPost = ({ src }: {src: string}) => {
   return (
-    <div className="avatar">
-      <div className="w-7 rounded-full">
-        <img
-          src={src || "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"}
-          alt={""}
-        />
+    <div className="avatar placeholder">
+      <div className="w-7 rounded-full bg-base-300">
+        {
+          src
+              ? <img
+                  src={src}
+                  alt={""}
+              />
+              : <span></span>
+        }
       </div>
     </div>
   );
@@ -46,20 +53,21 @@ const AvatarPost = ({ src }: {src: string}) => {
 export const PostUser = (props: any) => {
   return (
     <section className={"flex flex-row px-2 text-sm"}>
-      <div
-        className={"flex-1 flex flex-row items-center gap-x-4 leading-normal"}
+      <Link
+          href={`/profile/${props.post_username}`}
+          className={"flex-1 flex flex-row items-center gap-x-4 leading-normal"}
       >
           <AvatarPost
-              src={props?.post_media ? props?.post_media : defaultImage}
+              src={props?.post_media && props?.post_media}
           />
-        <span className="font-medium text-md relative dark:text-gray-400">
+        <span className="font-medium text-xs lg:text-md relative dark:text-gray-400">
           {props?.post_displayName ?? "Anonymous"}
         </span>
         <span className="w-1 h-1 bg-gray-300 rounded-full"></span>
-        <span className="relative dark:text-gray-400">
+        <span className="relative text-xs lg:text-base dark:text-gray-400">
           @{props?.post_username ?? "Anonymous"}
         </span>
-      </div>
+      </Link>
       <div className={"flex-grow-0 px-6 text-gray-500"}>
         {/* {new Date().toLocaleTimeString()} */}
       </div>
@@ -84,7 +92,7 @@ export const PostBody = ({ children, postMetaData }: IPostBody) => {
   const post_hash = postMetaData?.ipfs_pin_hash;
   return (
     <section
-      className={"px-3 py-4 text-base leading-7 text-pretty"}
+      className={"px-3 py-4 text-sm lg:text-base leading-7 text-pretty"}
       onClick={() => router.push("/comments/" + post_hash)}
     >
       {children}
@@ -100,6 +108,7 @@ export const PostActionsContainer = ({
   postMetaData,
   children,
 }: IPostActions) => {
+  const {isConnected} = useAccount();
   const rollups = useRollups(defaultDappAddress);
   const { wallet, unPin, PostActions, userData } = usePeepsContext();
   const [like, setLike] = useState(false);
@@ -157,7 +166,7 @@ export const PostActionsContainer = ({
   };
 
   const handleLikePost = async (action: boolean) => {
-    if (wallet) {
+    if (isConnected) {
       const actionData = action ? "like" : "unlike";
       if (actionData == "like") {
         await PostActions(postId, postData, postMetaData, actionData);
@@ -174,7 +183,7 @@ export const PostActionsContainer = ({
   };
 
   const handleRepeepPost = async (action: boolean) => {
-    if (wallet) {
+    if (isConnected) {
       const actionData = action ? "repeep" : "unrepeep";
       if (actionData == "repeep") {
         await PostActions(postId, postData, postMetaData, actionData);
@@ -191,14 +200,14 @@ export const PostActionsContainer = ({
   };
 
   return (
-    <section className={"flex flex-row gap-x-6 p-2"}>
+    <section className={"relative flex flex-row flex-nowrap lg:gap-x-6 lg:p-2 max-w-full"}>
       <div
         className={
-          "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
+          "btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row justify-start items-center lg:gap-x-3"
         }
         onClick={() => handleLikePost(!like)}
       >
-        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
+        <span className="inline-flex justify-center items-center lg:h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 mx-auto scale-75 lg:scale-100 dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
           <svg
             className="flex-shrink-0 w-5 h-5"
             xmlns="http://www.w3.org/2000/svg"
@@ -215,7 +224,7 @@ export const PostActionsContainer = ({
             <path d="M15 5.88 14 10h5.83a2 2 0 0 1 1.92 2.56l-2.33 8A2 2 0 0 1 17.5 22H4a2 2 0 0 1-2-2v-8a2 2 0 0 1 2-2h2.76a2 2 0 0 0 1.79-1.11L12 2h0a3.13 3.13 0 0 1 3 3.88Z" />
           </svg>
         </span>
-        <span className={"text-xs"}>
+        <span className={classNames("text-xs", {"font-bold": postData?.post_likes > 0})}>
           {postData?.post_likes > 0 ? postData?.post_likes : "Like"}
         </span>
       </div>
@@ -226,7 +235,7 @@ export const PostActionsContainer = ({
         }
       >
         <span
-          className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
+          className="flex-shrink-0 inline-flex justify-center items-center lg:h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
           onClick={showCommentModal}
         >
           <svg
@@ -257,14 +266,14 @@ export const PostActionsContainer = ({
 
       <div
         className={
-          "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
+          "btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row items-center lg:gap-x-3"
         }
         onClick={() => handleRepeepPost(!repeep)}
       >
-        <span className="flex-shrink-0 inline-flex justify-center items-center h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
+        <span className="flex-shrink-0 inline-flex justify-center items-center lg:h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 mx-auto scale-75 lg:scale-100 dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
           <FaRetweet width={24} height={24} className={"text-xl"} />
         </span>
-        <span className={"text-xs"}>
+        <span className={classNames("text-xs", {"font-bold": postData?.post_repeeps > 0})}>
           {postData?.post_repeeps > 0 ? postData?.post_repeeps : "Repeep"}
         </span>
       </div>
