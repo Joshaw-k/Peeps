@@ -103,7 +103,7 @@ const Page = ({ params }: { params: any }) => {
           />
         </PostContainer>
       )}
-      <div className={"prose text-4xl font-bold text-gray-400 px-2 py-6 mt-8"}>
+      <div className={"prose text-lg lg:text-4xl font-bold text-gray-400 px-2 lg:py-6 mt-8 lg:mt-8"}>
         Comments
       </div>
       {commentsData ? (

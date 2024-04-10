@@ -12,8 +12,10 @@ import { v4 as uuidv4 } from "uuid";
 import { ButtonLoader } from "./Button";
 import { LucideImagePlus, LucideUpload, LucideX } from "lucide-react";
 import Image from "next/image";
+import { useAccount } from "wagmi";
 
 const PostForm: React.FC<IInputProps> = (props) => {
+  const {isConnected} = useAccount();
   const { wallet, userData, refreshPost, setRefreshPost, pinFileToIPFS } =
     usePeepsContext();
   const postTextField = useRef(null);
@@ -87,7 +89,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
   const handlePost = async () => {
     setIsSubmit(true);
     // construct the json payload to send to addInput
-    if (wallet) {
+    if (isConnected) {
       try {
         if (formImage == "") {
           await sendPost();
@@ -142,7 +144,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
     <div className="bg-base-200 rounded-box focus-within:ring-2 focus-within:ring-primary">
       <textarea
         placeholder="Write something"
-        className="textarea textarea-lg border-0 w-full resize-none bg-transparent focus:outline-0"
+        className="textarea textarea-lg text-base border-0 w-full resize-none bg-transparent focus:outline-0"
         ref={postTextField}
         onChange={(e) => setPostText(e.target.value)}
         value={postText}
@@ -153,9 +155,9 @@ const PostForm: React.FC<IInputProps> = (props) => {
             <Image
               src={formImagePreview}
               alt={"formImagePreview"}
-              width={320}
-              height={320}
-              className={"shadow-xl"}
+              width={120}
+              height={120}
+              className={"shadow-2xl"}
             />
             <span
               className={
@@ -169,7 +171,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
         )}
         {formVideoPreview && (
           <div className={"relative inline-block mx-8"}>
-            <video width={320} height={320} className={"shadow-2xl"}>
+            <video width={120} height={120} className={"shadow-2xl"}>
               <source src={formVideoPreview} />
             </video>
             <span
