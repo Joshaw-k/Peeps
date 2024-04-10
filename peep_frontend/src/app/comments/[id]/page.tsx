@@ -17,7 +17,7 @@ import {
 import axios from "axios";
 import toast from "react-hot-toast";
 
-const page = ({ params }: { params: any }) => {
+const Page = ({ params }: { params: any }) => {
   const [post, setPost] = useState<any>();
   const [postMetadata, setPostMetadata] = useState<any>();
   const [comments, setComments] = useState<any>();
@@ -130,4 +130,4 @@ const page = ({ params }: { params: any }) => {
   );
 };
 
-export default page;
+export default Page;

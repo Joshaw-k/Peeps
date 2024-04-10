@@ -7,8 +7,9 @@ import { useConnectWallet } from "@web3-onboard/react";
 import { useNotices } from "./useNotices";
 import { useEffect, useState } from "react";
 import { usePeepsContext } from "../context";
+import {useAccount} from "wagmi";
 
-const Avatar = () => {
+export const Avatar = () => {
   return (
     <div className="avatar">
       <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
@@ -17,6 +18,18 @@ const Avatar = () => {
     </div>
   );
 };
+
+export const NoProfileCard = () => {
+  return (
+      <div className={"card card-compact bg-amber-400/40 my-4"}>
+        <div className="card-body">
+          <div className="card-title">Action Required</div>
+          You have not created your profile
+          <ProfileForm/>
+        </div>
+      </div>
+  )
+}
 
 export const UserLeft = () => {
   // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
@@ -29,10 +42,11 @@ export const UserLeft = () => {
     setHasProfile,
     hasProfile,
   } = usePeepsContext();
+  const {address, isConnected} = useAccount();
 
   useEffect(() => {
     checkProfileExist();
-  }, [wallet]);
+  }, [isConnected]);
 
   useEffect(() => {
     checkProfileExist();
@@ -40,20 +54,20 @@ export const UserLeft = () => {
 
   return (
     <>
-      <div className="absolute left-24 bottom-10 card max-w-[280px] bg-base-200/80 opacity-60">
+      <div className="hidden lg:block absolute left-24 bottom-10 card w-full lg:max-w-[280px] bg-base-200/80 opacity-60">
         <div className="card-body">
           <div className="font-bold">Ad</div>
           Play your favourite games on a web3 decentralized platform.
         </div>
       </div>
-      <section className={`sticky top-28 w-[60%] mx-auto`}>
+      <section className={`hidden lg:block w-full sticky lg:top-28 lg:w-[60%] mx-auto px-2`}>
         <div
           className={
             "card card-bordered bg-base-200 p-4 flex flex-row items-center gap-x-4"
           }
         >
           <Avatar />
-          {wallet && hasProfile ? (
+          {isConnected && hasProfile ? (
             <div className="grow">
               <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
                 {userData?.username}
@@ -73,7 +87,7 @@ export const UserLeft = () => {
             </div>
           )}
         </div>
-        {wallet && hasProfile ? (
+        {isConnected && hasProfile ? (
           <div className={"card card-compact bg-base-200 my-1"}>
             <div className="card-body">
               <div className="font-bold text-xs">About me</div>
@@ -81,18 +95,12 @@ export const UserLeft = () => {
             </div>
           </div>
         ) : null}
-        {wallet && !hasProfile && (
-          <div className={"card card-compact bg-amber-400/40 my-4"}>
-            <div className="card-body">
-              <div className="card-title">Action Required</div>
-              You have not created your profile
-              <ProfileForm />
-            </div>
-          </div>
+        {isConnected && !hasProfile && (
+          <NoProfileCard />
         )}
         <div>
-          <ul className="menu menu-md py-4 gap-y-2 [&_a]:py-4">
-            {wallet && hasProfile && (
+          <ul className="lg:menu menu-md lg:py-4 gap-y-2 lg:[&_a]:py-4">
+            {isConnected && hasProfile && (
               <li>
                 <Link
                   href={`/profile/${userData?.username}`}
@@ -127,7 +135,6 @@ export const UserLeft = () => {
                 </Link>
               </li>
             )}
-
             {/* <li>
             <Link href={"/wallet"} className="space-x-2">
               <FaWallet />

@@ -20,12 +20,23 @@ import classNames from "classnames";
 import axios from "axios";
 import toast from "react-hot-toast";
 import Link from "next/link";
+import {useAccount} from "wagmi";
+import {Avatar, NoProfileCard} from "../../components/UserLeft";
 
 const Profile = ({ params }: { params: any }) => {
-  const { wallet, userData, userIpfsHash } = usePeepsContext();
+  const {isConnected} = useAccount();
+  const { wallet, userData, userIpfsHash, hasProfile } = usePeepsContext();
   const [userProfileIpfsHash, setUserProfileIpfsHash] = useState(null);
   const [relationshipIpfsHash, setRelationshipIpfsHash] = useState(null);
-  const [userProfileData, setUserProfileData] = useState(null);
+  const [userProfileData, setUserProfileData] = useState({
+    wallet: "",
+    displayName: "",
+    username: "",
+    bio: "",
+    createdAt: "",
+    followers: "",
+    following: ""
+  });
   const [isFollow, setIsFollow] = useState(false);
   const [posts, setPosts] = useState<any>();
   const [postsData, setPostsData] = useState<any>();
@@ -466,187 +477,212 @@ const Profile = ({ params }: { params: any }) => {
       {/*<div className={"prose text-4xl font-bold text-gray-400 px-2 py-6 mt-8"}>
         Your Profile
       </div>*/}
-
-      <div className="">
-        <div className="hero min-h-60 bg-base-200">
-          <div className="hero-content text-center"></div>
-        </div>
-        <div className={"relative w-full px-4"}>
-          <div className={"absolute -top-12 z-10"}>
-            <div className="avatar">
-              <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
-                <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg" />
+      {
+        isConnected && !hasProfile
+            ? <>
+              <div
+                  className={
+                    "card card-bordered bg-base-200 p-4 flex flex-row items-center gap-x-4"
+                  }
+              >
+                <Avatar/>
+                <div className="grow">
+                  <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
+                    {"Anonymous"}
+                  </h4>
+                  <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
+                    ...
+                  </p>
+                </div>
               </div>
-            </div>
-          </div>
-          <div className={"absolute top-2 right-2 z-[1]"}>
-            {params.id != userData?.username ? (
-              isFollow ? (
-                <button
-                  className={"btn btn-primary rounded-box"}
-                  onClick={unfollowerUser}
-                >
-                  Unfollow
-                </button>
-              ) : (
-                <button
-                  className={"btn btn-primary rounded-box"}
-                  onClick={followerUser}
-                >
-                  Follow
-                </button>
-              )
-            ) : (
-              <button className={"btn btn-primary rounded-box"}>
-                Edit Profile
-              </button>
-            )}
-          </div>
-          <div className={"relative pt-20 pb-16 space-y-4 bg-base-100"}>
-            <div className={""}>
-              <div className={"font-bold text-2xl"}>
-                {userProfileData?.displayName}
-              </div>
-              <div>@{userProfileData?.username}</div>
-            </div>
-            <div className={""}>{userProfileData?.bio}</div>
-            <div>{new Date(userProfileData?.createdAt).toDateString()}</div>
-            <div>
-              <span>Followers: {userProfileData?.followers}</span> |
-              <span>Following: {userProfileData?.following}</span>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* Profile Tabs - Posts, Followers, Likes*/}
-      <div className={""}>
-        <Tab.Group>
-          <Tab.List className="flex space-x-1 rounded-xl p-1">
-            <Tab
-              className={({ selected }) =>
-                classNames(
-                  "rounded-lg px-8 py-2.5 font-medium leading-5",
-                  "ring-white/60 focus:outline-none",
-                  selected
-                    ? "bg-primary text-primary-content shadow"
-                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
-                )
-              }
-            >
-              Posts
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                classNames(
-                  "rounded-lg px-8 py-2.5 font-medium leading-5",
-                  "ring-white/60 focus:outline-none",
-                  selected
-                    ? "bg-primary text-primary-content shadow"
-                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
-                )
-              }
-            >
-              Likes
-            </Tab>
-            <Tab
-              className={({ selected }) =>
-                classNames(
-                  "rounded-lg px-8 py-2.5 font-medium leading-5",
-                  "ring-white/60 focus:outline-none",
-                  selected
-                    ? "bg-primary text-primary-content shadow"
-                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
-                )
-              }
-            >
-              Followers
-            </Tab>
-          </Tab.List>
-          <Tab.Panels>
-            <Tab.Panel
-              className={classNames(
-                "rounded-xl p-6",
-                "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
-              )}
-            >
-              {postsData ? (
-                postsData.map((eachPost: any, index: number) => (
-                  <PostContainer key={index}>
-                    {console.log(eachPost)}
-                    <PostUser {...eachPost} />
-                    <PostBody postMetaData={posts[index]}>
-                      {eachPost?.post_content}
-                    </PostBody>
-                    <PostActionsContainer
-                      postId={index}
-                      message={eachPost?.post_content}
-                      upload={eachPost?.post_media}
-                      postData={eachPost}
-                      postMetaData={posts}
-                    />
-                    {/*{<PostContainer></PostContainer>}*/}
-                  </PostContainer>
-                ))
-              ) : (
-                <div>No posts</div>
-              )}
-            </Tab.Panel>
-            <Tab.Panel
-              className={classNames(
-                "rounded-xl p-6",
-                "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
-              )}
-            >
-              {likedpostsData ? (
-                likedpostsData.map((eachPost: any, index: number) => (
-                  <PostContainer key={index}>
-                    <PostUser {...eachPost} />
-                    <PostBody postMetaData={likedposts?.[index]}>
-                      {eachPost?.post_content}
-                    </PostBody>
-                    <PostActionsContainer
-                      postId={index}
-                      message={eachPost?.post_content}
-                      upload={eachPost?.post_media}
-                      postData={eachPost}
-                      postMetaData={posts}
-                    />
-                    {/*{<PostContainer></PostContainer>}*/}
-                  </PostContainer>
-                ))
-              ) : (
-                <div>No posts</div>
-              )}
-            </Tab.Panel>
-            <Tab.Panel
-              className={classNames(
-                "rounded-xl p-6",
-                "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
-              )}
-            >
-              {followersListData ? (
-                followersListData.map((eachFollower: any, index: number) => (
-                    <Link href={`/profile/${eachFollower?.username}`} className={"card card-compact p-4 flex flex-row gap-x-3 bg-base-200"}>
-                      <div className="avatar">
-                        <div className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-1 ring-offset-1">
-                          {
-                            eachFollower?.displayPicture
-                              ? <img src="" alt={""}/>
-                              : <span className="text-3xl"></span>
-                          }
-                        </div>
+              <NoProfileCard/>
+            </>
+            : <section>
+              <div className="">
+                <div className="hero min-h-60 bg-base-200">
+                  <div className="hero-content text-center"></div>
+                </div>
+                <div className={"relative w-full px-4"}>
+                  <div className={"absolute -top-12 z-10"}>
+                    <div className="avatar">
+                      <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                        <img src="https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg"/>
                       </div>
-                      {eachFollower?.username}
-                    </Link>
-                ))
-              ) : (
-                  <div>No Posts</div>
-              )}
-            </Tab.Panel>
-          </Tab.Panels>
-        </Tab.Group>
-      </div>
+                    </div>
+                  </div>
+                  <div className={"absolute top-2 right-2 z-[1]"}>
+                    {params.id != userData?.username ? (
+                        isFollow ? (
+                            <button
+                                className={"btn btn-primary rounded-box"}
+                                onClick={unfollowerUser}
+                            >
+                              Unfollow
+                            </button>
+                        ) : (
+                            <button
+                                className={"btn btn-primary rounded-box"}
+                                onClick={followerUser}
+                            >
+                              Follow
+                            </button>
+                        )
+                    ) : (
+                        <button className={"btn btn-primary rounded-box"}>
+                          Edit Profile
+                        </button>
+                    )}
+                  </div>
+                  <div className={"relative pt-20 pb-16 space-y-4 bg-base-100"}>
+                    <div className={""}>
+                      <div className={"font-bold text-2xl"}>
+                        {userProfileData?.displayName}
+                      </div>
+                      <div>@{userProfileData?.username}</div>
+                    </div>
+                    <div className={""}>{userProfileData?.bio}</div>
+                    <div>{new Date(userProfileData?.createdAt).toDateString()}</div>
+                    <div>
+                      <span>Followers: {userProfileData?.followers}</span> |
+                      <span>Following: {userProfileData?.following}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Profile Tabs - Posts, Followers, Likes*/}
+              <div className={""}>
+                <Tab.Group>
+                  <Tab.List className="flex space-x-1 rounded-xl p-1">
+                    <Tab
+                        className={({selected}) =>
+                            classNames(
+                                "rounded-lg px-8 py-2.5 font-medium leading-5",
+                                "ring-white/60 focus:outline-none",
+                                selected
+                                    ? "bg-primary text-primary-content shadow"
+                                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                            )
+                        }
+                    >
+                      Posts
+                    </Tab>
+                    <Tab
+                        className={({selected}) =>
+                            classNames(
+                                "rounded-lg px-8 py-2.5 font-medium leading-5",
+                                "ring-white/60 focus:outline-none",
+                                selected
+                                    ? "bg-primary text-primary-content shadow"
+                                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                            )
+                        }
+                    >
+                      Likes
+                    </Tab>
+                    <Tab
+                        className={({selected}) =>
+                            classNames(
+                                "rounded-lg px-8 py-2.5 font-medium leading-5",
+                                "ring-white/60 focus:outline-none",
+                                selected
+                                    ? "bg-primary text-primary-content shadow"
+                                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                            )
+                        }
+                    >
+                      Followers
+                    </Tab>
+                  </Tab.List>
+                  <Tab.Panels>
+                    <Tab.Panel
+                        className={classNames(
+                            "rounded-xl p-6",
+                            "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                        )}
+                    >
+                      {postsData ? (
+                          postsData.map((eachPost: any, index: number) => (
+                              <PostContainer key={index}>
+                                {console.log(eachPost)}
+                                <PostUser {...eachPost} />
+                                <PostBody postMetaData={posts[index]}>
+                                  {eachPost?.post_content}
+                                </PostBody>
+                                <PostActionsContainer
+                                    postId={index}
+                                    message={eachPost?.post_content}
+                                    upload={eachPost?.post_media}
+                                    postData={eachPost}
+                                    postMetaData={posts}
+                                />
+                                {/*{<PostContainer></PostContainer>}*/}
+                              </PostContainer>
+                          ))
+                      ) : (
+                          <div>No posts</div>
+                      )}
+                    </Tab.Panel>
+                    <Tab.Panel
+                        className={classNames(
+                            "rounded-xl p-6",
+                            "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                        )}
+                    >
+                      {likedpostsData ? (
+                          likedpostsData.map((eachPost: any, index: number) => (
+                              <PostContainer key={index}>
+                                <PostUser {...eachPost} />
+                                <PostBody postMetaData={likedposts?.[index]}>
+                                  {eachPost?.post_content}
+                                </PostBody>
+                                <PostActionsContainer
+                                    postId={index}
+                                    message={eachPost?.post_content}
+                                    upload={eachPost?.post_media}
+                                    postData={eachPost}
+                                    postMetaData={posts}
+                                />
+                                {/*{<PostContainer></PostContainer>}*/}
+                              </PostContainer>
+                          ))
+                      ) : (
+                          <div>No posts</div>
+                      )}
+                    </Tab.Panel>
+                    <Tab.Panel
+                        className={classNames(
+                            "rounded-xl p-6",
+                            "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                        )}
+                    >
+                      {followersListData ? (
+                          followersListData.map((eachFollower: any, index: number) => (
+                              <Link href={`/profile/${eachFollower?.username}`}
+                                    className={"card card-compact p-4 flex flex-row gap-x-3 bg-base-200"}>
+                                <div className="avatar">
+                                  <div
+                                      className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-1 ring-offset-1">
+                                    {
+                                      eachFollower?.displayPicture
+                                          ? <img src="" alt={""}/>
+                                          : <span className="text-3xl"></span>
+                                    }
+                                  </div>
+                                </div>
+                                {eachFollower?.username}
+                              </Link>
+                          ))
+                      ) : (
+                          <div>No Posts</div>
+                      )}
+                    </Tab.Panel>
+                  </Tab.Panels>
+                </Tab.Group>
+              </div>
+            </section>
+      }
+
       {/* {console.log(currentAddress)}
       {console.log(JSON.parse(notices.reverse()[0].payload).posts)}
       {console.log(

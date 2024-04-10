@@ -10,8 +10,10 @@ import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
 import axios from "axios";
+import { useAccount } from "wagmi";
 
 export const ProfileForm = () => {
+  const {isConnected} = useAccount();
   const { baseDappAddress, wallet, checkProfileExist, setHasProfile } =
     usePeepsContext();
   const rollups = useRollups(baseDappAddress);
@@ -95,7 +97,7 @@ export const ProfileForm = () => {
         <button
           type="button"
           className="btn btn-block inline-flex h-[35px] items-center justify-center px-[15px] font-medium leading-none outline-none outline-0"
-          disabled={!wallet}
+          disabled={!isConnected}
         >
           Create Profile
         </button>
@@ -191,7 +193,7 @@ export const ProfileForm = () => {
                   aria-label="Close"
                   ref={profileFormCloseButton}
               >
-                <Cross2Icon size={64} />
+                <LucideX size={64} strokeWidth={4} />
               </button>
             </AlertDialog.Cancel>
             {/* <AlertDialog.Action asChild>
