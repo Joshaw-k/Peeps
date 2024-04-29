@@ -36,8 +36,10 @@ import { ConnectedChain } from "@web3-onboard/core";
 
 import configFile from "./config.json";
 import { JsonRpcSigner } from "@ethersproject/providers";
+import {custom, useAccount, useConnectorClient} from "wagmi";
 
 const config: any = configFile;
+const rkConfig = rainbowKitConfig;
 
 export interface RollupsContracts {
   dappContract: CartesiDApp;
@@ -51,24 +53,138 @@ export interface RollupsContracts {
   erc1155BatchPortalContract: ERC1155BatchPortal;
 }
 
+import { providers } from 'ethers'
+import { useMemo } from 'react'
+import {Account, Chain, Client, createWalletClient, Transport} from 'viem'
+import { Config, useClient } from 'wagmi'
+import {mainnet} from "wagmi/chains";
+import { getClient } from "@wagmi/core";
+import {rainbowKitConfig} from "../../wagmi";
+import {usePeepsContext} from "./context";
+
+export function clientToProvider(client: Client<Transport, Chain>) {
+  const { chain, transport } = client
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  if (transport.type === 'fallback')
+    return new providers.FallbackProvider(
+        (transport.transports as ReturnType<Transport>[]).map(
+            ({ value }) => new providers.JsonRpcProvider(value?.url, network),
+        ),
+    )
+  return new providers.JsonRpcProvider(transport.url, network)
+}
+
+/** Hook to convert a viem Client to an ethers.js Provider. */
+export function useEthersProvider(
+    {
+      chainId,
+    }: { chainId?: number | undefined } = {}) {
+  const client = useClient<Config>({chainId})
+  return useMemo(() => clientToProvider(client), [client])
+}
+
+export function clientToSigner(client: Client<Transport, Chain, Account>) {
+  const { account, chain, transport } = client
+  const network = {
+    chainId: chain.id,
+    name: chain.name,
+    ensAddress: chain.contracts?.ensRegistry?.address,
+  }
+  const provider = new providers.Web3Provider(transport, network)
+  const signer = provider.getSigner(account.address)
+  return signer
+}
+
+/** Action to convert a Viem Client to an ethers.js Signer. */
+export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
+  const { data: client } = useConnectorClient<Config>({ chainId })
+  return useMemo(() => (client ? clientToSigner(client) : undefined), [client])
+}
+
+
 export const useRollups = (dAddress: string): RollupsContracts | undefined => {
   const [contracts, setContracts] = useState<RollupsContracts | undefined>();
   const [{ connectedChain }] = useSetChain();
   const [connectedWallet] = useWallets();
   const [dappAddress] = useState<string>(dAddress);
+  // const chainId = useChainId();
+  const {address, connector, chain, chainId, isConnected} = useAccount();
+  // console.log(chainId);
+  // const { data: client } = useConnectorClient<Config>({ chainId });
+  // const provider = useEthersProvider({chainId})
+  // const signer = useEthersSigner({chainId})
+  const { baseDappAddress, refreshPost, updateRollupContracts } = usePeepsContext();
 
   useEffect(() => {
     const connect = async (
-      chain: ConnectedChain
+      // chain: ConnectedChain
+      chain: Chain
     ): Promise<RollupsContracts> => {
-      const provider = new ethers.providers.Web3Provider(
-        connectedWallet.provider
-      );
-      const signer = provider.getSigner();
+      // export function walletClientToProvider(walletClient: WalletClient) {
+      //   const { chain, transport } = walletClient
+      //   const network = {
+      //     chainId: chain.id,
+      //     name: chain.name,
+      //     ensAddress: chain.contracts?.ensRegistry?.address,
+      //   }
+      //   const provider = new providers.Web3Provider(transport as any, network)
+      //   return provider
+      // }
+      //
+      // /** Hook to convert a viem Wallet Client to an ethers.js Web3Provider. */
+      // export function useEthersWeb3Provider({ chainId }: { chainId?: number } = {}) {
+      //   const { data: walletClient } = useWalletClient({ chainId })
+      //   return React.useMemo(
+      //       () => (walletClient ? walletClientToProvider(walletClient) : undefined),
+      //       [walletClient],
+      //   )
+      // }
+
+      // const provider = new ethers.providers.Web3Provider(
+      //   connectedWallet.provider
+      //   //   connector
+      // );
+      // const signer = provider.getSigner();
+      // const provider = useEthersProvider()
+      // const signer = useEthersSigner()
+
+      // const account = '0x0000000000000000000000000000000000000000'
+
+//       const client = createWalletClient({
+//         account: address,
+//         chain: mainnet,
+//         transport: custom(window.ethereum)
+//       })
+//
+// // ethers.js
+//       const provider = new providers.Web3Provider(window.ethereum, client?.chain)
+//       const provider = new providers.Web3Provider(window.ethereum)
+      // const signer = provider.getSigner(address)
+      const client = getClient(rkConfig, {
+        chainId: 31337,
+      })
+      console.log("CLIENttt...", client);
+      // const { transport } = client
+      // console.log("Chain id...", chain.id);
+      const network = {
+        chainId: chain.id,
+        name: chain.name,
+        // ensAddress: chain.contracts?.ensRegistry?.address,
+      }
+      const provider = new providers.Web3Provider(client.transport)
+      // console.log("ProvideR", provider);
+      const signer = provider.getSigner(address)
+      // console.log("SIGNerrrrr.", signer);
+      // return signer
+      // const signer = clientToSigner(client);
 
       let dappRelayAddress = "";
-      if (config[chain.id]?.DAppRelayAddress) {
-        dappRelayAddress = config[chain.id].DAppRelayAddress;
+      if (config[`0x${chain.id}`]?.DAppRelayAddress) {
+        dappRelayAddress = config[`0x${chain.id}`].DAppRelayAddress;
       } else {
         console.error(
           `No dapp relay address address defined for chain ${chain.id}`
@@ -76,8 +192,8 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
       }
 
       let inputBoxAddress = "";
-      if (config[chain.id]?.InputBoxAddress) {
-        inputBoxAddress = config[chain.id].InputBoxAddress;
+      if (config[`0x${chain.id}`]?.InputBoxAddress) {
+        inputBoxAddress = config[`0x${chain.id}`].InputBoxAddress;
       } else {
         console.error(
           `No input box address address defined for chain ${chain.id}`
@@ -85,8 +201,8 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
       }
 
       let etherPortalAddress = "";
-      if (config[chain.id]?.EtherPortalAddress) {
-        etherPortalAddress = config[chain.id].EtherPortalAddress;
+      if (config[`0x${chain.id}`]?.EtherPortalAddress) {
+        etherPortalAddress = config[`0x${chain.id}`].EtherPortalAddress;
       } else {
         console.error(
           `No ether portal address address defined for chain ${chain.id}`
@@ -94,44 +210,44 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
       }
 
       let erc20PortalAddress = "";
-      if (config[chain.id]?.Erc20PortalAddress) {
-        erc20PortalAddress = config[chain.id].Erc20PortalAddress;
+      if (config[`0x${chain.id}`]?.Erc20PortalAddress) {
+        erc20PortalAddress = config[`0x${chain.id}`].Erc20PortalAddress;
       } else {
         console.error(
           `No erc20 portal address address defined for chain ${chain.id}`
         );
-        alert(`No erc20 portal address defined for chain ${chain.id}`);
+        // alert(`No erc20 portal address defined for chain ${chain.id}`);
       }
 
       let erc721PortalAddress = "";
-      if (config[chain.id]?.Erc721PortalAddress) {
-        erc721PortalAddress = config[chain.id].Erc721PortalAddress;
+      if (config[`0x${chain.id}`]?.Erc721PortalAddress) {
+        erc721PortalAddress = config[`0x${chain.id}`].Erc721PortalAddress;
       } else {
         console.error(
           `No erc721 portal address address defined for chain ${chain.id}`
         );
-        alert(`No erc721 portal address defined for chain ${chain.id}`);
+        // alert(`No erc721 portal address defined for chain ${chain.id}`);
       }
 
       let erc1155SinglePortalAddress = "";
-      if (config[chain.id]?.Erc1155SinglePortalAddress) {
+      if (config[`0x${chain.id}`]?.Erc1155SinglePortalAddress) {
         erc1155SinglePortalAddress =
-          config[chain.id].Erc1155SinglePortalAddress;
+          config[`0x${chain.id}`].Erc1155SinglePortalAddress;
       } else {
         console.error(
           `No erc1155 single portal address address defined for chain ${chain.id}`
         );
-        alert(`No erc1155 single portal address defined for chain ${chain.id}`);
+        // alert(`No erc1155 single portal address defined for chain ${chain.id}`);
       }
 
       let erc1155BatchPortalAddress = "";
-      if (config[chain.id]?.Erc1155BatchPortalAddress) {
-        erc1155BatchPortalAddress = config[chain.id].Erc1155BatchPortalAddress;
+      if (config[`0x${chain.id}`]?.Erc1155BatchPortalAddress) {
+        erc1155BatchPortalAddress = config[`0x${chain.id}`].Erc1155BatchPortalAddress;
       } else {
         console.error(
           `No erc1155 batch portal address address defined for chain ${chain.id}`
         );
-        alert(`No erc1155 batch portal address defined for chain ${chain.id}`);
+        // alert(`No erc1155 batch portal address defined for chain ${chain.id}`);
       }
       // dapp contract
       const dappContract = CartesiDApp__factory.connect(dappAddress, signer);
@@ -171,7 +287,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
         signer
       );
 
-      return {
+      const _contracts = {
         dappContract,
         signer,
         relayContract,
@@ -182,12 +298,28 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
         erc1155SinglePortalContract,
         erc1155BatchPortalContract,
       };
+      updateRollupContracts(_contracts);
+      return _contracts;
     };
-    if (connectedWallet?.provider && connectedChain) {
-      connect(connectedChain).then((contracts) => {
+    if (connector && chainId) {
+    connect(chain).then((contracts) => {
+        // console.log(contracts);
         setContracts(contracts);
+        // console.log("Inside connect fn");
       });
     }
-  }, [connectedWallet, connectedChain, dappAddress]);
+    // if (connectedWallet?.provider && connectedChain) {
+    //   connect(connectedChain).then((contracts) => {
+    //     setContracts(contracts);
+    //   });
+    // }
+  // }, [connectedWallet, connectedChain, dappAddress]);
+  }, [dappAddress, isConnected, chainId, address]);
+  // console.log("Before return contracts", contracts);
+
+  useEffect(() => {
+    // console.log("Contract refresh")
+    updateRollupContracts(contracts)
+  }, [contracts]);
   return contracts;
 };

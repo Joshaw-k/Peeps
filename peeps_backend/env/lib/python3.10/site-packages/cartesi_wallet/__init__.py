@@ -1,1 +1,0 @@
-import cartesi_wallet.wallet
