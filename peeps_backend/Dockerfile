@@ -13,7 +13,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
 set -e
 apt-get update
-apt-get install -y --no-install-recommends build-essential=12.9ubuntu3 busybox-static=1:1.30.1-7ubuntu3 ca-certificates=20230311ubuntu0.22.04.1 curl=7.81.0-1ubuntu1.15
+apt-get install -y --no-install-recommends build-essential=12.9ubuntu3 busybox-static=1:1.30.1-7ubuntu3 ca-certificates=20230311ubuntu0.22.04.1
 rm -rf /var/lib/apt/lists/*
 EOF
 
