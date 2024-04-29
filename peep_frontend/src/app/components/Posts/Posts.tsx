@@ -22,6 +22,8 @@ import {
   PostUser,
 } from "./index";
 
+import { useDebounce } from "@uidotdev/usehooks";
+
 // type Notice = {
 //   id: string;
 //   index: number;
@@ -133,7 +135,47 @@ export const Post = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isPageError, setIsPageError] = useState<boolean>(false);
   const [pageLoadCount, setPageLoadCount] = useState<number>(0);
-  const { refreshPost } = usePeepsContext();
+  const { baseDappAddress, refreshPost, rollupContracts } = usePeepsContext();
+
+  const rollups = useRollups(baseDappAddress);
+  const debouncedRollups = useDebounce(rollups, 1000);
+  const [hexInput, setHexInput] = useState<boolean>(false);
+
+  useEffect(() => {
+    console.log("debounced rollups not here...", rollupContracts);
+    if (rollupContracts && !isPageLoading) {
+      handlePostToDapp()
+    }
+  }, [rollupContracts]);
+
+  const addInput = async (str: string) => {
+    console.log("rollups.....", rollups);
+    console.log("rollupContracts", rollupContracts);
+    console.log("Debounced rollup contracts", debouncedRollups);
+    if (rollupContracts) {
+      try {
+        let payload = ethers.utils.toUtf8Bytes(str);
+        console.log("Payload:::", payload);
+        if (hexInput) {
+          payload = ethers.utils.arrayify(str);
+        }
+        await rollupContracts.inputContract.addInput(baseDappAddress, payload);
+        console.log("Inside the add input function");
+      } catch (e) {
+        console.log(`${e}`);
+      }
+    }
+  };
+
+  const handlePostToDapp = async () => {
+    // construct the json payload to send to addInput
+    const jsonPayload = {
+      method: "recommendPost",
+      data: postsData,
+    };
+    await addInput(JSON.stringify(jsonPayload));
+    console.log("handle Post to Dapp", jsonPayload);
+  };
 
   const fetchPosts = async () => {
     setIsPageLoading(true);
@@ -161,6 +203,7 @@ export const Post = () => {
           setIsPageLoading(false);
           setIsPageError(false);
           pageLoadCount === 0 && setPageLoadCount((value) => value + 1);
+          // if (data.length > 0) await handlePostToDapp();
         } else {
           setIsPageLoading(false);
           setIsPageError(false);
@@ -208,6 +251,7 @@ export const Post = () => {
 
   return (
     <>
+      <button onClick={handlePostToDapp}>Trigger wallet</button>
       {/* <button onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}>
         Reload
       </button> */}

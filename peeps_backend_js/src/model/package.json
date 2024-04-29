@@ -1,0 +1,23 @@
+{
+  "name": "my-dapp",
+  "version": "0.1.0",
+  "description": "JS DApp",
+  "dependencies": {
+    "axios": "^1.6.8",
+    "dotenv": "^16.4.5",
+    "ethers": "^6.7.1",
+    "viem": "^2.9.26",
+    "wink-naive-bayes-text-classifier": "^2.2.1"
+  },
+  "devDependencies": {
+    "esbuild": "^0.19.2"
+  },
+  "scripts": {
+    "train": "esbuild train.js --bundle --outfile=dist/index.js --platform=node --target=node20",
+    "start": "ROLLUP_HTTP_SERVER_URL=\\\"http://127.0.0.1:5004\\\" node src/index.js"
+  },
+  "keywords": [
+    "cartesi"
+  ],
+  "license": "MIT"
+}

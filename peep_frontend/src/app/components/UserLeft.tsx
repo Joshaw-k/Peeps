@@ -52,6 +52,7 @@ export const UserLeft = () => {
     profileChanged,
   } = usePeepsContext();
   const {address, isConnected} = useAccount();
+  console.log(address, isConnected, hasProfile);
 
   useEffect(() => {
     checkProfileExist();

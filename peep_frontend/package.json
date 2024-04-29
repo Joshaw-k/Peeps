@@ -19,6 +19,7 @@
     "@types/jest": "^27.5.0",
     "@types/react": "^18.0.8",
     "@types/react-dom": "^18.0.3",
+    "@uidotdev/usehooks": "^2.4.1",
     "@web3-onboard/core": "^2.2.6",
     "@web3-onboard/injected-wallets": "^2.0.5",
     "@web3-onboard/react": "^2.1.5",
@@ -54,6 +55,7 @@
     "web-vitals": "^2.1.0",
     "web3": "^1.7.3",
     "webpack": "^5.76.0",
+    "wink-naive-bayes-text-classifier": "^2.2.1",
     "xhr2-cookies": "^1.1.0",
     "yarn": "^1.22.18"
   },

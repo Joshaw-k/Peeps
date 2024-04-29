@@ -45,6 +45,8 @@ interface IPeepsContext {
   pinFileToIPFS: any;
   profileChanged: boolean;
   setProfileChanged: any;
+  rollupContracts: any;
+  updateRollupContracts: any;
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -79,6 +81,8 @@ const PeepsContext = createContext<IPeepsContext>({
   pinFileToIPFS: null,
   profileChanged: false,
   setProfileChanged: null,
+  rollupContracts: null,
+  updateRollupContracts: null,
 });
 
 export interface PeepsProviderProps {
@@ -106,6 +110,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [userIpfsHash, setUserIpfsHash] = useState(null);
   const [refreshPost, setRefreshPost] = useState(false);
   const [profileChanged, setProfileChanged] = useState(false);
+  const [rollupContracts, setRollupContracts] = useState({});
 
   const { data, notices, loading, error } = useNotices();
   // const [currentUser, setCurrentUser] = useState();
@@ -125,6 +130,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const updateCurrentUser = (_user: ICurrentUser) => {
     setCurrentUser(_user);
   };
+
+  const updateRollupContracts = (_rollupsContracts: any) => {
+    setRollupContracts(_rollupsContracts);
+  }
 
   const checkProfileExist = async () => {
     // if (wallet) {
@@ -455,6 +464,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         pinFileToIPFS,
         profileChanged,
         setProfileChanged,
+        rollupContracts,
+        updateRollupContracts
       }}
     >
       {children}

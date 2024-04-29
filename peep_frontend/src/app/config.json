@@ -1,5 +1,5 @@
 {
-    "0x7a69":{
+    "0x31337":{
         "token": "DummyETH",
         "label": "localhost",
         "rpcUrl": "http://localhost:8545",

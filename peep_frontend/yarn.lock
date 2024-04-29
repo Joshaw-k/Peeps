@@ -4871,6 +4871,11 @@
     "@typescript-eslint/types" "5.59.8"
     eslint-visitor-keys "^3.3.0"
 
+"@uidotdev/usehooks@^2.4.1":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@uidotdev/usehooks/-/usehooks-2.4.1.tgz#4b733eaeae09a7be143c6c9ca158b56cc1ea75bf"
+  integrity sha512-1I+RwWyS+kdv3Mv0Vmc+p0dPYH0DTRAo04HLyXReYBL9AeseDWUJyi4THuksBJcu9F0Pih69Ak150VDnqbVnXg==
+
 "@urql/core@^2.6.1":
   version "2.6.1"
   resolved "https://registry.npmjs.org/@urql/core/-/core-2.6.1.tgz"
@@ -17171,6 +17176,30 @@ which@^2.0.1:
   integrity sha512-BLI3Tl1TW3Pvl70l3yq3Y64i+awpwXqsGBYWkkqMtnbXgrMD+yj7rhW0kuEDxzJaYXGjEW5ogapKNMEKNMjibA==
   dependencies:
     isexe "^2.0.0"
+
+wink-eng-lite-web-model@^1.4.3:
+  version "1.7.0"
+  resolved "https://registry.yarnpkg.com/wink-eng-lite-web-model/-/wink-eng-lite-web-model-1.7.0.tgz#5b317bf7ae780add5ab572d0d296e9c7e7f7bf1f"
+  integrity sha512-i6OsM4H90lIWoOPu/Qy8Elw6a0bt3e2WD23U66ldpLND961i4g29UqTwLadjM4J9wxbsBRqtN4qAtAOj2itnfA==
+
+wink-helpers@^2.0.0:
+  version "2.0.0"
+  resolved "https://registry.yarnpkg.com/wink-helpers/-/wink-helpers-2.0.0.tgz#0aec1a2bddd0adcf9e6deb3bf7fa70c7e92dbe5c"
+  integrity sha512-I/ZzXrHcNRXuoeFJmp2vMVqDI6UCK02Tds1WP4kSGAmx520gjL1BObVzF7d2ps24tyHIly9ngdB2jwhlFUjPvg==
+
+wink-naive-bayes-text-classifier@^2.2.1:
+  version "2.2.1"
+  resolved "https://registry.yarnpkg.com/wink-naive-bayes-text-classifier/-/wink-naive-bayes-text-classifier-2.2.1.tgz#633ee06f73066f8794c22f3ce56fed74ea9fe09c"
+  integrity sha512-HaysOmwofNyE40RjAG7UiURKQ0r4cPKyywlMiI4H3i/R2aL4tzGQAY5UzLxp9gy/+Doy+064uCkEGrbkK17g4g==
+  dependencies:
+    wink-eng-lite-web-model "^1.4.3"
+    wink-helpers "^2.0.0"
+    wink-nlp "^1.12.2"
+
+wink-nlp@^1.12.2:
+  version "1.14.3"
+  resolved "https://registry.yarnpkg.com/wink-nlp/-/wink-nlp-1.14.3.tgz#dd00604899796e4eb49b3314acfa19b9cd88b22f"
+  integrity sha512-lvY5iCs3T8I34F8WKS70+2P0U9dWLn3vdPf/Z+m2VK14N7OmqnPzmHfh3moHdusajoQ37Em39z0IZB9K4x/96A==
 
 wonka@^4.0.14:
   version "4.0.15"
