@@ -16,15 +16,15 @@ const localhost = {
     rpcUrls: {
         default: { http: ['http://localhost:8545'] },
     },
-    blockExplorers: {
-        default: { name: 'SnowTrace', url: 'https://snowtrace.io' },
-    },
-    contracts: {
-        multicall3: {
-            address: '0xca11bde05977b3631167028862be2a173976ca11',
-            blockCreated: 11_907_934,
-        },
-    },
+    // blockExplorers: {
+    //     default: { name: 'SnowTrace', url: 'https://snowtrace.io' },
+    // },
+    // contracts: {
+    //     multicall3: {
+    //         address: '0xca11bde05977b3631167028862be2a173976ca11',
+    //         blockCreated: 11_907_934,
+    //     },
+    // },
 } as const satisfies Chain;
 
 export const rainbowKitConfig = getDefaultConfig({
@@ -32,8 +32,8 @@ export const rainbowKitConfig = getDefaultConfig({
     projectId: '7f49c7e89e54528522eef8334c58506e',
     transports: {
         [localhost.id]: http("http://localhost:8545"),
-        [mainnet.id]: http(), // http('https://eth-mainnet.g.alchemy.com/v2/...')
-        [sepolia.id]: http(), // http('https://eth-sepolia.g.alchemy.com/v2/...')
+        [mainnet.id]: /*http(), */ http(''),
+        [sepolia.id]: /*http(),*/ http('')
     },
     wallets: [
         ...wallets,

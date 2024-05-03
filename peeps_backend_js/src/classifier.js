@@ -28,21 +28,28 @@ function classifyText(inputText) {
     // Train!
 
     // Example usage:
-    const directoryPath = 'train-data';
+    const directoryPath = 'src/train-data';
+    console.log("Before read line by line")
     readFilesLineByLine(
         directoryPath,
-        (line, name) => {
+        function (line, name) {
+            console.log("Before learn")
             nbc.learn(line, name);
+            console.log("After learn")
         },
         () => {
+            console.log("Before consolidate")
             nbc.consolidate();
+            console.log("After consolidate")
 
             console.log(nbc.predict('Is microsoft a 3 trillion dollar company'));
             console.log(nbc.predict('What is the current value of Apples stock?'));
+            // return nbc;
         }
     );
     console.log("Time to predict text")
-    return nbc.predict(inputText)
+    // return nbc.predict(inputText)
+    return "accept";
 }
 
 module.exports = classifyText;

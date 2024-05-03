@@ -16,7 +16,7 @@ import { useAccount } from "wagmi";
 
 const PostForm: React.FC<IInputProps> = (props) => {
   const {isConnected} = useAccount();
-  const { wallet, userData, refreshPost, setRefreshPost, pinFileToIPFS } =
+  const { userData, refreshPost, setRefreshPost, pinFileToIPFS } =
     usePeepsContext();
   const postTextField = useRef(null);
   const [postText, setPostText] = useState<string>("");
@@ -47,6 +47,8 @@ const PostForm: React.FC<IInputProps> = (props) => {
           },
         },
         pinataContent: {
+          post_user: userData?.wallet,
+          post_id: uuidv4(),
           post_username: userData?.username,
           post_displayName: userData?.displayName,
           post_content: postText,

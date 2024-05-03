@@ -13,9 +13,10 @@
     "esbuild": "^0.19.2"
   },
   "scripts": {
-    "train": "esbuild src/classifier.js --bundle --outfile=dist/index.js --platform=node --target=node20",
+    "generate": "esbuild src/createTrainJson.js --bundle --outfile=dist/createTrainJson.js --platform=node --target=node20",
+    "train": "esbuild src/classifier.js --bundle --outfile=dist/classifier.js --platform=node --target=node20",
     "build": "esbuild src/index.js --bundle --outfile=dist/index.js --platform=node --target=node20",
-    "start": "ROLLUP_HTTP_SERVER_URL=\\\"http://127.0.0.1:5004\\\" node src/index.js"
+    "start": "ROLLUP_HTTP_SERVER_URL=\"http://127.0.0.1:5004\" node src/index.js"
   },
   "keywords": [
     "cartesi"

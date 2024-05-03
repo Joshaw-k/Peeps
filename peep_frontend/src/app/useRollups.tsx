@@ -1,3 +1,5 @@
+"use client";
+
 // Copyright 2022 Cartesi Pte. Ltd.
 
 // Licensed under the Apache License, Version 2.0 (the "License"); you may not
@@ -108,8 +110,8 @@ export function useEthersSigner({ chainId }: { chainId?: number } = {}) {
 
 export const useRollups = (dAddress: string): RollupsContracts | undefined => {
   const [contracts, setContracts] = useState<RollupsContracts | undefined>();
-  const [{ connectedChain }] = useSetChain();
-  const [connectedWallet] = useWallets();
+  // const [{ connectedChain }] = useSetChain();
+  // const [connectedWallet] = useWallets();
   const [dappAddress] = useState<string>(dAddress);
   // const chainId = useChainId();
   const {address, connector, chain, chainId, isConnected} = useAccount();
@@ -298,10 +300,11 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
         erc1155SinglePortalContract,
         erc1155BatchPortalContract,
       };
-      updateRollupContracts(_contracts);
+      // updateRollupContracts(_contracts);
       return _contracts;
     };
-    if (connector && chainId) {
+    // if (connector && chainId) {
+    if (chainId) {
     connect(chain).then((contracts) => {
         // console.log(contracts);
         setContracts(contracts);
@@ -319,7 +322,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
 
   useEffect(() => {
     // console.log("Contract refresh")
-    updateRollupContracts(contracts)
+    // updateRollupContracts(contracts)
   }, [contracts]);
   return contracts;
 };

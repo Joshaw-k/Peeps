@@ -24,45 +24,60 @@ import {
 
 import { useDebounce } from "@uidotdev/usehooks";
 
-// type Notice = {
-//   id: string;
-//   index: number;
-//   input: any; //{index: number; epoch: {index: number; }
-//   payload: string;
-// };
+type Notice = {
+  id: string;
+  index: number;
+  input: any; //{index: number; epoch: {index: number; }
+  payload: string;
+};
 
-// // GraphQL query to retrieve notices given a cursor
-// const GET_NOTICES = gql`
-//   query GetNotices($cursor: String) {
-//     notices(first: 10, after: $cursor) {
-//       totalCount
-//       pageInfo {
-//         hasNextPage
-//         endCursor
-//       }
-//       edges {
-//         node {
-//           index
-//           input {
-//             index
-//           }
-//           payload
-//         }
-//       }
-//     }
-//   }
-// `;
+// GraphQL query to retrieve notices given a cursor
+const GET_NOTICES = gql`
+  query GetNotices($cursor: String) {
+    notices(first: 20, after: $cursor) {
+      totalCount
+      pageInfo {
+        hasNextPage
+        endCursor
+      }
+      edges {
+        node {
+          index
+          input {
+            index
+          }
+          payload
+        }
+      }
+    }
+  }
+`;
 
 export const Post = () => {
   // const [result, reexecuteQuery] = useNoticesQuery();
   // const { data, fetching, error } = result;
-  // const [cursor, setCursor] = useState(null);
-  // const [endCursor, setEndCursor] = useState(20);
 
-  // const { loading, error, data } = useQuery(GET_NOTICES, {
-  //   variables: { cursor },
-  //   // pollInterval: 500,
-  // });
+  const [cursor, setCursor] = useState(null);
+  const [endCursor, setEndCursor] = useState(20);
+
+  const { loading, error, data } = useQuery(GET_NOTICES, {
+    variables: { cursor },
+    pollInterval: 2000,
+  });
+
+  // const [posts, setPosts] = useState<any>();
+  // const [postsData, setPostsData] = useState<any>();
+  const [myPosts, setMyPosts] = useState<any>();
+  const [myPostsData, setMyPostsData] = useState<any>();
+  const [myLikedPosts, setMyLikedPosts] = useState<any>();
+  const [myLikedPostsData, setMyLikedPostsData] = useState<any>();
+  const [myFollowersList, setMyFollowersList] = useState<any>();
+  const [myFollowersListData, setMyFollowersListData] = useState<any>();
+  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
+  const [isPageError, setIsPageError] = useState<boolean>(false);
+  const [pageLoadCount, setPageLoadCount] = useState<number>(0);
+  const { baseDappAddress, posts, postsData, refreshPost, rollupContracts, userData, updatePostsNotice } = usePeepsContext();
+  // console.log(posts);
 
   // // if (fetching) return <p>Loading...</p>;
   // if (loading)
@@ -84,43 +99,45 @@ export const Post = () => {
   //     ></EmptyPage>
   //   );
 
-  // const notices: Notice[] = data.notices.edges
-  //   .map((node: any) => {
-  //     const n = node.node;
-  //     let inputPayload = n?.input.payload;
-  //     if (inputPayload) {
-  //       try {
-  //         inputPayload = ethers.utils.toUtf8String(inputPayload);
-  //       } catch (e) {
-  //         inputPayload = inputPayload + " (hex)";
-  //       }
-  //     } else {
-  //       inputPayload = "(empty)";
-  //     }
-  //     let payload = n?.payload;
-  //     if (payload) {
-  //       try {
-  //         payload = ethers.utils.toUtf8String(payload);
-  //       } catch (e) {
-  //         payload = payload + " (hex)";
-  //       }
-  //     } else {
-  //       payload = "(empty)";
-  //     }
-  //     return {
-  //       id: `${n?.id}`,
-  //       index: parseInt(n?.index),
-  //       payload: `${payload}`,
-  //       input: n ? { index: n.input.index, payload: inputPayload } : {},
-  //     };
-  //   })
-  //   .sort((b: any, a: any) => {
-  //     if (a.input.index === b.input.index) {
-  //       return b.index - a.index;
-  //     } else {
-  //       return b.input.index - a.input.index;
-  //     }
-  //   });
+  const notices: Notice[] = data
+      ? data.notices.edges
+    .map((node: any) => {
+      const n = node.node;
+      let inputPayload = n?.input.payload;
+      if (inputPayload) {
+        try {
+          inputPayload = ethers.utils.toUtf8String(inputPayload);
+        } catch (e) {
+          inputPayload = inputPayload + " (hex)";
+        }
+      } else {
+        inputPayload = "(empty)";
+      }
+      let payload = n?.payload;
+      if (payload) {
+        try {
+          payload = ethers.utils.toUtf8String(payload);
+        } catch (e) {
+          payload = payload + " (hex)";
+        }
+      } else {
+        payload = "(empty)";
+      }
+      return {
+        id: `${n?.id}`,
+        index: parseInt(n?.index),
+        payload: `${payload}`,
+        input: n ? { index: n.input.index, payload: inputPayload } : {},
+      };
+    })
+    .sort((b: any, a: any) => {
+      if (a.input.index === b.input.index) {
+        return b.index - a.index;
+      } else {
+        return b.input.index - a.input.index;
+      }
+    })
+  : [];
 
   // if (notices.length < 1) {
   //   return (
@@ -130,51 +147,183 @@ export const Post = () => {
   //     ></EmptyPage>
   //   );
   // }
-  const [posts, setPosts] = useState<any>();
-  const [postsData, setPostsData] = useState<any>();
-  const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
-  const [isPageError, setIsPageError] = useState<boolean>(false);
-  const [pageLoadCount, setPageLoadCount] = useState<number>(0);
-  const { baseDappAddress, refreshPost, rollupContracts } = usePeepsContext();
 
-  const rollups = useRollups(baseDappAddress);
-  const debouncedRollups = useDebounce(rollups, 1000);
-  const [hexInput, setHexInput] = useState<boolean>(false);
+  // const rollups = useRollups(baseDappAddress);
+  // const debouncedRollups = useDebounce(rollups, 1000);
+  // const [hexInput, setHexInput] = useState<boolean>(false);
+  //
+  // useEffect(() => {
+  //   console.log("debounced rollups not here...", rollupContracts);
+  //   if (rollupContracts && !isPageLoading && userData?.wallet) {
+  //     handlePostToDapp()
+  //   }
+  // }, [rollupContracts]);
+  //
+  // const addInput = async (str: string) => {
+  //   console.log("rollups.....", rollups);
+  //   console.log("rollupContracts", rollupContracts);
+  //   console.log("Debounced rollup contracts", debouncedRollups);
+  //   if (rollupContracts) {
+  //     try {
+  //       let payload = ethers.utils.toUtf8Bytes(str);
+  //       console.log("Payload:::", payload);
+  //       if (hexInput) {
+  //         payload = ethers.utils.arrayify(str);
+  //       }
+  //       await rollupContracts.inputContract.addInput(baseDappAddress, payload);
+  //       console.log("Inside the add input function");
+  //     } catch (e) {
+  //       console.log(`${e}`);
+  //     }
+  //   }
+  // };
+  //
+  // const handlePostToDapp = async () => {
+  //   console.log(userData, postsData);
+  //   // construct the json payload to send to addInput
+  //   const jsonPayload = {
+  //     method: "recommendPost",
+  //     data: {
+  //       user: userData,
+  //       likedPosts: myLikedPostsData,
+  //       followersPosts: myFollowersListData,
+  //       myPosts: myPostsData,
+  //       posts: postsData
+  //     },
+  //   };
+  //   await addInput(JSON.stringify(jsonPayload));
+  //   console.log("handle Post to Dapp", jsonPayload);
+  // };
 
-  useEffect(() => {
-    console.log("debounced rollups not here...", rollupContracts);
-    if (rollupContracts && !isPageLoading) {
-      handlePostToDapp()
-    }
-  }, [rollupContracts]);
+  // update PostsNotice
+  // if (notices.length > 0) {
+  //   updatePostsNotice(notices);
+  // }
 
-  const addInput = async (str: string) => {
-    console.log("rollups.....", rollups);
-    console.log("rollupContracts", rollupContracts);
-    console.log("Debounced rollup contracts", debouncedRollups);
-    if (rollupContracts) {
-      try {
-        let payload = ethers.utils.toUtf8Bytes(str);
-        console.log("Payload:::", payload);
-        if (hexInput) {
-          payload = ethers.utils.arrayify(str);
+  const fetchMyPosts = async () => {
+    try {
+      const res = await axios.get(
+          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
+              userData?.wallet
+          }","op":"eq"}&status=pinned`,
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+            },
+          }
+      );
+      if (res.data) {
+        if (res.data.rows.length > 0) {
+          setMyPosts(res.data.rows);
+          let data = [];
+          for (let index = 0; index < res.data.rows.length; index++) {
+            const res1 = await axios.get(
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
+            );
+            data.push(res1.data);
+          }
+          // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+          setMyPostsData(data);
         }
-        await rollupContracts.inputContract.addInput(baseDappAddress, payload);
-        console.log("Inside the add input function");
-      } catch (e) {
-        console.log(`${e}`);
       }
+    } catch (error) {
+      console.log(error);
     }
   };
 
-  const handlePostToDapp = async () => {
-    // construct the json payload to send to addInput
-    const jsonPayload = {
-      method: "recommendPost",
-      data: postsData,
-    };
-    await addInput(JSON.stringify(jsonPayload));
-    console.log("handle Post to Dapp", jsonPayload);
+  const fetchLikePosts = async () => {
+    try {
+      const res = await axios.get(
+          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${
+              userData?.wallet
+          }","op":"eq"}&status=pinned`,
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+            },
+          }
+      );
+
+      if (res.data) {
+        if (res.data.rows.length > 0) {
+          let data = [];
+          for (let index = 0; index < res.data.rows.length; index++) {
+            const res1 = await axios.get(
+                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                  },
+                }
+            );
+            data.push(res1.data.rows[0]);
+          }
+          console.log(data);
+          if (data.length > 0) {
+            setMyLikedPosts(data);
+            let dataOne = [];
+            for (let index = 0; index < data.length; index++) {
+              const res2 = await axios.get(
+                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+              );
+              dataOne.push(res2.data);
+            }
+            // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+            console.log(dataOne);
+            setMyLikedPostsData(dataOne);
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
+
+  const fetchFollowers = async () => {
+    try {
+      const res = await axios.get(
+          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${
+              userData?.username
+          }","op":"eq"}&status=pinned`,
+          {
+            headers: {
+              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+            },
+          }
+      );
+
+      if (res.data) {
+        if (res.data.rows.length > 0) {
+          let data = [];
+          for (let index = 0; index < res.data.rows.length; index++) {
+            const res1 = await axios.get(
+                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
+                {
+                  headers: {
+                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                  },
+                }
+            );
+
+            data.push(res1.data.rows[0]);
+          }
+          if (data.length > 0) {
+            setMyFollowersList(data);
+            let dataOne = [];
+            for (let index = 0; index < data.length; index++) {
+              const res2 = await axios.get(
+                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+              );
+              dataOne.push(res2.data);
+            }
+            // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
+            setMyFollowersListData(dataOne);
+          }
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
   };
 
   const fetchPosts = async () => {
@@ -188,6 +337,8 @@ export const Post = () => {
           },
         }
       );
+      console.log(res);
+      console.log(userData);
       if (res.data) {
         if (res.data.rows.length > 0) {
           setPosts(res.data.rows);
@@ -197,6 +348,7 @@ export const Post = () => {
               `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
             );
             data.push(res1.data);
+            console.log(res1);
           }
           // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
           setPostsData(data);
@@ -226,8 +378,16 @@ export const Post = () => {
   //   }, 6000);
   // }, []);
 
+  // useEffect(() => {
+  //   // console.log(userData?.wallet);
+  //   // fetchLikePosts();
+  //   // fetchFollowers();
+  //   fetchMyPosts();
+  //   // fetchPosts();
+  // }, [userData?.wallet]);
+
   useEffect(() => {
-    fetchPosts();
+    // fetchPosts();
   }, [refreshPost]);
 
   useEffect(() => {}, [postsData]);
@@ -251,7 +411,35 @@ export const Post = () => {
 
   return (
     <>
-      <button onClick={handlePostToDapp}>Trigger wallet</button>
+      {notices ? notices.length > 0 && <div>New messages</div> : null}
+      {
+        notices.length > 0 && notices[0].payload !== undefined
+          ? JSON.parse(notices[0]?.payload)
+              .splice(0, endCursor)
+                .map((eachNotice: any, index: number) => (
+                    // .filter((it) => JSON.parse(it.payload).posts.length > 0)
+          <>
+            <PostContainer key={index}>
+              <PostUser {...eachNotice} />
+              <PostBody postMetaData={posts[index]}>
+                {eachNotice?.post_content}
+              </PostBody>
+              <PostActionsContainer
+                  postId={index}
+                  message={eachNotice?.post_content}
+                  upload={eachNotice?.post_media}
+                  postData={eachNotice}
+                  postMetaData={posts}
+              />
+              {/*{<PostContainer></PostContainer>}*/}
+            </PostContainer>
+            <div className={"divider"}></div>
+          </>
+                ))
+            : <div>No posts</div>
+      }
+
+      {/*<button onClick={handlePostToDapp}>Trigger wallet</button>*/}
       {/* <button onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}>
         Reload
       </button> */}
@@ -323,7 +511,7 @@ export const Post = () => {
       {/*  )}*/}
       {/*</div>*/}
 
-      {postsData ? (
+      {/*{postsData ? (
         postsData.map((eachPost: any, index: number) => (
           <PostContainer key={index}>
             <PostUser {...eachPost} />
@@ -337,12 +525,11 @@ export const Post = () => {
               postData={eachPost}
               postMetaData={posts}
             />
-            {/*{<PostContainer></PostContainer>}*/}
           </PostContainer>
         ))
       ) : (
         <div>No posts</div>
-      )}
+      )}*/}
       {postsData && postsData.length > 20 && (
         <section className="flex flex-row justify-center w-full mx-auto">
           <button
