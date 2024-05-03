@@ -92,7 +92,7 @@ export const Trending = () => {
     <section className={"px-4 mt-12 prose"}>
       <h2 className="">Trending Posts</h2>
 
-      {JSON.parse(notices.reverse()[0].payload).trendingWords.map(
+      {/* {JSON.parse(notices.reverse()[0].payload).trendingWords.map(
         (eachTrends: any, index: number) => (
           <TrendingCard
             key={eachTrends[0]}
@@ -101,7 +101,7 @@ export const Trending = () => {
             repostCount={eachTrends[1]}
           ></TrendingCard>
         )
-      )}
+      )} */}
     </section>
   );
 };

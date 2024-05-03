@@ -19,9 +19,18 @@ import Image from "next/image";
 import { EditProfileForm } from "../../components/EditProfileForm";
 import {useAccount} from "wagmi";
 import {Avatar, NoProfileCard} from "../../components/UserLeft";
+import { useRollups } from "../../useRollups";
+import { ethers } from "ethers";
+import configFile from "../../config.json";
+
+const config: any = configFile;
+
+interface Report {
+  payload: string;
+}
 
 const Profile = ({ params }: { params: any }) => {
-  const {isConnected} = useAccount();
+  const {isConnected,chainId,address} = useAccount();
   const { wallet, userData, userIpfsHash, hasProfile, profileChanged } = usePeepsContext();
   const [userProfileIpfsHash, setUserProfileIpfsHash] = useState(null);
   const [relationshipIpfsHash, setRelationshipIpfsHash] = useState(null);
@@ -42,7 +51,12 @@ const Profile = ({ params }: { params: any }) => {
   const [likedpostsData, setLikedPostsData] = useState<any>();
   const [followersList, setFollowersList] = useState<any>();
   const [followersListData, setFollowersListData] = useState<any>();
-
+  const [hexData, setHexData] = useState<boolean>(false);
+  const [postData, setPostData] = useState<boolean>(false);
+  const [reports, setReports] = useState<string[]>([]);
+    const [decodedReports, setDecodedReports] = useState<any>({});
+    const [metadata, setMetadata] = useState<any>({});
+  const rollups = useRollups("0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e");
   const defaultImage: string =
     "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
 
@@ -446,6 +460,117 @@ const Profile = ({ params }: { params: any }) => {
     }
   };
 
+  const depositEtherToPortal = async (amount: number) => {
+    try {
+      if (rollups && isConnected) {
+        const data = ethers.utils.toUtf8Bytes(`Deposited (${amount}) ether.`);
+        const txOverrides = { value: ethers.utils.parseEther(`${amount}`) };
+        console.log("Ether to deposit: ", txOverrides);
+
+        // const tx = await ...
+        rollups.etherPortalContract.depositEther(
+          "0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e",
+          data,
+          txOverrides
+        );
+      }
+    } catch (e) {
+      console.log(`${e}`);
+    }
+  };
+
+  const transferEtherToPortal = async (amount: number) => {
+    console.log("clicked")
+    let ether_amount = ethers.utils.parseEther(String(amount)).toString();
+    try {
+      if (rollups && isConnected) {
+        const input_obj = {
+          method: "ether_transfer",
+          args: {
+            to: "0x70997970C51812dc3A010C7d01b50e0d17dc79C8",
+            amount: ether_amount,
+          },
+        };
+        const data = JSON.stringify(input_obj);
+        let payload = ethers.utils.toUtf8Bytes(data);
+        await rollups.inputContract.addInput("0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e", payload);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const withdrawEther = async (amount: number) => {
+    try {
+      if (rollups && isConnected) {
+        let ether_amount = ethers.utils.parseEther(String(amount)).toString();
+        console.log("ether after parsing: ", ether_amount);
+        const input_obj = {
+          method: "ether_withdraw",
+          args: {
+            amount: ether_amount,
+          },
+        };
+        const data = JSON.stringify(input_obj);
+        let payload = ethers.utils.toUtf8Bytes(data);
+        await rollups.inputContract.addInput("0xab7528bb862fb57e8a2bcd567a2e929a0be56a5e", payload);
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
+
+  const inspectCall = async (str: string) => {
+    console.log("This is the balance address",str)
+    let payload = str;
+    if (hexData) {
+        const uint8array = ethers.utils.arrayify(payload);
+        payload = new TextDecoder().decode(uint8array);
+    }
+    if (!isConnected){
+        return;
+    }
+    
+    let apiURL= ""
+
+    if(config[`0x${chainId}`]?.inspectAPIURL) {
+        apiURL = `${config[`0x${chainId}`].inspectAPIURL}/inspect`;
+    } else {
+        console.error(`No inspect interface defined for chain ${`0x${chainId}`}`);
+        return;
+    }
+    
+    let fetchData: Promise<Response>;
+    if (postData) {
+        const payloadBlob = new TextEncoder().encode(payload);
+        fetchData = fetch(`${apiURL}`, { method: 'POST', body: payloadBlob });
+    } else {
+        fetchData = fetch(`${apiURL}/${payload}`);
+    }
+    fetchData
+        .then(response => response.json())
+        .then(data => {
+            setReports(data.reports);
+            setMetadata({status: data.status, exception_payload: data.exception_payload});
+            console.log("Metadata:", data.reports);
+
+            // Decode payload from each report
+            const decode = data.reports.map((report: Report) => {
+            return ethers.utils.toUtf8String(report.payload);
+            });
+            console.log("Decoded Reports:", decode);
+            const reportData = JSON.parse(decode)
+            console.log("Report data: ", reportData)
+            setDecodedReports(reportData)
+            console.log("Erc20 : ", decodedReports.erc20)
+            //console.log(parseEther("1000000000000000000", "gwei"))
+        });
+};
+
+  const tipUser = async() => {
+
+  }
+
   useEffect(() => {
     setInterval(() => {
       fetchPosts();
@@ -481,6 +606,10 @@ const Profile = ({ params }: { params: any }) => {
   useEffect(() => {
     fetchProfileUser();
   }, [profileChanged]);
+
+  useEffect(()=>{
+    console.log("This is the address in the useeffect",address)
+  inspectCall(`balance/${address?address:""}`)},[address])
 
   return (
     <section>
@@ -532,22 +661,44 @@ const Profile = ({ params }: { params: any }) => {
                   <div className={"absolute top-2 right-2 z-[1]"}>
                     {params.id != userData?.username ? (
                         isFollow ? (
-                            <button
+                            <div>
+                              <button
                                 className={"btn btn-primary rounded-box"}
                                 onClick={unfollowerUser}
                             >
                               Unfollow
                             </button>
-                        ) : (
                             <button
+                                className={"btn btn-primary rounded-box"}
+                                onClick={()=>transferEtherToPortal(20)}
+                            >
+                              Tip
+                            </button>
+                            </div>
+                        ) : (
+                            <div>
+                              <button
                                 className={"btn btn-primary rounded-box"}
                                 onClick={followerUser}
                             >
                               Follow
                             </button>
+                            <button
+                                className={"btn btn-primary rounded-box"}
+                                onClick={()=>depositEtherToPortal(20)}
+                            >
+                              Tip
+                            </button>
+                            </div>
                         )
                     ) : (
-                        <EditProfileForm />
+                        <div><EditProfileForm />
+                        <button
+                                className={"btn btn-primary rounded-box"}
+                                onClick={()=>depositEtherToPortal(20)}
+                            >
+                              Deposit
+                            </button></div>
                     )}
                   </div>
                   <div className={"relative pt-20 pb-16 space-y-4 bg-base-100"}>
@@ -562,6 +713,9 @@ const Profile = ({ params }: { params: any }) => {
                     <div>
                       <span>Followers: {userProfileData?.followers}</span> |
                       <span>Following: {userProfileData?.following}</span>
+                    </div>
+                    <div>
+                      {decodedReports && decodedReports.ether &&(<span>Dapp Balance: {ethers.utils.formatEther(decodedReports.ether)}</span>)}
                     </div>
                   </div>
                 </div>
