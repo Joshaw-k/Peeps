@@ -8,6 +8,7 @@ const trainClassifier = require("./postClassifier");
 const createJSONFile = require("./createTrainJson");
 const fs = require("node:fs");
 const postArrayDifference = require("./utils");
+const uniqueFromArray = require("./utils");
 // require('dotenv').config()
 console.log("PROCESS ENV:", process.env)
 
@@ -263,26 +264,35 @@ async function handle_advance(data) {
     const recommendedData = jsonPayload.data;
     const allPosts = recommendedData.posts || [];
     const myPosts = recommendedData.myPosts || [];
+    const likedPosts = recommendedData.likedPosts || [];
+    const personalPosts = myPosts.concat(likedPosts); // personalPosts is a combination of myPosts & likedPosts
     const userData = recommendedData.user;
     // const result = allPosts.map((value, index) => value - array2[index]);
 
     // Get the difference between allPosta and myPosts if both exists.
-    const postMinus = postArrayDifference(allPosts, myPosts);
-    console.log(postMinus);
+    const postMinus = postArrayDifference(allPosts, personalPosts);
+    console.log("postMinus", postMinus);
+
+    // Check that likedPosts is returned
+    if (likedPosts.length > 0) {
+      // Add liked posts to postMinus before detecting the user's interests
+      // postMinus.concat(likedPosts);
+    }
 
     // Check if user has interests in the userDB
+    // DETERMINE THE USER'S INTERESTS
     const thisUserInterests = usersInterstDB[userData.wallet];
-    console.log("this user interests", thisUserInterests);
-    if (thisUserInterests === undefined) {
-      console.log("About to change userInterests")
-      let _userInterests = [];
-      myPosts.map((eachMyPost) => {
-        _userInterests.push(_nbc.predict(eachMyPost.post_content));
-      });
-      usersInterstDB[userData.wallet] = _userInterests;
-      console.log("Gotten user Interests", _userInterests);
-      console.log("What are User's INterests", usersInterstDB[userData.wallet]);
-    }
+    // console.log("this user interests", thisUserInterests);
+    // if (thisUserInterests === undefined) {
+    // console.log("About to change userInterests")
+    let _userInterests = [];
+    personalPosts.map((eachMyPost) => {
+      _userInterests.push(_nbc.predict(eachMyPost.post_content));
+    });
+    usersInterstDB[userData.wallet] = uniqueFromArray(_userInterests);
+    // console.log("Gotten user Interests", _userInterests);
+    // console.log("What are User's INterests", usersInterstDB[userData.wallet]);
+    // }
 
     // Check the posts that are in the user's interest from the postMinus Array.
     if (postMinus.length > 0) {
@@ -290,18 +300,19 @@ async function handle_advance(data) {
       postMinus.map(eachPostMinus => {
         eachPostMinus["post_category"] = _nbc.predict(eachPostMinus.post_content);
       });
-      const postMinusSimilarInterests = postMinus.filter(it => {
-        // console.log(usersInterstDB[userData.wallet], it.post_content);
-        // usersInterstDB[userData.wallet].includes(_nbc.predict(it.post_content))
-        usersInterstDB[userData.wallet].includes(it.post_category);
-      });
+      console.log("post Minus", postMinus.length, postMinus);
+      const postMinusSimilarInterests = postMinus.filter(it => usersInterstDB[userData.wallet].includes(it.post_category));
+      // {
+      //   // console.log(usersInterstDB[userData.wallet], it.post_content);
+      //   // usersInterstDB[userData.wallet].includes(_nbc.predict(it.post_content))
+      // }
       // .map((eachPostMinus) => {
       //   _nbc.predict(eachPostMinus);
       // });
-      await createNotice(JSON.stringify(postMinusSimilarInterests));
-      console.log(postMinusSimilarInterests);
+      await createNotice(JSON.stringify([...postMinusSimilarInterests, ...personalPosts]));
+      console.log("Inside post Minus similar interests", postMinusSimilarInterests);
     } else {
-      const postMinusSimilarInterests = [
+      /*const postMinusSimilarInterests = [
         {
           post_user: '0x70997970C51812dc3A010C7d01b50e0d17dc79C8',
           post_id: 'b8683c99-99f8-489b-99cd-c7779dec98c3',
@@ -316,7 +327,8 @@ async function handle_advance(data) {
         }
       ];
       postMinusSimilarInterests["post_category"] = _nbc.predict(postMinusSimilarInterests[0].post_content);
-      await createNotice(JSON.stringify(postMinusSimilarInterests));
+      await createNotice(JSON.stringify(postMinusSimilarInterests));*/
+      await createNotice(JSON.stringify([]));
     }
 
     // Categorize the difference between allPosts and userPosts.
