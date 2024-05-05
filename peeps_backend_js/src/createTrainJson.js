@@ -1,36 +1,46 @@
-// const fs = require('fs');
-// const readline = require('readline');
-
-// // Specify the path to your file
-// const filePath = 'path/to/your/file.txt';
-
-// // Create a readline interface
-// const rl = readline.createInterface({
-//     input: fs.createReadStream(filePath),
-//     crlfDelay: Infinity // To treat CR LF as a single line break
-// });
-
-// // Read the file line by line
-// rl.on('line', (line) => {
-//     console.log(`Line from file: ${line}`);
-// });
-
-// // Handle any errors that occur while reading the file
-// rl.on('error', (err) => {
-//     console.error(`Error reading file: ${err}`);
-// });
-
-
 const fs = require('fs');
 const path = require('path');
 const readline = require('readline');
 
+var Classifier = require('wink-naive-bayes-text-classifier');
+// Instantiate
+var nbc = Classifier();
+// Load wink nlp and its model
+const winkNLP = require('wink-nlp');
+// Load language model
+const model = require('wink-eng-lite-web-model');
+const readFilesLineByLine = require('./loadTrainData');
+const nlp = winkNLP(model);
+const its = nlp.its;
+
+const directoryPath = 'src/train-data';
+let isDoneReading = false;
+
+const prepTask = function (text) {
+    const tokens = [];
+    nlp.readDoc(text)
+        .tokens()
+        // Use only words ignoring punctuations etc and from them remove stop words
+        .filter((t) => (t.out(its.type) === 'word' && !t.out(its.stopWordFlag)))
+        // Handle negation and extract stem of the word
+        .each((t) => tokens.push((t.out(its.negationFlag)) ? '!' + t.out(its.stem) : t.out(its.stem)));
+
+    return tokens;
+};
+nbc.definePrepTasks([prepTask]);
+// Configure behavior
+nbc.defineConfig({ considerOnlyPresence: true, smoothingFactor: 0.5 });
+// Train!
+
+
 // Function to read all .txt files in a directory line by line
 let catList = [];
-let isDoneReading = false;
-let JSONContent = {}
+let jsonData = {}
 
-function readFilesLineByLine(directoryPath, lineCallback, completionCallback) {
+console.log("Open directory");
+
+function createJSONFile(outputFilePath) {
+    // function readFilesLineByLine(directoryPath, lineCallback, completionCallback) {
     // Read all files in the directory
     fs.readdir(directoryPath, (err, files) => {
         if (err) {
@@ -47,10 +57,8 @@ function readFilesLineByLine(directoryPath, lineCallback, completionCallback) {
 
         // Iterate through each .txt file
         txtFiles.forEach(txtFile => {
-            console.log("Each text file: ", txtFile);
             const filePath = path.join(directoryPath, txtFile);
             const fileNameWithoutExt = txtFile.split(".txt")[0];
-            console.log("Each text file name: ", fileNameWithoutExt);
             const rl = readline.createInterface({
                 input: fs.createReadStream(filePath),
                 crlfDelay: Infinity
@@ -59,24 +67,22 @@ function readFilesLineByLine(directoryPath, lineCallback, completionCallback) {
                 // console.log("insideherr");
                 catList.push(fileNameWithoutExt);
             }
+            jsonData[fileNameWithoutExt] = [];
 
             // Read each line from the file
-            console.log("Let's read file line by line");
             rl.on('line', (line) => {
-                // console.log("Inside file readline");
                 // lineCallback(line, catList[filesRead - 1]);
-                lineCallback(line, fileNameWithoutExt);
                 // console.log(line, fileNameWithoutExt);
+                jsonData[fileNameWithoutExt].push(line);
                 // nbc.learn(line, fileNameWithoutExt);
                 // if (filesRead === totalFiles) {
                 //     isDoneReading = true;
                 //     console.log("Done reading:", isDoneReading);
                 // }
             });
-            console.log("After running line by line");
-            // rl.prependListener('line', () => {
-            //
-            // });
+            rl.prependListener('line', () => {
+
+            });
 
             // Handle any errors while reading the file
             rl.on('error', (err) => {
@@ -92,10 +98,17 @@ function readFilesLineByLine(directoryPath, lineCallback, completionCallback) {
                 console.log("Reading:", filesRead, fileNameWithoutExt);
                 if (filesRead === totalFiles && catList[catList.length - 1] === fileNameWithoutExt) {
                     // Call the completionCallback function
+                    // completionCallback();
                     isDoneReading = true;
                     console.log("Done reading:", isDoneReading);
-                    completionCallback();
                     // nbc.consolidate();
+                    fs.writeFile(outputFilePath, JSON.stringify(jsonData, null, 2), (err) => {
+                        if (err) {
+                            console.error(`Error writing JSON file: ${err}`);
+                            return;
+                        }
+                        console.log('JSON file created successfully.');
+                    });
                     // console.log("Prediction:", nbc.predict('Is microsoft a 3 trillion dollar company'));
                 }
             });
@@ -106,17 +119,28 @@ function readFilesLineByLine(directoryPath, lineCallback, completionCallback) {
 
             // Check if all files have been read
             // if (filesRead === totalFiles) {
-            if (isDoneReading) {
-                // nbc.consolidate();
-                // console.log(fileNameWithoutExt);
-                // Call the completionCallback function
-                // console.log(catList);
-                console.log("I'm completed. I can run");
-                // console.log("Prediction:", nbc.predict('Is microsoft a 3 trillion dollar company'));
-                completionCallback();
-            }
+            // if (isDoneReading) {
+            //     nbc.consolidate();
+            //     console.log(fileNameWithoutExt);
+            //     // Call the completionCallback function
+            //     // console.log(catList);
+            //     console.log("I'm completed. I can run");
+            //     // completionCallback();
+            //     fs.writeFile(outputFilePath, JSON.stringify(jsonData, null, 2), (err) => {
+            //         if (err) {
+            //             console.error(`Error writing JSON file: ${err}`);
+            //             return;
+            //         }
+            //         console.log('JSON file created successfully.');
+            //     });
+            //     console.log("Prediction:", nbc.predict('Is microsoft a 3 trillion dollar company'));
+            // }
         });
     });
+    // }
 }
 
-module.exports = readFilesLineByLine;
+// const outputFilePath = 'trainDataOutput.json';
+// createJSONFile(outputFilePath);
+
+module.exports = createJSONFile;

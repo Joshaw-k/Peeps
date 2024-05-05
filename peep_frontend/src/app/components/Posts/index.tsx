@@ -110,7 +110,7 @@ export const PostActionsContainer = ({
 }: IPostActions) => {
   const {isConnected} = useAccount();
   const rollups = useRollups(defaultDappAddress);
-  const { wallet, unPin, PostActions, userData } = usePeepsContext();
+  const { unPin, PostActions, userData } = usePeepsContext();
   const [like, setLike] = useState(false);
   const [repeep, setRepeep] = useState(false);
 

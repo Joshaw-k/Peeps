@@ -9,12 +9,17 @@
 FROM node:20.8.0-bookworm as build-stage
 
 WORKDIR /usr/src/app
-COPY ./src/model .
-RUN yarn install && yarn train
+COPY ./src/createTrainJson.js .
+COPY package.json .
+#COPY ./src/model .
+#RUN yarn install && yarn train
+RUN yarn install
+#RUN node createTrainJson.js
 
 WORKDIR /opt/cartesi/dapp
 COPY . .
-RUN yarn install && yarn build
+RUN yarn && yarn build && yarn generate
+RUN node ./src/createTrainJson.js
 
 #COPY --from=model /usr/src/app/classifier.js .
 
@@ -31,7 +36,7 @@ RUN dpkg -i /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb \
   && rm /machine-emulator-tools-v${MACHINE_EMULATOR_TOOLS_VERSION}.deb
 
 LABEL io.sunodo.sdk_version=0.4.0
-LABEL io.cartesi.rollups.ram_size=128Mi
+LABEL io.cartesi.rollups.ram_size=512Mi
 
 ARG DEBIAN_FRONTEND=noninteractive
 RUN <<EOF
@@ -48,7 +53,13 @@ ENV PATH="/opt/cartesi/bin:${PATH}"
 WORKDIR /opt/cartesi/dapp
 COPY --from=build-stage /opt/cartesi/dapp/dist .
 
+RUN ls
+COPY . .
+
 ENV ROLLUP_HTTP_SERVER_URL="http://127.0.0.1:5004"
+
+# Set permissions for the directory where you want to write the file
+RUN chmod -R 777 /opt/cartesi/dapp
 
 ENTRYPOINT ["rollup-init"]
 

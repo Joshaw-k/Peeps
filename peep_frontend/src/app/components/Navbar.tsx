@@ -8,7 +8,7 @@ import {WalletOptions} from "./walletOptions";
 import React from "react";
 import {useAccount} from "wagmi";
 import { Account } from "./account";
-import { ConnectButton } from "@rainbow-me/rainbowkit";
+import {ConnectButton, WalletButton} from "@rainbow-me/rainbowkit";
 
 const Navbar: React.FC = () => {
   const { isConnected } = useAccount();
@@ -31,6 +31,7 @@ const Navbar: React.FC = () => {
               chainStatus={{smallScreen: "icon", largeScreen: "full"}}
               showBalance={false}
           />
+          <WalletButton wallet="metamask" />
           {/*{*/}
           {/*  isConnected*/}
           {/*      ? <Account/>*/}

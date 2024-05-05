@@ -40,24 +40,24 @@ const metadata: Metadata = {
 
 const config: any = configFile;
 
-const injected: any = injectedModule();
-init({
-  wallets: [injected],
-  chains: Object.entries(config).map(([k, v]: [string, any], i) => ({
-    id: k,
-    token: v.token,
-    label: v.label,
-    rpcUrl: v.rpcUrl,
-  })),
-  appMetadata: {
-    name: "Peeps - Built on Cartesi",
-    icon: "<svg><svg/>",
-    description: "Peeps is a decentralized social platform",
-    recommendedInjectedWallets: [
-      { name: "MetaMask", url: "https://metamask.io" },
-    ],
-  },
-});
+// const injected: any = injectedModule();
+// init({
+//   wallets: [injected],
+//   chains: Object.entries(config).map(([k, v]: [string, any], i) => ({
+//     id: k,
+//     token: v.token,
+//     label: v.label,
+//     rpcUrl: v.rpcUrl,
+//   })),
+//   appMetadata: {
+//     name: "Peeps - Built on Cartesi",
+//     icon: "<svg><svg/>",
+//     description: "Peeps is a decentralized social platform",
+//     recommendedInjectedWallets: [
+//       { name: "MetaMask", url: "https://metamask.io" },
+//     ],
+//   },
+// });
 
 //Setup GraphQL Apollo client
 const URL_QUERY_GRAPHQL = "http://localhost:8080/graphql";
