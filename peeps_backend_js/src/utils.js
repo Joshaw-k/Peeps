@@ -66,7 +66,11 @@ module.exports = symmetricDifference;
 
 function postArrayDifference(array1, array2) {
     // Filter elements in array1 that are not present in array2
-    const difference = array1.filter(post1 => !array2.some(post2 => post1.post_id === post2.post_id));
-    return difference;
+    return array1.filter(post1 => !array2.some(post2 => post1.post_content === post2.post_content));
 }
 module.exports = postArrayDifference;
+
+function uniqueFromArray(arr) {
+    return Array.from(new Set(arr));
+}
+module.exports = uniqueFromArray;

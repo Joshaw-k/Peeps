@@ -338,9 +338,7 @@ const Profile = ({ params }: { params: any }) => {
   const fetchPosts = async () => {
     try {
       const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
-          userProfileData?.wallet
-        }","op":"eq"}&status=pinned`,
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userProfileData?.wallet}","op":"eq"}&status=pinned`,
         {
           headers: {
             Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
@@ -571,23 +569,23 @@ const Profile = ({ params }: { params: any }) => {
 
   }
 
-  useEffect(() => {
-    setInterval(() => {
-      fetchPosts();
-    }, 6000);
-  }, [wallet]);
-
-  useEffect(() => {
-    setInterval(() => {
-      fetchLikePosts();
-    }, 6000);
-  }, [userProfileData]);
-
-  useEffect(() => {
-    setInterval(() => {
-      fetchFollowers();
-    }, 6000);
-  }, [userProfileData]);
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     fetchPosts();
+  //   }, 6000);
+  // }, [wallet]);
+  //
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     fetchLikePosts();
+  //   }, 6000);
+  // }, [userProfileData]);
+  //
+  // useEffect(() => {
+  //   setInterval(() => {
+  //     fetchFollowers();
+  //   }, 6000);
+  // }, [userProfileData]);
 
   useEffect(() => {
     checkIfFollowing();

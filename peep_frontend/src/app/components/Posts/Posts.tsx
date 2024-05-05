@@ -411,7 +411,7 @@ export const Post = () => {
 
   return (
     <>
-      {notices ? notices.length > 0 && <div>New messages</div> : null}
+      {/*{notices ? notices.length > 0 && <div>New messages</div> : null}*/}
       {
         notices.length > 0 && notices[0].payload !== undefined
           ? JSON.parse(notices[0]?.payload)
@@ -433,7 +433,7 @@ export const Post = () => {
               />
               {/*{<PostContainer></PostContainer>}*/}
             </PostContainer>
-            <div className={"divider"}></div>
+            {/*<div className={"divider"}></div>*/}
           </>
                 ))
             : <div>No posts</div>

@@ -45,7 +45,7 @@ export const Home = () => {
             ? <div className={""}>
               {/* For you & Explore tabs */}
               <Tab.Group>
-                <Tab.List className="flex space-x-1 rounded-xl p-1">
+                <Tab.List className="bg-base-100 sticky top-[60px] z-10 flex space-x-1 rounded-xl px-1 py-4">
                   <Tab
                       className={({selected}) =>
                           classNames(
@@ -89,7 +89,7 @@ export const Home = () => {
                 <Tab.Panels>
                   <Tab.Panel
                       className={classNames(
-                          "rounded-xl p-6",
+                          "rounded-xl p-3",
                           "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                       )}
                   >
@@ -110,7 +110,7 @@ export const Home = () => {
               <div className={"prose text-xl lg:text-4xl font-bold text-gray-400 px-2 py-6 lg:mt-8"}>
                 Posts
               </div>
-              <Post/>
+              <PostExplore/>
             </>
       }
 

@@ -15,7 +15,7 @@ import Image from "next/image";
 import { useAccount } from "wagmi";
 
 const PostForm: React.FC<IInputProps> = (props) => {
-  const {isConnected} = useAccount();
+  const {address, isConnected} = useAccount();
   const { userData, refreshPost, setRefreshPost, pinFileToIPFS } =
     usePeepsContext();
   const postTextField = useRef(null);
@@ -42,7 +42,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
         pinataMetadata: {
           name: "PEEPS_POSTS",
           keyvalues: {
-            addr: `${wallet?.accounts[0]?.address}`,
+            addr: `${address}`,
             uuid: uuidv4(),
           },
         },

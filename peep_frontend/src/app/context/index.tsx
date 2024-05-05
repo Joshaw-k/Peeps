@@ -277,10 +277,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
 
   const fetchMyPosts = async () => {
     try {
+      console.log("Fetch MY POSTS address: ", userData?.wallet, address);
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
-              userData?.wallet
-          }","op":"eq"}&status=pinned`,
+          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
           {
             headers: {
               Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
