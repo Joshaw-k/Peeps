@@ -42,7 +42,6 @@ export const NoProfileCard = () => {
 export const UserLeft = () => {
   // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const {
-    wallet,
     currentUser,
     userCreated,
     checkProfileExist,

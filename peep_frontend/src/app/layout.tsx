@@ -103,7 +103,7 @@ export default function RootLayout({
                       <section className={"lg:col-span-3"}>
                         <UserLeft />
                       </section>
-                      <section className={"col-span-6 px-2 lg:px-4"}>{children}</section>
+                      <section className={"col-span-6 px-2 pb-16 lg:px-4 py-0"}>{children}</section>
                       <section className={"lg:col-span-3"}>
                         <RightComponent />
                       </section>
