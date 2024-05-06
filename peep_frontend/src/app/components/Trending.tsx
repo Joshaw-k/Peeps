@@ -89,7 +89,7 @@ export const Trending = () => {
     );
 
   return (
-    <section className={"px-4 mt-12 prose"}>
+    <section className={"px-2 lg:px-4 mt-4 lg:mt-12 prose"}>
       <h2 className="">Trending Posts</h2>
 
       {JSON.parse(postsNotice.reverse()[0].payload).trendingWords.map(

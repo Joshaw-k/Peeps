@@ -10,7 +10,6 @@ import classNames from "classnames";
 
 export const MobileNavigation = () => {
     const {
-        wallet,
         currentUser,
         userCreated,
         checkProfileExist,

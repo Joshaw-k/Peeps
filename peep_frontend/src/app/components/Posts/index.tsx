@@ -11,6 +11,7 @@ import { useState } from "react";
 import {useAccount} from "wagmi";
 import classNames from "classnames";
 import Link from "next/link";
+import {LucideCoins, LucideHandCoins} from "lucide-react";
 
 interface IPostContainer {
   children: any;
@@ -276,6 +277,10 @@ export const PostActionsContainer = ({
         <span className={classNames("text-xs", {"font-bold": postData?.post_repeeps > 0})}>
           {postData?.post_repeeps > 0 ? postData?.post_repeeps : "Repeep"}
         </span>
+      </div>
+
+      <div className={"absolute right-0 btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row items-center lg:gap-x-3"}>
+        <LucideHandCoins />
       </div>
     </section>
   );
