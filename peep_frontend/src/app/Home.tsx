@@ -97,7 +97,7 @@ export const Home = () => {
                   </Tab.Panel>
                   <Tab.Panel
                       className={classNames(
-                          "rounded-xl p-6",
+                          "rounded-xl p-3",
                           "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                       )}
                   >

@@ -414,7 +414,7 @@ export const Post = () => {
       {/*{notices ? notices.length > 0 && <div>New messages</div> : null}*/}
       {
         notices.length > 0 && notices[0].payload !== undefined
-          ? JSON.parse(notices[0]?.payload)
+          ? JSON.parse(notices[0]?.payload)?.posts
               .splice(0, endCursor)
                 .map((eachNotice: any, index: number) => (
                     // .filter((it) => JSON.parse(it.payload).posts.length > 0)
