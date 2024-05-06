@@ -22,7 +22,7 @@ import {Avatar, NoProfileCard} from "../../components/UserLeft";
 
 const Profile = ({ params }: { params: any }) => {
   const {isConnected} = useAccount();
-  const { wallet, userData, userIpfsHash, hasProfile, profileChanged } = usePeepsContext();
+  const { userData, userIpfsHash, hasProfile, profileChanged, myPosts, myPostsData } = usePeepsContext();
   const [userProfileIpfsHash, setUserProfileIpfsHash] = useState(null);
   const [relationshipIpfsHash, setRelationshipIpfsHash] = useState(null);
   const [userProfileData, setUserProfileData] = useState({
@@ -461,6 +461,11 @@ const Profile = ({ params }: { params: any }) => {
   //     fetchFollowers();
   //   }, 6000);
   // }, [userProfileData]);
+  useEffect(() => {
+    fetchPosts();
+    fetchLikePosts();
+    fetchFollowers();
+  }, []);
 
   useEffect(() => {
     checkIfFollowing();
@@ -616,12 +621,12 @@ const Profile = ({ params }: { params: any }) => {
                             "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                         )}
                     >
-                      {postsData ? (
-                          postsData.map((eachPost: any, index: number) => (
+                      {myPostsData ? (
+                          myPostsData.map((eachPost: any, index: number) => (
                               <PostContainer key={index}>
                                 {console.log(eachPost)}
                                 <PostUser {...eachPost} />
-                                <PostBody postMetaData={posts[index]}>
+                                <PostBody postMetaData={myPosts[index]}>
                                   {eachPost?.post_content}
                                 </PostBody>
                                 <PostActionsContainer
@@ -662,7 +667,7 @@ const Profile = ({ params }: { params: any }) => {
                               </PostContainer>
                           ))
                       ) : (
-                          <div>No posts</div>
+                          <div>No Liked posts</div>
                       )}
                     </Tab.Panel>
                     <Tab.Panel
@@ -689,7 +694,7 @@ const Profile = ({ params }: { params: any }) => {
                               </Link>
                           ))
                       ) : (
-                          <div>No Posts</div>
+                          <div>No Followers yet</div>
                       )}
                     </Tab.Panel>
                   </Tab.Panels>

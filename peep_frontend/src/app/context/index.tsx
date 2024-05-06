@@ -55,6 +55,8 @@ interface IPeepsContext {
   updatePostsNotice: any;
   posts: any;
   postsData: any;
+  myPosts: any;
+  myPostsData: any;
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -95,6 +97,8 @@ const PeepsContext = createContext<IPeepsContext>({
   updatePostsNotice: null,
   posts: [],
   postsData: [],
+  myPosts: [],
+  myPostsData: [],
 });
 
 export interface PeepsProviderProps {
@@ -800,6 +804,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         updatePostsNotice,
         posts,
         postsData,
+        myPosts,
+        myPostsData,
       }}
     >
       {children}
