@@ -527,7 +527,7 @@ export const PostExplore = () => {
             ) : (
                 <div>No posts</div>
             )}
-            {postsData && postsData.length > 20 && (
+            {postsData && postsData.length >= 10 && (
                 <section className="flex flex-row justify-center w-full mx-auto">
                     <button
                         title="load more button"

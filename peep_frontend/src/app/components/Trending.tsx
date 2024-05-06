@@ -60,7 +60,7 @@ const TrendingCard = ({ index, hashTag, repostCount }: ITweet) => {
 };
 
 export const Trending = () => {
-  const { data, loading, notices } = usePeepsContext();
+  const { loading, postsNotice } = usePeepsContext();
 
   if (loading)
     return (
@@ -72,15 +72,15 @@ export const Trending = () => {
       </EmptyPage>
     );
 
-  if (!data || !data.notices)
+  /*if (!data || !data.notices)
     return (
       <EmptyPage
         icon={<TrendingUp size={48} />}
         text={"No trending posts..."}
       ></EmptyPage>
-    );
+    );*/
 
-  if (notices?.length < 1)
+  if (postsNotice?.length < 1)
     return (
       <EmptyPage
         icon={<TrendingUp size={48} />}
@@ -92,7 +92,7 @@ export const Trending = () => {
     <section className={"px-4 mt-12 prose"}>
       <h2 className="">Trending Posts</h2>
 
-      {JSON.parse(notices.reverse()[0].payload).trendingWords.map(
+      {JSON.parse(postsNotice.reverse()[0].payload).trendingWords.map(
         (eachTrends: any, index: number) => (
           <TrendingCard
             key={eachTrends[0]}

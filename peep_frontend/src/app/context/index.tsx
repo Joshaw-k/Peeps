@@ -34,8 +34,8 @@ interface IPeepsContext {
   updateCurrentUser: any;
   userCreated: boolean;
   // data: any;
-  // error: any;
-  // loading: any;
+  error: any;
+  loading: any;
   // notices: any;
   checkProfileExist: any;
   userData: any;
@@ -74,8 +74,8 @@ const PeepsContext = createContext<IPeepsContext>({
   updateCurrentUser: null,
   userCreated: false,
   // data: null,
-  // error: null,
-  // loading: null,
+  error: null,
+  loading: null,
   // notices: null,
   checkProfileExist: null,
   userData: null,
@@ -780,7 +780,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         userCreated,
         // data,
         // error,
-        // loading,
+        loading,
         // notices,
         checkProfileExist,
         userData,

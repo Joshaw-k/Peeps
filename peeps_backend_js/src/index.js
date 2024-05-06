@@ -9,6 +9,7 @@ const createJSONFile = require("./createTrainJson");
 const fs = require("node:fs");
 const postArrayDifference = require("./utils");
 const uniqueFromArray = require("./utils");
+const TrendingAlgorithm = require("./getTrends");
 // require('dotenv').config()
 console.log("PROCESS ENV:", process.env)
 
@@ -88,9 +89,11 @@ let modelTrained = false;
 
 // Data to store in the dapp
 let usersInterstDB = {};
-let usersDB = {
-
-};
+let usersDB = {};
+let noticeDB = {
+  posts: [],
+  trendingWords: [],
+}
 
 const fetchUserPosts = async () => {
   try {
@@ -271,13 +274,7 @@ async function handle_advance(data) {
 
     // Get the difference between allPosta and myPosts if both exists.
     const postMinus = postArrayDifference(allPosts, personalPosts);
-    console.log("postMinus", postMinus);
-
-    // Check that likedPosts is returned
-    if (likedPosts.length > 0) {
-      // Add liked posts to postMinus before detecting the user's interests
-      // postMinus.concat(likedPosts);
-    }
+    // console.log("postMinus", postMinus);
 
     // Check if user has interests in the userDB
     // DETERMINE THE USER'S INTERESTS
@@ -302,14 +299,12 @@ async function handle_advance(data) {
       });
       console.log("post Minus", postMinus.length, postMinus);
       const postMinusSimilarInterests = postMinus.filter(it => usersInterstDB[userData.wallet].includes(it.post_category));
-      // {
-      //   // console.log(usersInterstDB[userData.wallet], it.post_content);
-      //   // usersInterstDB[userData.wallet].includes(_nbc.predict(it.post_content))
-      // }
-      // .map((eachPostMinus) => {
-      //   _nbc.predict(eachPostMinus);
-      // });
-      await createNotice(JSON.stringify([...postMinusSimilarInterests, ...personalPosts]));
+
+      // Prepare the notice to send to the frontend
+      const _allPostsContentArray = allPosts.map((eachAllPost) => eachAllPost.post_content);
+      noticeDB.posts = [...postMinusSimilarInterests, ...personalPosts];
+      noticeDB.trendingWords = new TrendingAlgorithm(_allPostsContentArray).alltrendingPosts();
+      await createNotice(JSON.stringify(noticeDB));
       console.log("Inside post Minus similar interests", postMinusSimilarInterests);
     } else {
       /*const postMinusSimilarInterests = [

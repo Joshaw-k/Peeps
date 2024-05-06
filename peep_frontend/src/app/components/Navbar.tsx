@@ -31,7 +31,7 @@ const Navbar: React.FC = () => {
               chainStatus={{smallScreen: "icon", largeScreen: "full"}}
               showBalance={false}
           />
-          <WalletButton wallet="metamask" />
+          {/*<WalletButton wallet="metamask" />*/}
           {/*{*/}
           {/*  isConnected*/}
           {/*      ? <Account/>*/}
