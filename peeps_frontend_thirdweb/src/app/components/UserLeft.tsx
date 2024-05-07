@@ -76,7 +76,7 @@ export const UserLeft = () => {
       <section className={`hidden lg:block w-full sticky lg:top-28 lg:w-[60%] mx-auto px-2`}>
         <div
           className={
-            "card card-bordered bg-base-200 dark:bg-base-300/80 p-4 flex flex-row items-center gap-x-4"
+            "card card-bordered bg-gray-200 dark:bg-base-300/80 p-4 flex flex-row items-center gap-x-4"
           }
         >
           {walletStatus === "connected" && hasProfile ? (
@@ -110,7 +110,7 @@ export const UserLeft = () => {
           )}
         </div>
         {walletStatus === "connected" && hasProfile ? (
-          <div className={"card card-compact bg-base-200 dark:bg-base-300/80 my-1"}>
+          <div className={"card card-compact bg-gray-200 dark:bg-base-300/80 my-1"}>
             <div className="card-body">
               <div className="font-bold text-xs">About me</div>
               {userData?.bio ? userData?.bio : "*********"}
@@ -126,7 +126,7 @@ export const UserLeft = () => {
               <li>
                 <Link
                   href={`/profile/${userData?.username}`}
-                  className="space-x-2"
+                  className="space-x-2 bg-gray-100 dark:bg-base-200"
                 >
                   <svg
                     className="w-4 h-4"

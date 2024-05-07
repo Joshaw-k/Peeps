@@ -304,7 +304,7 @@ export const CommentModal = ({
                     <span className="label-text">Your comment</span>
                   </label> */}
                   <textarea
-                    className="textarea textarea-lg lg:text-base border-0 w-full h-54 lg:h-60 resize-none bg-transparent focus:outline-primary"
+                    className="textarea textarea-lg lg:text-base border-0 w-full h-54 lg:h-54 resize-none bg-transparent focus:outline-primary"
                     placeholder="write your comment here"
                     onChange={(e) => setCommentText(e.target.value)}
                   ></textarea>

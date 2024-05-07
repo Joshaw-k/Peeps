@@ -18,7 +18,7 @@ const Navbar: React.FC = () => {
 
   return (
     <section className="sticky top-0 z-[100]">
-      <div className="navbar bg-base-200 dark:bg-base-300 px-3 md:px-6 lg:px-16 lg:px-24 h-16 lg:h-20">
+      <div className="navbar bg-gray-200 dark:bg-base-300 px-3 md:px-6 lg:px-16 lg:px-24 h-16 lg:h-20">
         <div className="navbar-start">
           <Link
             href={"/"}
