@@ -499,7 +499,7 @@ const Profile = ({ params }: { params: any }) => {
             ? <>
               <div
                   className={
-                    "card card-bordered bg-gray-200 p-4 flex flex-row items-center gap-x-4 rounded-sm"
+                    "card card-bordered bg-gray-200 dark:bg-base-200 p-4 flex flex-row items-center gap-x-4 rounded-sm"
                   }
               >
                 <Avatar profileImage={""}/>

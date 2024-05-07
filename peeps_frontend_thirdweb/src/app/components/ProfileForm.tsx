@@ -134,7 +134,7 @@ export const ProfileForm = () => {
         <button
           type="button"
           className="btn btn-block inline-flex h-[35px] items-center justify-center px-[15px] font-medium leading-none outline-none outline-0"
-          disabled={walletStatus === "connected"}
+          disabled={walletStatus !== "connected"}
         >
           Create Profile
         </button>
