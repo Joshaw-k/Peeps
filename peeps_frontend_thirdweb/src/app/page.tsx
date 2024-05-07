@@ -20,7 +20,7 @@ export default function Home() {
     const walletStatus = useActiveWalletConnectionStatus();
 
     return (
-    <main className="min-h-[100vh] flex items-center justify-center w-full containe max-w-scree-lg mx-auto">
+    <main className="min-h-[100vh] flex items-start justify-center w-full containe max-w-scree-lg mx-auto">
         {/*{*/}
         {/*    walletStatus === "connected" ?*/}
         {/*        <>*/}
