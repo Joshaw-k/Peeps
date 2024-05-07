@@ -12,6 +12,7 @@
     "@apollo/client": "^3.10.2",
     "@cartesi/rollups": "^1.4.0",
     "@headlessui/react": "^1.7.19",
+    "@radix-ui/react-alert-dialog": "^1.0.5",
     "@uidotdev/usehooks": "^2.4.1",
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
