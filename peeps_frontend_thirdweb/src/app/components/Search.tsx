@@ -43,7 +43,7 @@ export const Search = () => {
       <div className="join w-full">
         <div className="w-full">
           <input
-            className="input input-bordered w-full px-6 py-6 border-0 bg-base-200 rounded-box join-item focus:bg-base-300 transition-[colors, outline]"
+            className="input input-bordered w-full px-6 py-6 border-0 bg-gray-100 dark:bg-base-200 rounded-box join-item focus:bg-base-300 transition-[colors, outline]"
             placeholder="Search"
           />
         </div>

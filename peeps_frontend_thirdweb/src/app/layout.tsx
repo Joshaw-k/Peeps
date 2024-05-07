@@ -1,7 +1,7 @@
 "use client";
 
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
+import {Inter, Noto_Sans} from "next/font/google";
 import "./globals.css";
 import { ThirdwebProvider } from "thirdweb/react";
 import {ApolloClient, ApolloProvider, InMemoryCache} from "@apollo/client";
@@ -15,6 +15,12 @@ import Home from "@/app/page";
 import React from "react";
 
 const inter = Inter({ subsets: ["latin"] });
+const notoSans = Noto_Sans({
+    subsets: ["latin", "cyrillic"],
+    display: "swap",
+    preload: false,
+    variable: "--font-noto-sans",
+});
 
 const metadata: Metadata = {
   title: "Peeps Thirdweb",
@@ -36,7 +42,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${inter.className} flex flex-col h-dvh overflow-y-auto`}>
+      <body className={`${notoSans.className} flex flex-col h-dvh overflow-y-auto`}>
       <ApolloProvider client={client}>
         <ThirdwebProvider>
             <PeepsProvider>

@@ -499,7 +499,7 @@ const Profile = ({ params }: { params: any }) => {
             ? <>
               <div
                   className={
-                    "card card-bordered bg-base-200 p-4 flex flex-row items-center gap-x-4"
+                    "card card-bordered bg-gray-200 p-4 flex flex-row items-center gap-x-4 rounded-sm"
                   }
               >
                 <Avatar profileImage={""}/>
@@ -516,7 +516,7 @@ const Profile = ({ params }: { params: any }) => {
             </>
             : <section>
               <div className="">
-                <div className="hero min-h-60 bg-base-300">
+                <div className="hero min-h-60 bg-gray-200 dark:bg-base-200 rounded-lg">
                   <div className="hero-content text-center"></div>
                 </div>
                 <div className={"relative w-full px-4"}>
@@ -582,10 +582,10 @@ const Profile = ({ params }: { params: any }) => {
                         className={({selected}) =>
                             classNames(
                                 "rounded-lg px-8 py-2.5 font-medium leading-5",
-                                "ring-white/60 focus:outline-none",
+                                "ring-white/60 focus:outline-none hover:bg-gray-300",
                                 selected
                                     ? "bg-primary text-primary-content shadow"
-                                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                                    : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
                             )
                         }
                     >
@@ -595,10 +595,10 @@ const Profile = ({ params }: { params: any }) => {
                         className={({selected}) =>
                             classNames(
                                 "rounded-lg px-8 py-2.5 font-medium leading-5",
-                                "ring-white/60 focus:outline-none",
+                                "ring-white/60 focus:outline-none hover:bg-gray-300",
                                 selected
                                     ? "bg-primary text-primary-content shadow"
-                                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                                    : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
                             )
                         }
                     >
@@ -608,10 +608,10 @@ const Profile = ({ params }: { params: any }) => {
                         className={({selected}) =>
                             classNames(
                                 "rounded-lg px-8 py-2.5 font-medium leading-5",
-                                "ring-white/60 focus:outline-none",
+                                "ring-white/60 focus:outline-none hover:bg-gray-300",
                                 selected
                                     ? "bg-primary text-primary-content shadow"
-                                    : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                                    : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
                             )
                         }
                     >
@@ -621,7 +621,7 @@ const Profile = ({ params }: { params: any }) => {
                   <Tab.Panels>
                     <Tab.Panel
                         className={classNames(
-                            "rounded-xl p-6",
+                            "rounded-xl p-3",
                             "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                         )}
                     >
@@ -649,7 +649,7 @@ const Profile = ({ params }: { params: any }) => {
                     </Tab.Panel>
                     <Tab.Panel
                         className={classNames(
-                            "rounded-xl p-6",
+                            "rounded-xl p-3",
                             "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                         )}
                     >
@@ -676,7 +676,7 @@ const Profile = ({ params }: { params: any }) => {
                     </Tab.Panel>
                     <Tab.Panel
                         className={classNames(
-                            "rounded-xl p-6",
+                            "rounded-xl p-3",
                             "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                         )}
                     >

@@ -81,7 +81,7 @@ export const PostContainer = ({ children }: IPostContainer) => {
   return (
     <section
       className={
-        "card card-compact p-4 my-2 border-base-200 bg-gray-100/60 dark:bg-base-300"
+        "card card-compact p-4 my-2 border-base-200 bg-gray-100 dark:bg-base-300"
       }
     >
       {children}

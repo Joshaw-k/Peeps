@@ -20,7 +20,7 @@ export default function Home() {
     const walletStatus = useActiveWalletConnectionStatus();
 
     return (
-    <main className="min-h-[100vh] flex items-start justify-center w-full containe max-w-scree-lg mx-auto">
+    <main className="min-h-[100vh] flex items-start w-full containe max-w-scree-lg mx-auto">
         {/*{*/}
         {/*    walletStatus === "connected" ?*/}
         {/*        <>*/}
@@ -72,22 +72,22 @@ const HomePosts = () => {
     const {postsNotice} = usePeepsContext();
 
     return (
-        <div className={"lg:py-0"}>
+        <div className={"lg:py-0 w-full"}>
             <PostForm dappAddress={dappAddress} />
             {
                 postsNotice.length > 0
                     ? <div className={""}>
                         {/* For you & Explore tabs */}
                         <Tab.Group>
-                            <Tab.List className="bg-zinc-950 sticky top-[60px] z-10 flex space-x-1 rounded-xl px-1 py-4">
+                            <Tab.List className="bg-base-100 dark:bg-zinc-950 sticky top-[60px] z-10 flex space-x-1 rounded-xl px-1 py-4">
                                 <Tab
                                     className={({selected}) =>
                                         classNames(
-                                            "rounded-lg px-8 py-2.5 leading-5 prose text-xl lg:text-3xl font-semibold text-gray-400 lg:mt-8",
-                                            "ring-white/60 focus:outline-none",
+                                            "rounded-xl px-8 py-2 leading-5 prose text-xl lg:text-2xl font-semibold text-gray-400 lg:mt-8",
+                                            "ring-white/60 focus:outline-none hover:bg-gray-300",
                                             selected
-                                                ? "bg-primary text-primary-content shadow font-bold"
-                                                : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                                                ? "bg-primary text-primary-content shadow font-bold hover:bg-primary"
+                                                : "text-blue-100 hover:bg-white/[0.12] dark:hover:text-white"
                                         )
                                     }
                                 >
@@ -96,11 +96,11 @@ const HomePosts = () => {
                                 <Tab
                                     className={({selected}) =>
                                         classNames(
-                                            "rounded-lg px-8 py-2.5 leading-5 prose text-xl lg:text-3xl font-semibold text-gray-400 lg:mt-8",
-                                            "ring-white/60 focus:outline-none",
+                                            "rounded-xl px-8 py-2 leading-5 prose text-xl lg:text-2xl font-semibold text-gray-400 lg:mt-8",
+                                            "ring-white/60 focus:outline-none hover:bg-gray-300",
                                             selected
-                                                ? "bg-primary text-primary-content shadow font-bold"
-                                                : "text-blue-100 hover:bg-white/[0.12] hover:text-white"
+                                                ? "bg-primary text-primary-content shadow font-bold hover:bg-primary"
+                                                : "text-blue-100 hover:bg-white/[0.12] dark:hover:text-white"
                                         )
                                     }
                                 >

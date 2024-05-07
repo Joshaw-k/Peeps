@@ -151,7 +151,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
   ]);
 
   return (
-    <div className="bg-gray-100/60 dark:bg-base-300 rounded-box focus-within:ring-2 focus-within:ring-primary">
+    <div className="bg-gray-200 dark:bg-base-300 rounded-box focus-within:ring-2 focus-within:ring-primary">
       <textarea
         placeholder="Write something"
         className="textarea textarea-lg text-base border-0 w-full resize-none bg-transparent focus:outline-0"
