@@ -682,14 +682,14 @@ const Profile = ({ params }: { params: any }) => {
                     >
                       {followersListData ? (
                           followersListData.map((eachFollower: any, index: number) => (
-                              <Link href={`/profile/${eachFollower?.username}`}
+                              <Link key={index} href={`/profile/${eachFollower?.username}`}
                                     className={"card card-compact p-4 flex flex-row gap-x-3 bg-base-200"}>
                                 <div className="avatar">
                                   <div
                                       className="w-8 rounded-full ring ring-primary ring-offset-base-100 ring-1 ring-offset-1">
                                     {
                                       eachFollower?.displayPicture
-                                          ? <img src="" alt={""}/>
+                                          ? <Image src="" alt={""} width={56} height={56}/>
                                           : <span className="text-3xl"></span>
                                     }
                                   </div>

@@ -11,16 +11,16 @@ import {
 import { usePeepsContext } from "../../context";
 
 const TrendingPosts = ({ params }: { params: { slug: string } }) => {
-  const { notices } = usePeepsContext();
+  const { postsNotice } = usePeepsContext();
 
-  if (!notices)
+  if (!postsNotice)
     return (
       <EmptyPage
         icon={<TrendingUp size={48} />}
         text={"No trending posts..."}
       ></EmptyPage>
     );
-  if (notices?.length < 1)
+  if (postsNotice?.length < 1)
     return (
       <EmptyPage
         icon={<TrendingUp size={48} />}
@@ -36,15 +36,15 @@ const TrendingPosts = ({ params }: { params: { slug: string } }) => {
         Trending Posts
       </div>
       {/* {console.log(currentAddress)}
-          {console.log(JSON.parse(notices.reverse()[0].payload).posts)}
+          {console.log(JSON.parse(postsNotice.reverse()[0].payload).posts)}
           {console.log(
-            JSON.parse(notices.reverse()[0].payload).posts.filter(
+            JSON.parse(postsNotice.reverse()[0].payload).posts.filter(
               (it: any) => it.address === currentAddress
             )
           )} */}
-      {console.log(JSON.parse(notices?.reverse()[0].payload))}
-      {notices.length > 0 &&
-        JSON.parse(notices?.reverse()[0].payload)
+      {console.log(JSON.parse(postsNotice?.reverse()[0].payload))}
+      {postsNotice.length > 0 &&
+        JSON.parse(postsNotice?.reverse()[0].payload)
           .posts?.filter((item: any) =>
             item.content?.message?.includes(params.slug)
           )

@@ -336,7 +336,7 @@ export const PostExplore = () => {
             console.log(userData);
             if (res.data) {
                 if (res.data.rows.length > 0) {
-                    setPosts(res.data.rows);
+                    // setPosts(res.data.rows);
                     let data = [];
                     for (let index = 0; index < res.data.rows.length; index++) {
                         const res1 = await axios.get(
@@ -346,7 +346,7 @@ export const PostExplore = () => {
                         console.log(res1);
                     }
                     // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-                    setPostsData(data);
+                    // setPostsData(data);
                     setIsPageLoading(false);
                     setIsPageError(false);
                     pageLoadCount === 0 && setPageLoadCount((value) => value + 1);

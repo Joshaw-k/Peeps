@@ -16,7 +16,7 @@ import { Tab } from "@headlessui/react";
 import {Post} from "@/app/components/Posts/Posts";
 import {PostExplore} from "@/app/components/Posts/PostsExplore";
 
-export default function Home({children}: { children: React.ReactNode }) {
+export default function Home() {
     const walletStatus = useActiveWalletConnectionStatus();
 
     return (
