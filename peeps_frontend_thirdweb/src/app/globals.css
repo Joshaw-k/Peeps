@@ -19,4 +19,13 @@
 	body {
 		@apply bg-base-100 dark:bg-zinc-950 dark:text-neutral-200;
 	}
+	.peeps-color {
+		@apply bg-[#4563eb] text-white;
+	}
+}
+
+@layer components {
+	.connect-button {
+		@apply btn btn-success text-white;
+	}
 }
