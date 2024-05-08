@@ -1,6 +1,6 @@
 "use client";
 
-import {LucideHome, LucideSearch, LucideTrendingUp} from "lucide-react";
+import {LucideHome, LucidePlus, LucideSearch, LucideTrendingUp} from "lucide-react";
 import {AvatarProfileSmall} from "./Avatar";
 import React from "react";
 import Link from "next/link";
@@ -8,6 +8,7 @@ import {usePeepsContext} from "../context";
 // import {useAccount} from "wagmi";
 import classNames from "classnames";
 import { useActiveWalletConnectionStatus } from "thirdweb/react";
+import {PostFormModal} from "@/app/components/postFormModal";
 
 export const MobileNavigation = () => {
     const {
@@ -38,6 +39,12 @@ export const MobileNavigation = () => {
                     {/*<span>Search</span>*/}
                     {/*<span className="badge badge-sm badge-warning">NEW</span>*/}
                 </Link>
+            </li>
+            <li>
+                {/*<div className={"flex flex-row flex-nowrap justify-center text-center bg-primary-content dark:bg-primary/60 rounded-box"}>
+                    <LucidePlus size={24} strokeWidth={4}/>
+                </div>*/}
+                <PostFormModal />
             </li>
             <li>
                 <Link href={"/trending"}

@@ -73,7 +73,9 @@ const HomePosts = () => {
 
     return (
         <div className={"lg:py-0 w-full"}>
-            <PostForm dappAddress={dappAddress} />
+            <div className={"hidden lg:block"}>
+                <PostForm dappAddress={dappAddress} />
+            </div>
             {
                 postsNotice.length > 0
                     ? <div className={""}>
