@@ -17,7 +17,7 @@ const Navbar: React.FC = () => {
   // const { isConnected } = useAccount();
 
   return (
-    <section className="sticky top-0 z-[100]">
+    <section className="sticky top-0 z-20">
       <div className="navbar bg-gray-200 dark:bg-base-300 px-3 md:px-6 lg:px-16 lg:px-24 h-16 lg:h-20">
         <div className="navbar-start">
           <Link
@@ -36,7 +36,7 @@ const Navbar: React.FC = () => {
                 url: "https://peeps-mu.vercel.app",
               }}
               connectButton={{
-                  className: "bg-purple-400"
+                  className: "bg-primary"
               }}
           />
           {/*<Network />*/}
