@@ -35,6 +35,9 @@ const Navbar: React.FC = () => {
                 name: "Peeps",
                 url: "https://peeps-mu.vercel.app",
               }}
+              connectButton={{
+                  className: "bg-purple-400"
+              }}
           />
           {/*<Network />*/}
           {/*<ConnectButton*/}

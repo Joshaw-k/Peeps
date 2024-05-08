@@ -39,6 +39,7 @@ export const CommentModal = ({
   const address = activeAccount?.address;
   const [commentText, setCommentText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [commentsUpdate, setCommentsUpdate] = useState(postData.post_comments);
 
   // const addInput = async (str: string) => {
   //   if (rollups) {
@@ -204,6 +205,9 @@ export const CommentModal = ({
           toast.error(`Unable to post comment`);
         }
         // Then repin on ipfs
+
+        // Update the comments count - clientSide
+        setCommentsUpdate(postData.post_comments + 1);
       } else {
         toast.error(
           "Something went wrong at our end. We are working to resolve it as we speak."
@@ -258,7 +262,7 @@ export const CommentModal = ({
         >
           <span className="flex-shrink-0 inline-flex justify-center items-center lg:h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 mx-auto scale-75 lg:scale-100 dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
             <svg
-              className="flex-shrink-0 w-5 h-5"
+              className={classNames("flex-shrink-0 w-5 h-5", {"text-primary": commentsUpdate > 0})}
               xmlns="http://www.w3.org/2000/svg"
               width="24"
               height="24"
@@ -273,8 +277,9 @@ export const CommentModal = ({
               <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
             </svg>
           </span>
-          <span className={classNames("text-xs", {"font-bold": postData?.post_comments > 0})}>
-            {postData?.post_comments > 0 ? postData?.post_comments : "Comment"}
+          <span className={classNames("text-xs", {"font-bold": commentsUpdate > 0})}>
+            {/*{postData?.post_comments > 0 ? postData?.post_comments : "Comment"}*/}
+            {commentsUpdate > 0 ? commentsUpdate : "Comment"}
           </span>
           {/* <CommentModal
             postId={postId}
