@@ -45,8 +45,7 @@ const Profile = ({ params }: { params: any }) => {
   const [followersListData, setFollowersListData] = useState<any>();
   const walletStatus = useActiveWalletConnectionStatus();
 
-  const defaultImage: string =
-    "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
+  const defaultImage: string = "";
 
   const fetchProfileData = async () => {
     if (userProfileIpfsHash) {
@@ -522,7 +521,7 @@ const Profile = ({ params }: { params: any }) => {
                 <div className={"relative w-full px-4"}>
                   <div className={"absolute -top-12 z-10"}>
                     <div className="avatar">
-                      <div className="w-24 rounded-full ring ring-primary ring-offset-base-100 ring-offset-2">
+                      <div className="w-24 rounded-full ring ring-primary dark:ring-[#4563eb] ring-offset-base-100 ring-offset-2">
                         <Image
                             width={100}
                             height={100}
@@ -584,7 +583,7 @@ const Profile = ({ params }: { params: any }) => {
                                 "rounded-lg px-8 py-2.5 font-medium leading-5",
                                 "ring-white/60 focus:outline-none hover:bg-gray-300",
                                 selected
-                                    ? "bg-primary text-primary-content shadow"
+                                    ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow"
                                     : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
                             )
                         }
@@ -597,7 +596,7 @@ const Profile = ({ params }: { params: any }) => {
                                 "rounded-lg px-8 py-2.5 font-medium leading-5",
                                 "ring-white/60 focus:outline-none hover:bg-gray-300",
                                 selected
-                                    ? "bg-primary text-primary-content shadow"
+                                    ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow"
                                     : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
                             )
                         }
@@ -610,7 +609,7 @@ const Profile = ({ params }: { params: any }) => {
                                 "rounded-lg px-8 py-2.5 font-medium leading-5",
                                 "ring-white/60 focus:outline-none hover:bg-gray-300",
                                 selected
-                                    ? "bg-primary text-primary-content shadow"
+                                    ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow"
                                     : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
                             )
                         }

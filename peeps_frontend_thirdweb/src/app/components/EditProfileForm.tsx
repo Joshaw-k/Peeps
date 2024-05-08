@@ -158,7 +158,7 @@ export const EditProfileForm = () => {
       <AlertDialog.Trigger asChild>
         <button
           type="button"
-          className="btn btn-block btn-primary rounded-xl inline-flex h-[35px] items-center justify-center px-[15px] font-semibold leading-none outline-none outline-0"
+          className="btn btn-block btn-primary dark:bg-[#4563eb] dark:border-0 dark:text-white rounded-xl inline-flex h-[35px] items-center justify-center px-[15px] font-semibold leading-none outline-none outline-0"
           // disabled={!isConnected}
           disabled={walletStatus !== "connected"}
         >
