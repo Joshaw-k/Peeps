@@ -24,6 +24,7 @@ export const ProfileForm = () => {
     pinFileToIPFS,
     profileChanged,
     setProfileChanged,
+      updateBaseUserData
   } = usePeepsContext();
   const rollups = useRollups(baseDappAddress);
   const [dp, setDp] = useState<string>("");
@@ -83,6 +84,16 @@ export const ProfileForm = () => {
         setHasProfile(true);
         await wait(800);
         setProfileChanged(!profileChanged);
+        updateBaseUserData({
+          username: username,
+          wallet: `${address}`,
+          displayName: displayName,
+          profilePicture: imgUrl,
+          bio: bio,
+          following: 0,
+          followers: 0,
+          createdAt: new Date(),
+        });
       }
     } catch (error) {
       console.log(error);

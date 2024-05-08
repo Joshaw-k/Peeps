@@ -7,7 +7,7 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { defaultDappAddress } from "../utils/constants";
+import {defaultDappAddress, PEEPS_USER_CACHE_NAME} from "../utils/constants";
 import axios from "axios";
 import toast from "react-hot-toast";
 // import {useAccount} from "wagmi";
@@ -52,6 +52,8 @@ interface IPeepsContext {
   postsData: any;
   myPosts: any;
   myPostsData: any;
+  baseUserData: any,
+  updateBaseUserData: any
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -94,6 +96,8 @@ const PeepsContext = createContext<IPeepsContext>({
   postsData: [],
   myPosts: [],
   myPostsData: [],
+  baseUserData: null,
+  updateBaseUserData: null
 });
 
 export interface PeepsProviderProps {
@@ -136,6 +140,38 @@ const GET_NOTICES = gql`
   }
 `;
 
+function isJsonString(str: string | null) {
+  try {
+    if (typeof str === "string") {
+      JSON.parse(str);
+    }
+  } catch (e) {
+    return false;
+  }
+  return true;
+}
+
+export const getCurrentUserCache = () => {
+
+  const defaultCurrentUserCache = null;
+  let currentUserCache = typeof window !== "undefined" ? window.localStorage.getItem(PEEPS_USER_CACHE_NAME) : null;
+  if (typeof window !== "undefined") {
+    if (!currentUserCache) {
+      window.localStorage.setItem(PEEPS_USER_CACHE_NAME, JSON.stringify(defaultCurrentUserCache));
+      currentUserCache = localStorage.getItem(PEEPS_USER_CACHE_NAME);
+    }
+  }
+  // console.log(isJsonString(currentUserCache));
+  // console.log(typeof currentUserCache);
+
+  return isJsonString(currentUserCache) ? JSON.parse(currentUserCache!) : null;
+}
+
+export const updateCurrentUserCache = (rawData: any) => {
+  // Save summary data to localStorage
+  localStorage.setItem(PEEPS_USER_CACHE_NAME, JSON.stringify(rawData));
+}
+
 const PeepsProvider: React.FC<PeepsProviderProps> = ({
   children,
 }: PeepsProviderProps) => {
@@ -143,6 +179,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     useState<string>(defaultDappAddress);
   // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   // const {address, isConnecting, isConnected} = useAccount();
+  const [baseUserData, setBaseUserData] = useState(getCurrentUserCache() || null);
   const activeAccount = useActiveAccount();
   const {connect, isConnecting} = useConnect();
   const address = activeAccount?.address;
@@ -451,6 +488,11 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     console.log(baseDappAddress);
     console.log(newDappAddress);
   };
+
+  const updateBaseUserData = (_newUserData: any) => {
+    setBaseUserData(_newUserData);
+    updateCurrentUserCache(_newUserData);
+  }
 
   const updateCurrentUser = (_user: ICurrentUser) => {
     setCurrentUser(_user);
@@ -806,6 +848,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         postsData,
         myPosts,
         myPostsData,
+        baseUserData,
+        updateBaseUserData
       }}
     >
       {children}
