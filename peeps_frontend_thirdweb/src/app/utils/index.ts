@@ -10,7 +10,7 @@ export function classNames(...classes: []) {
     return classes.filter(Boolean).join(' ')
 }
 
-export function formattedDate(_currentDate) {
+export function formattedDate(_currentDate: any) {
     return _currentDate.toLocaleString('en-US', {
         year: '2-digit',
         month: '2-digit',

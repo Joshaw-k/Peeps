@@ -41,8 +41,7 @@ export const EditProfileForm = () => {
   const [open, setOpen] = React.useState(false);
   const [disableSave, setDisableSave] = React.useState(true);
 
-  const defaultImage: string =
-    "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
+  const defaultImage: string = "";
 
   const profileImageRef = useRef(null);
 
@@ -159,7 +158,7 @@ export const EditProfileForm = () => {
       <AlertDialog.Trigger asChild>
         <button
           type="button"
-          className="btn btn-block btn-primary inline-flex h-[35px] items-center justify-center px-[15px] font-semibold leading-none outline-none outline-0"
+          className="btn btn-block btn-primary rounded-xl inline-flex h-[35px] items-center justify-center px-[15px] font-semibold leading-none outline-none outline-0"
           // disabled={!isConnected}
           disabled={walletStatus !== "connected"}
         >
