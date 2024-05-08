@@ -56,6 +56,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
         },
         pinataContent: {
           post_user: userData?.wallet,
+          post_user_dp: userData?.profilePicture,
           post_id: uuidv4(),
           post_username: userData?.username,
           post_displayName: userData?.displayName,

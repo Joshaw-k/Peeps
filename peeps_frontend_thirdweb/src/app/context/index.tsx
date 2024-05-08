@@ -697,6 +697,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     const post_creator = postMetaData.metadata?.keyvalues?.addr;
     const post_uuid = postMetaData.metadata?.keyvalues?.uuid;
     const username = postData?.post_username;
+    const userDp = postData?.post_user_dp;
+    const displayName = postData?.displayName;
     const postContent = postData?.post_content;
     const postMedia = postData?.post_media;
     const commentList = postData?.post_comments;
@@ -719,6 +721,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           },
           pinataContent: {
             post_username: username,
+            post_user_dp: userDp,
+            post_displayName: displayName,
             post_content: postContent,
             post_media: postMedia,
             post_comments:

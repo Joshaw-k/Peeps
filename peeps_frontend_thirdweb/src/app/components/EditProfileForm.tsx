@@ -161,7 +161,7 @@ export const EditProfileForm = () => {
           type="button"
           className="btn btn-block btn-primary inline-flex h-[35px] items-center justify-center px-[15px] font-semibold leading-none outline-none outline-0"
           // disabled={!isConnected}
-          disabled={walletStatus === "connected"}
+          disabled={walletStatus !== "connected"}
         >
           Edit Profile
         </button>

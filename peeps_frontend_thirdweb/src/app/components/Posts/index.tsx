@@ -1,3 +1,5 @@
+"use client";
+
 import { useRouter } from "next/navigation";
 import { useRollups } from "../../useRollups";
 import { defaultDappAddress } from "../../utils/constants";
@@ -39,13 +41,13 @@ interface IPostActions {
   children?: any;
 }
 
-const defaultImage =
-  "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
+// const defaultImage =
+//   "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
 
 const AvatarPost = ({ src }: {src: string}) => {
   return (
     <div className="avatar placeholder">
-      <div className="w-7 rounded-full bg-base-100">
+      <div className="w-7 rounded-full bg-base-300 dark:bg-base-100">
         {
           src
               ? <img
@@ -67,7 +69,7 @@ export const PostUser = (props: any) => {
           className={"flex-1 flex flex-row items-center gap-x-4 leading-normal"}
       >
           <AvatarPost
-              src={props?.post_media && props?.post_media}
+              src={props?.post_user_dp}
           />
         <span className="font-medium text-xs lg:text-md relative dark:text-gray-400">
           {props?.post_displayName ?? "Anonymous"}
@@ -77,8 +79,10 @@ export const PostUser = (props: any) => {
           @{props?.post_username ?? "Anonymous"}
         </span>
       </Link>
-      <div className={"flex-grow-0 px-6 text-gray-500"}>
+      <div className={"flex-grow-0 lg:px-2 text-gray-500 text-right text-xs leading-tight"}>
         {/* {new Date().toLocaleTimeString()} */}
+        <div className={"text-[0.6rem] lg:text-xs"}>{new Date(props?.createdAt).toLocaleDateString()}</div>
+        <div className={"text-[0.6rem] lg:text-xs font-semibold"}>{new Date(props?.createdAt).toLocaleTimeString()}</div>
       </div>
     </section>
   );
@@ -88,7 +92,7 @@ export const PostContainer = ({ children }: IPostContainer) => {
   return (
     <section
       className={
-        "card card-compact p-4 my-2 border-base-200 bg-gray-100 dark:bg-base-300"
+        "card card-compact rounded-lg lg:rounded-box p-4 my-2 border-base-200 bg-gray-100 dark:bg-base-300"
       }
     >
       {children}
@@ -182,9 +186,7 @@ export const PostActionsContainer = ({
       const actionData = action ? "like" : "unlike";
       if (actionData == "like") {
         await PostActions(postId, postData, postMetaData, actionData);
-        console.log("before post_likes", likesUpdate);
         setLikesUpdate(postData.post_likes + 1);
-        console.log("after post_likes", likesUpdate);
       } else {
         await revertReactions(
           userData?.wallet,

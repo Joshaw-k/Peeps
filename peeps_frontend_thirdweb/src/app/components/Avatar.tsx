@@ -14,6 +14,7 @@ export const AvatarProfile = React.forwardRef((props: avatarProps, ref: React.Fo
     );
 });
 AvatarProfile.displayName = "AvatarProfile";
+
 export const AvatarProfileSmall = React.forwardRef((props: avatarProps, ref: React.ForwardedRef<any>) => {
   return (
     <div className="avatar placeholder">
