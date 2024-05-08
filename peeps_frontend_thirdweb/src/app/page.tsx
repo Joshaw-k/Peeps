@@ -88,7 +88,7 @@ const HomePosts = () => {
                                             "rounded-xl px-8 py-2 leading-5 prose text-xl lg:text-2xl font-semibold text-gray-400 lg:mt-8",
                                             "ring-white/60 focus:outline-none hover:bg-gray-300",
                                             selected
-                                                ? "bg-primary text-primary-content shadow font-bold hover:bg-primary"
+                                                ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow font-bold hover:bg-primary"
                                                 : "text-blue-100 hover:bg-white/[0.12] dark:hover:text-white"
                                         )
                                     }
@@ -101,7 +101,7 @@ const HomePosts = () => {
                                             "rounded-xl px-8 py-2 leading-5 prose text-xl lg:text-2xl font-semibold text-gray-400 lg:mt-8",
                                             "ring-white/60 focus:outline-none hover:bg-gray-300",
                                             selected
-                                                ? "bg-primary text-primary-content shadow font-bold hover:bg-primary"
+                                                ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow font-bold hover:bg-primary"
                                                 : "text-blue-100 hover:bg-white/[0.12] dark:hover:text-white"
                                         )
                                     }
