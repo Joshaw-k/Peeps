@@ -51,7 +51,7 @@ export const MobileNavigation = () => {
                 <Link href={`/profile/${userData?.username}`}
                       className={"flex flex-row flex-nowrap gap-x-3 active:bg-base-300"}>
                     <div className={"relative"}>
-                        <AvatarProfileSmall src={""}/>
+                        <AvatarProfileSmall src={userData?.profilePicture}/>
                         {
                             walletStatus === "connected" && !hasProfile &&
                             <span className="absolute top-0 -right-2 badge badge-xs badge-warning"></span>

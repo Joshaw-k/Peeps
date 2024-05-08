@@ -23,6 +23,7 @@ import {
 } from "./index";
 
 import { useDebounce } from "@uidotdev/usehooks";
+import Image from "next/image";
 
 type Notice = {
   id: string;
@@ -423,6 +424,15 @@ export const Post = () => {
               <PostUser {...eachNotice} />
               <PostBody postMetaData={posts[index]}>
                 {eachNotice?.post_content}
+                {
+                    eachNotice?.post_media && <Image
+                        src={eachNotice?.post_media}
+                        alt={"Post media"}
+                        width={100}
+                        height={100}
+                        className={"w-full"}
+                    />
+                }
               </PostBody>
               <PostActionsContainer
                   postId={index}

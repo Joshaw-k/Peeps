@@ -23,6 +23,7 @@ import {
 } from "./index";
 
 import { useDebounce } from "@uidotdev/usehooks";
+import Image from "next/image";
 
 type Notice = {
     id: string;
@@ -513,6 +514,16 @@ export const PostExplore = () => {
                         <PostUser {...eachPost} />
                         <PostBody postMetaData={posts[index]}>
                             {eachPost?.post_content}
+                            {
+                                eachPost?.post_media &&
+                                <Image
+                                    src={eachPost?.post_media}
+                                    alt={"Post media"}
+                                    width={100}
+                                    height={100}
+                                    className={"w-full rounded-lg mt-4 lg:rounded-box"}
+                                />
+                            }
                         </PostBody>
                         <PostActionsContainer
                             postId={index}
