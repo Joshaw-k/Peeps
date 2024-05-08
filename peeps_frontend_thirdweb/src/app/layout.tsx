@@ -23,8 +23,8 @@ const notoSans = Noto_Sans({
 });
 
 const metadata: Metadata = {
-  title: "Peeps Thirdweb",
-  description: "A web3 decentralized social media platform",
+  title: "Peeps",
+  description: "A decentralized social media platform",
 };
 
 //Setup GraphQL Apollo client

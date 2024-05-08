@@ -34,10 +34,22 @@ const Navbar: React.FC = () => {
               appMetadata={{
                 name: "Peeps",
                 url: "https://peeps-mu.vercel.app",
+                description: "Peeps is a decentralized social media platform"
               }}
               connectButton={{
-                  className: "bg-primary"
+                  className: "connect-button",
+                  label: "Sign in",
+                  style: {
+                      display: "flex",
+                      background: "#4563eb",
+                      color: "white",
+                      borderRadius: ".8rem",
+                      height: "2.75rem",
+                      width: "auto",
+                      fontWeight: "bolder"
+                  }
               }}
+              walletConnect={{projectId: "7f49c7e89e54528522eef8334c58506e"}}
           />
           {/*<Network />*/}
           {/*<ConnectButton*/}
