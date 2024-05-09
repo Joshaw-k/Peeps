@@ -298,7 +298,7 @@ export const PostActionsContainer = ({
         </span>
       </div>
 
-      <TipModal address={postMetaData?.postId?.metadata?.keyvalues?.addr} />
+      <TipModal address={postMetaData?.[postId]?.metadata?.keyvalues?.addr} />
     </section>
   );
 };
