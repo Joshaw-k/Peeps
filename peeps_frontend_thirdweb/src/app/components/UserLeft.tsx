@@ -10,6 +10,7 @@ import { usePeepsContext } from "../context";
 // import {useAccount} from "wagmi";
 import Image from "next/image";
 import {useActiveAccount, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
+import { LucideWallet2 } from "lucide-react";
 
 const defaultImage: string =
   "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
@@ -157,12 +158,12 @@ export const UserLeft = () => {
                 </Link>
               </li>
             )}
-            {/* <li>
-            <Link href={"/wallet"} className="space-x-2">
-              <FaWallet />
-              <span>Wallet</span>
-            </Link>
-          </li> */}
+            <li>
+              <Link href={"/wallet"} className="space-x-2">
+                <LucideWallet2 width={20} height={20} />
+                <span>Wallet</span>
+              </Link>
+            </li>
             {/* <li>
             <Link href={"/settings"} className="space-x-2">
               <FaGear />
