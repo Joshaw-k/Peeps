@@ -54,7 +54,7 @@ interface IPeepsContext {
   myPostsData: any;
   baseUserData: any,
   updateBaseUserData: any,
-  activeAddress: string,
+  activeAddress: any,
   walletStatus: string,
 }
 
@@ -100,8 +100,8 @@ const PeepsContext = createContext<IPeepsContext>({
   myPostsData: [],
   baseUserData: null,
   updateBaseUserData: null,
-  activeAddress: null,
-  walletStatus: null
+  activeAddress: "",
+  walletStatus: ""
 });
 
 export interface PeepsProviderProps {

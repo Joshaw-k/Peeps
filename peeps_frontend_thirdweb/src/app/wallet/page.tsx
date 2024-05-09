@@ -66,7 +66,7 @@ const Wallet = () => {
         const _balance = await getWalletBalance({
             address: activeAddress,
             client,
-            chain: connectedChain,
+            chain: connectedChain!,
         });
         console.log("wallet Balance", _balance);
         setBalance(_balance);
@@ -192,7 +192,7 @@ const Wallet = () => {
                 <header className="py-8 font-medium text-xl text-base-content/60">
                     Charts and Overview
                 </header>
-                <ChartTransaction />
+                {/*<ChartTransaction />*/}
             </section>
         </section>
     );
