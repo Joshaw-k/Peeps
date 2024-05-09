@@ -22,6 +22,7 @@ import {
   LucideThumbsUp
 } from "lucide-react";
 import {useActiveWalletConnectionStatus} from "thirdweb/react";
+import { TipModal } from "../tipModal";
 
 interface IPostContainer {
   children: any;
@@ -297,9 +298,7 @@ export const PostActionsContainer = ({
         </span>
       </div>
 
-      <div className={"absolute right-0 btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row items-center lg:gap-x-3"}>
-        <LucideHandCoins size={8} width={18} height={18} className={"text-xs"} />
-      </div>
+      <TipModal address={postMetaData?.postId?.metadata?.keyvalues?.addr} />
     </section>
   );
 };

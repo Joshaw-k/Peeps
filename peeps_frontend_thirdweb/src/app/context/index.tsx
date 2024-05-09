@@ -53,7 +53,9 @@ interface IPeepsContext {
   myPosts: any;
   myPostsData: any;
   baseUserData: any,
-  updateBaseUserData: any
+  updateBaseUserData: any,
+  activeAddress: string,
+  walletStatus: string,
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -97,7 +99,9 @@ const PeepsContext = createContext<IPeepsContext>({
   myPosts: [],
   myPostsData: [],
   baseUserData: null,
-  updateBaseUserData: null
+  updateBaseUserData: null,
+  activeAddress: null,
+  walletStatus: null
 });
 
 export interface PeepsProviderProps {
@@ -183,6 +187,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const activeAccount = useActiveAccount();
   const {connect, isConnecting} = useConnect();
   const address = activeAccount?.address;
+  const activeAddress = address;
   const walletStatus = useActiveWalletConnectionStatus();
   const [currentUser, setCurrentUser] = useState<ICurrentUser[] | any>();
   // const [profileExist, setProfileExist] = useState<ICurrentUser[] | any>();
@@ -853,7 +858,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         myPosts,
         myPostsData,
         baseUserData,
-        updateBaseUserData
+        updateBaseUserData,
+        activeAddress,
+        walletStatus,
       }}
     >
       {children}
