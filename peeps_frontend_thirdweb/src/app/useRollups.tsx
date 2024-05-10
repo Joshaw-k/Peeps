@@ -41,7 +41,8 @@ import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import {ChainOptions} from "thirdweb/src/chains/types";
 import {ethers5Adapter} from "thirdweb/adapters/ethers5";
 import {createThirdwebClient} from "thirdweb";
-import {baseClientId} from "@/app/client";
+import {baseClientId, client} from "@/app/client";
+import {localhostChain} from "@/app/components/Navbar";
 
 const config: any = configFile;
 
@@ -65,9 +66,6 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
   // const [connectedWallet] = useWallets();
   const activeAccount = useActiveAccount();
   const [dappAddress] = useState<string>(dAddress);
-  const client = createThirdwebClient({
-    clientId: baseClientId!
-  });
 
   useEffect(() => {
     const connect = async (
@@ -78,11 +76,14 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
           connectedWallet.provider
       );
       const signer = provider.getSigner();*/
+      console.log("CHain from rollups", connectedChain);
       const signer = await ethers5Adapter.signer.toEthers({
         client: client,
-        chain: connectedChain!,
+        chain: localhostChain!,
         account: activeAccount!
       });
+      // const provider = new ethers.providers.JsonRpcProvider();
+      // const signer = provider.getSigner();
 
       let dappRelayAddress = "";
       if(config[chain.id]?.DAppRelayAddress) {

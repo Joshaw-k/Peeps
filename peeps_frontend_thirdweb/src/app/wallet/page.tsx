@@ -36,15 +36,17 @@ const nftGrid = [
 ];
 
 const Wallet = () => {
+    const {walletBalance} = usePeepsContext();
     // const [{ wallet }] = useConnectWallet();
     const walletStatus = useActiveWalletConnectionStatus();
     const {activeAddress} = usePeepsContext();
     const connectedChain = useActiveWalletChain();
     const balance = Balance();
+    console.log("Wallet balance", balance, walletBalance);
     const [transactionsGrid, setTransactionsGrid] = useState([
     {
         type: "Balance",
-        value: "0.0",
+        value: balance,
     },
     {
         type: "spent",
@@ -55,6 +57,23 @@ const Wallet = () => {
         value: "0.0",
     },
 ])
+
+    useEffect(() => {
+        setTransactionsGrid([
+            {
+                type: "Balance",
+                value: walletBalance,
+            },
+            {
+                type: "spent",
+                value: "0.0",
+            },
+            {
+                type: "received",
+                value: "0.0",
+            },
+        ])
+    }, [walletBalance]);
 
 
     useEffect(() => {
@@ -107,7 +126,7 @@ const Wallet = () => {
                 <LucideCopy /> Copy
               </span>
                         </div>
-                        <div className="text-9xl font-bold">
+                        <div className="text-6xl font-bold">
                             {shortenAddress(activeAddress)}
                         </div>
                     </div>

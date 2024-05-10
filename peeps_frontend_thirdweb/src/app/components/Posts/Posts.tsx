@@ -410,41 +410,62 @@ export const Post = () => {
       </EmptyPage>
     );
 
+
+  // // if (fetching) return <p>Loading...</p>;
+  if (loading)
+    return (
+      <EmptyPage
+        icon={<span className="loading loading-dots loading-lg"></span>}
+        text={""}
+      >
+        <div className="text-xl">Loading...</div>
+      </EmptyPage>
+    );
+  // if (error) return <p>Oh no... {error.message}</p>;
+
+  // if (!data || !data.notices)
+  if (notices.length < 1)
+    return (
+      <EmptyPage
+        icon={<MessageSquareText size={48} />}
+        text={"No posts yet"}
+      ></EmptyPage>
+    );
+
   return (
     <>
       {/*{notices ? notices.length > 0 && <div>New messages</div> : null}*/}
       {
         notices.length > 0 && notices[0].payload !== undefined
-          ? JSON.parse(notices[0]?.payload)?.posts
-              .splice(0, endCursor)
+          ? JSON.parse(notices[0]?.payload)?.posts?.splice(0, endCursor)
                 .map((eachNotice: any, index: number) => (
                     // .filter((it) => JSON.parse(it.payload).posts.length > 0)
-          <>
-            <PostContainer key={index}>
-              <PostUser {...eachNotice} />
-              <PostBody postMetaData={posts[index]}>
-                {eachNotice?.post_content}
-                {
-                    eachNotice?.post_media && <Image
-                        src={eachNotice?.post_media}
-                        alt={"Post media"}
-                        width={100}
-                        height={100}
-                        className={"w-full"}
-                    />
-                }
-              </PostBody>
-              <PostActionsContainer
-                  postId={index}
-                  message={eachNotice?.post_content}
-                  upload={eachNotice?.post_media}
-                  postData={eachNotice}
-                  postMetaData={posts}
-              />
-              {/*{<PostContainer></PostContainer>}*/}
-            </PostContainer>
-            {/*<div className={"divider"}></div>*/}
-          </>
+                    <>
+                      <PostContainer key={index}>
+                        <PostUser {...eachNotice} />
+                        <PostBody postMetaData={posts[index]}>
+                          {eachNotice?.post_content}
+                          {
+                              eachNotice?.post_media && <Image
+                                  src={eachNotice?.post_media}
+                                  alt={"Post media"}
+                                  width={100}
+                                  height={100}
+                                  className={"w-full"}
+                              />
+                          }
+                        </PostBody>
+                        <PostActionsContainer
+                            postId={index}
+                            message={eachNotice?.post_content}
+                            upload={eachNotice?.post_media}
+                            postData={eachNotice}
+                            postMetaData={posts}
+                        />
+                        {/*{<PostContainer></PostContainer>}*/}
+                      </PostContainer>
+                      {/*<div className={"divider"}></div>*/}
+                    </>
                 ))
             : <div>No posts</div>
       }

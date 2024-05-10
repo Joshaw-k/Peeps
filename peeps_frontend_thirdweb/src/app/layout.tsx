@@ -15,7 +15,7 @@ import Home from "@/app/page";
 import React from "react";
 import injectedModule from "@web3-onboard/injected-wallets";
 import { init } from "@web3-onboard/react";
-import configFile from "./config.json";
+import configFile from "./config-web3onboard.json";
 
 const inter = Inter({ subsets: ["latin"] });
 const notoSans = Noto_Sans({

@@ -8,7 +8,7 @@ import {ConnectButton} from "thirdweb/react";
 // import {ConnectButton, WalletButton} from "@rainbow-me/rainbowkit";
 import { defineChain } from "thirdweb";
 
-const localhost = defineChain({
+export const localhostChain = defineChain({
     id: 31337,
     rpc: "http://localhost:8545"
 });
@@ -30,7 +30,7 @@ const Navbar: React.FC = () => {
         <div className="navbar-end">
           <ConnectButton
               client={client}
-              chain={localhost}
+              chain={localhostChain}
               appMetadata={{
                 name: "Peeps",
                 url: "https://peeps-mu.vercel.app",
