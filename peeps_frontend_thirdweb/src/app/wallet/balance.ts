@@ -14,6 +14,7 @@ import React, { use, useEffect, useState } from "react";
 import { ethers } from "ethers";
 import configFile from "../config.json";
 import { useActiveWalletChain,useActiveAccount } from "thirdweb/react";
+import { usePeepsContext } from "../context";
 
 const config: any = configFile;
 interface Report {
@@ -24,6 +25,8 @@ export const Balance = () => {
     const activeAccount = useActiveAccount();
     const chainId = useActiveWalletChain();
     const [balance,setBalance] = useState("0")
+    const {updateWalletBalance} = usePeepsContext();
+
     const inspectCall = async (str: string) => {
         let payload = str;
 
@@ -46,15 +49,27 @@ export const Balance = () => {
         fetchData
             .then(response => response.json())
             .then(data => {
+                console.log("balance before decode");
                 // Decode payload from each report
                 const decode = data.reports.map((report: Report) => {
-                return ethers.utils.toUtf8String(report.payload);
+                    return ethers.utils.toUtf8String(report.payload);
                 });
-                // console.log("Decoded Reports:", decode);
+                console.log("Decoded Reports:", decode);
                 const reportData = JSON.parse(decode)
-                // console.log("Report data: ", reportData)
-                setBalance(reportData.ether)
+                console.log("Report data erc20: ", typeof reportData.erc20)
+                console.log("Report data: ", reportData)
+                setBalance(
+                    reportData.erc20.length > 0
+                        ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
+                        : "0"
+                );
+                updateWalletBalance(
+                    reportData.erc20.length > 0
+                        ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
+                        : "0"
+                )
                 // console.log("Ether : ", reportData.ether)
+                console.log("Ether : ", reportData.erc20)
             });
     };
 

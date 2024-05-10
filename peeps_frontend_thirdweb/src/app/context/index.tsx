@@ -56,6 +56,8 @@ interface IPeepsContext {
   updateBaseUserData: any,
   activeAddress: any,
   walletStatus: string,
+  walletBalance: string,
+  updateWalletBalance: any
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -101,7 +103,9 @@ const PeepsContext = createContext<IPeepsContext>({
   baseUserData: null,
   updateBaseUserData: null,
   activeAddress: "",
-  walletStatus: ""
+  walletStatus: "",
+  walletBalance: "",
+  updateWalletBalance: null
 });
 
 export interface PeepsProviderProps {
@@ -207,6 +211,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [myFollowersList, setMyFollowersList] = useState<any>([]);
   const [myFollowersListData, setMyFollowersListData] = useState<any>([]);
   // const [postsNotice, setPostsNotice] = useState<any>([]);
+  const [walletBalance, setWalletBalance] = useState<string>("0");
 
   const [cursor, setCursor] = useState(null);
   const [endCursor, setEndCursor] = useState(20);
@@ -509,6 +514,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
 
   const updatePostsNotice = (_postNotice: any) => {
     // setPostsNotice(_postNotice);
+  }
+
+  const updateWalletBalance = (_walletBalance: string) => {
+    setWalletBalance(_walletBalance);
   }
 
   const checkProfileExist = async () => {
@@ -861,6 +870,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         updateBaseUserData,
         activeAddress,
         walletStatus,
+        walletBalance,
+        updateWalletBalance
       }}
     >
       {children}

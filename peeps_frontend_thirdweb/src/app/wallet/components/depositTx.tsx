@@ -13,6 +13,8 @@ import { useActiveAccount, useActiveWallet, useActiveWalletChain } from "thirdwe
 import { client } from "@/app/client";
 import { ethers5Adapter } from "thirdweb/adapters/ethers5";
 import { IERC20__factory } from "@cartesi/rollups";
+import {localhostChain} from "@/app/components/Navbar";
+import {useWallets} from "@web3-onboard/react";
 
 
 export const DepositTransaction = () => {
@@ -20,7 +22,9 @@ export const DepositTransaction = () => {
     const erc20TokenAdress = "0x2797a6a6D9D94633BA700b52Ad99337DdaFA3f52"
     const activeAccount = useActiveAccount();
     const rollups = useRollups(baseDappAddress);
-    // const provider = new ethers.providers.Web3Provider();
+    const [connectedWallet] = useWallets();
+    // const provider = new ethers.providers.Web3Provider(connectedWallet.provider);
+    const provider = new ethers.providers.JsonRpcProvider();
     const [dp, setDp] = useState<string>("");
     const [depositDescription, setDepositDescription] = useState<string>("");
     const [depositAddress, setDepositAddress] = useState("");
@@ -30,13 +34,24 @@ export const DepositTransaction = () => {
 
 
     const depositErc20ToPortal = async (token: string, amount: number) => {
-      const signer = await ethers5Adapter.signer.toEthers({
-        client: client,
-        chain: connectedChain!,
-        account: activeAccount!
-      });
+      // const ethersSigner = await ethers5Adapter.signer.toEthers({
+      //   client: client,
+      //   chain: localhostChain!,
+      //   account: activeAccount!
+      // });
+      // const ethersProvider = await ethers5Adapter.provider.toEthers({
+      //     client: client,
+      //     chain: localhostChain!,
+      // });
+      // const ethersProvider = new ethers.providers.Web3Provider(provider);
+      // const ethersProvider = new ethers.providers.JsonRpcProvider();
+      // const ethersSigner = ethersProvider.getSigner();
+      const ethersSigner = provider.getSigner();
+      // console.log("Sigr & Provider", signer, provider);
+      // console.log("Ethers Provider", ethersProvider);
     try {
       if (rollups) {
+          console.log("Inside rollups", rollups);
         const data = ethers.utils.toUtf8Bytes(
           `Deposited (${amount}) of ERC20 (${token}).`
         );
@@ -45,21 +60,26 @@ export const DepositTransaction = () => {
         // const signerAddress = await signer.getAddress();
 
         const erc20PortalAddress = rollups.erc20PortalContract.address;
-        const tokenContract = signer
-          ? IERC20__factory.connect(token, signer)
-          : IERC20__factory.connect(token, signer);
+        const tokenContract = ethersSigner
+          ? IERC20__factory.connect(token, ethersSigner)
+          : IERC20__factory.connect(token, provider);
+        console.log("token Contract obj:", tokenContract, activeAddress, erc20PortalAddress);
 
         // query current allowance
         const currentAllowance = await tokenContract.allowance(
           activeAddress,
           erc20PortalAddress
         );
+        // ethersSigner.connect();
+        console.log("Current allowance:", currentAllowance);
         if (ethers.utils.parseEther(`${amount}`) > currentAllowance) {
+            console.log("enough allowance");
           // Allow portal to withdraw `amount` tokens from signer
           const tx = await tokenContract.approve(
             erc20PortalAddress,
             ethers.utils.parseEther(`${amount}`)
           );
+          console.log("Passed approve", tx);
           const receipt = await tx.wait(1);
           const event = (
             await tokenContract.queryFilter(
