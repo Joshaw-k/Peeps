@@ -3,9 +3,6 @@
 // import { useConnectWallet } from "@web3-onboard/react";
 // import { FaCopy, FaWallet } from "react-icons/fa6";
 import { shortenAddress } from "../utils";
-import { SendTransaction } from "./components/sendTx";
-import { ReceiveTransaction } from "./components/receiveTx";
-import ChartTransaction from "./components/chartTx";
 import {LucideCopy, LucideWallet, LucideWallet2} from "lucide-react";
 import {useActiveWalletChain, useActiveWalletConnectionStatus} from "thirdweb/react";
 import { usePeepsContext } from "../context";
@@ -13,21 +10,11 @@ import { getWalletBalance } from "thirdweb/wallets";
 import {client} from "@/app/client";
 import {useEffect, useState} from "react";
 import {GetWalletBalanceResult} from "thirdweb/src/wallets/utils/getWalletBalance";
+import { DepositTransaction } from "./components/depositTx";
+import { TransferTransaction } from "./components/transferTx";
+import { WithDrawTransaction } from "./components/withdrawTx";
+import { Balance } from "./balance";
 
-const transactionsGrid = [
-    {
-        type: "sent",
-        value: "0.0",
-    },
-    {
-        type: "spent",
-        value: "0.0",
-    },
-    {
-        type: "received",
-        value: "0.0",
-    },
-];
 
 const nftGrid = [
     {
@@ -53,24 +40,40 @@ const Wallet = () => {
     const walletStatus = useActiveWalletConnectionStatus();
     const {activeAddress} = usePeepsContext();
     const connectedChain = useActiveWalletChain();
-    const [balance, setBalance] = useState<GetWalletBalanceResult>();
+    const balance = Balance();
+    const [transactionsGrid, setTransactionsGrid] = useState([
+    {
+        type: "Balance",
+        value: "0.0",
+    },
+    {
+        type: "spent",
+        value: "0.0",
+    },
+    {
+        type: "received",
+        value: "0.0",
+    },
+])
+
 
     useEffect(() => {
         if (connectedChain) {
-            walletBalance();
+            // walletBalance();
+            console.log(balance)
         }
     }, [connectedChain, activeAddress]);
 
-    async function walletBalance() {
-        console.log("Fetching wallet balance");
-        const _balance = await getWalletBalance({
-            address: activeAddress,
-            client,
-            chain: connectedChain!,
-        });
-        console.log("wallet Balance", _balance);
-        setBalance(_balance);
-    }
+    // async function walletBalance() {
+    //     console.log("Fetching wallet balance");
+    //     const _balance = await getWalletBalance({
+    //         address: activeAddress,
+    //         client,
+    //         chain: connectedChain!,
+    //     });
+    //     console.log("wallet Balance", _balance);
+    //     setBalance(_balance);
+    // }
 
     // console.log(wallet?.accounts[0]);
     // console.log(wallet?.accounts[0].balance?.keys);
@@ -91,14 +94,9 @@ const Wallet = () => {
 
     return (
         <section>
-            {/* Financial Transactions */}
-            <section className="space-x-8 mb-4">
-                <SendTransaction />
-                <ReceiveTransaction />
-            </section>
-
+            
             {/* This is the wallet page */}
-            <section className="bg-base-200 rounded-3xl px-4">
+            <section className="bg-base-200 rounded-3xl px-4 pb-4">
                 <section className="relative flex flex-row px-2 py-12">
                     <div className="flex-1">
                         <div className="flex flex-row items-center px-6 text-xl text-base-content/20">
@@ -122,30 +120,12 @@ const Wallet = () => {
                 </section>
                 {
                     activeAddress && walletStatus === "connected" && (
-                        <section className="card rounded-3xl bg-base-200">
-                            <section className="card-body flex flex-row">
-                                <div className="flex-1">
-                                    <div className="text-base-content/40">Balance:</div>
-                                    <div className="text-4xl font-bold">
-                                        {/*{
-                                            wallet?.accounts?.length > 0
-                                            ? Object.values(wallet?.accounts[0]?.balance ?? {})
-                                            : 0
-                                        }{" "}
-                                        <span className="text-2xl font-normal">
-                                            {
-                                                wallet?.accounts?.length > 0 &&
-                                                Object.keys(wallet?.accounts[0]?.balance ?? {})
-                                            }
-                                        </span>*/}
-                                        {balance?.displayValue}
-                                    </div>
-                                </div>
-                                {/* <div>
-              <div>Token NAME: </div>
-            </div> */}
-                            </section>
-                        </section>
+                        <section className="space-x-8 mb-4">
+                            {/* Financial Transactions */}
+                <DepositTransaction />
+                <TransferTransaction />
+                <WithDrawTransaction />
+            </section>
                     )
                 }
             </section>

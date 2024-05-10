@@ -13,6 +13,9 @@ import {RightComponent} from "@/app/components/RightComponent";
 import {MobileNavigation} from "@/app/components/MobileNavigation";
 import Home from "@/app/page";
 import React from "react";
+import injectedModule from "@web3-onboard/injected-wallets";
+import { init } from "@web3-onboard/react";
+import configFile from "./config.json";
 
 const inter = Inter({ subsets: ["latin"] });
 const notoSans = Noto_Sans({
@@ -34,6 +37,7 @@ const client = new ApolloClient({
     uri: URL_QUERY_GRAPHQL,
     cache: new InMemoryCache(),
 });
+
 
 export default function RootLayout({
   children,
