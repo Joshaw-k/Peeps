@@ -10,11 +10,12 @@ import { usePeepsContext } from "../../context";
 import { ButtonLoader } from "../../components/Button";
 import {
     LucideArrowDownRight,
+    LucideArrowRight,
     LucideArrowUpRight,
     LucideX,
 } from "lucide-react";
 
-export const ReceiveTransaction = () => {
+export const TransferTransaction = () => {
     const { baseDappAddress } = usePeepsContext();
     const rollups = useRollups(baseDappAddress);
     const [dp, setDp] = useState<string>("");
@@ -56,16 +57,16 @@ export const ReceiveTransaction = () => {
             <AlertDialog.Trigger asChild>
                 <button
                     type="button"
-                    className="btn btn-lg rounded-box inline-flex w-auto items-center justify-center font-medium text-base leading-none outline-none outline-0"
+                    className="btn bg-white text-walletDark hover:text-white btn-lg rounded-box inline-flex w-auto items-center justify-center font-medium text-base leading-none outline-none outline-0"
                 >
-                    Receive <LucideArrowDownRight />
+                    Transfer <LucideArrowRight />
                 </button>
             </AlertDialog.Trigger>
             <AlertDialog.Portal>
                 <AlertDialog.Overlay className="bg-black/40 bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 dark:bg-base-300/80 dark:backdrop-blur-sm z-30" />
                 <AlertDialog.Content className="z-40 data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[800px] bg-base-100 translate-x-[-50%] translate-y-[-50%] rounded-[6px] p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
                     <AlertDialog.Title className="text-mauve12 mt-4 mb-12 text-xl text-center font-bold">
-                        Receive Token
+                        Transfer Token
                     </AlertDialog.Title>
                     <AlertDialog.Description className="text-[15px] text-center leading-normal">
                         {/* We require this to serve the best experience */}
@@ -113,7 +114,7 @@ export const ReceiveTransaction = () => {
                                         className="btn btn-primary rounded-xl"
                                         onClick={handleSendToken}
                                     >
-                                        {isSubmit ? <ButtonLoader /> : "Send"}
+                                        {isSubmit ? <ButtonLoader /> : "Transfer"}
                                     </button>
                                 </div>
                             </form>
