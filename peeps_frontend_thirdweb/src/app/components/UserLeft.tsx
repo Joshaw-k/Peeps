@@ -9,21 +9,21 @@ import { useEffect, useState } from "react";
 import { usePeepsContext } from "../context";
 // import {useAccount} from "wagmi";
 import Image from "next/image";
-import {useActiveAccount, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
+import { useActiveAccount, useActiveWalletConnectionStatus, useConnect } from "thirdweb/react";
 import { LucideWallet2 } from "lucide-react";
 
 const defaultImage: string =
   "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
 
-export const Avatar = ({profileImage}: {profileImage: string}) => {
+export const Avatar = ({ profileImage }: { profileImage: string }) => {
   return (
     <div className="avatar placeholder">
       <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
-          {
-              profileImage
-              ? <Image width={30} height={30} src={profileImage} alt=""/>
-              : <span></span>
-          }
+        {
+          profileImage
+            ? <Image width={30} height={30} src={profileImage} alt="" />
+            : <span></span>
+        }
       </div>
     </div>
   );
@@ -31,13 +31,13 @@ export const Avatar = ({profileImage}: {profileImage: string}) => {
 
 export const NoProfileCard = () => {
   return (
-      <div className={"card card-compact bg-amber-400/40 my-4"}>
-        <div className="card-body">
-          <div className="card-title">Action Required</div>
-          You have not created your profile
-          <ProfileForm/>
-        </div>
+    <div className={"card card-compact bg-amber-400/40 my-4"}>
+      <div className="card-body">
+        <div className="card-title">Action Required</div>
+        You have not created your profile
+        <ProfileForm />
       </div>
+    </div>
   )
 }
 
@@ -54,17 +54,17 @@ export const UserLeft = () => {
   } = usePeepsContext();
   // const {address, isConnected} = useAccount();
   // console.log(address, isConnected, hasProfile);
-    const activeAccount = useActiveAccount();
-    const {connect, isConnecting} = useConnect();
-    const address = activeAccount?.address;
-    const walletStatus = useActiveWalletConnectionStatus();
-    console.log(walletStatus, hasProfile);
+  const activeAccount = useActiveAccount();
+  const { connect, isConnecting } = useConnect();
+  const address = activeAccount?.address;
+  const walletStatus = useActiveWalletConnectionStatus();
+  console.log(walletStatus, hasProfile);
 
   useEffect(() => {
     checkProfileExist();
   }, [walletStatus, hasProfile, profileChanged]);
 
-  useEffect(() => {}, [userData]);
+  useEffect(() => { }, [userData]);
 
   return (
     <>
@@ -80,44 +80,44 @@ export const UserLeft = () => {
             "card card-bordered bg-gray-200 dark:bg-base-300/80 p-4 flex flex-row items-center gap-x-4"
           }
         >
-          {walletStatus === "connected" && hasProfile ? (
+          {
+            walletStatus === "connected" && hasProfile ? (
               <>
-                  <Avatar profileImage={userData?.profilePicture}/>
-                  <div className="grow">
-                      <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
-                          {userData?.displayName ? userData?.displayName : "Anonymous"}
-                      </h4>
-                      <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
-                          @{userData?.username ? userData?.username : "Anonymous"}
-                      </p>
-                  </div>
-              </>
-          ) : (
-            <>
-              <div className="avatar">
-                <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
-                  <Image width={30} height={30} src={defaultImage} alt="" />
+                <Avatar profileImage={userData?.profilePicture} />
+                <div className="grow">
+                  <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
+                    {userData?.displayName ? userData?.displayName : "Anonymous"}
+                  </h4>
+                  <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
+                    @{userData?.username ? userData?.username : "Anonymous"}
+                  </p>
                 </div>
-              </div>
-              <div className="grow">
-                <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
-                  {"Anonymous"}
-                </h4>
-                <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
-                  @Anonymous
-                </p>
-              </div>
-            </>
-          )}
+              </>
+            ) : (
+              <>
+                <div className="avatar">
+                  <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
+                    <div className="skeleton w-12 h-12 rounded-full"></div>
+                  </div>
+                </div>
+                <div className="grow space-y-2">
+                  <h4 className="skeleton w-full h-6 max-w-sm"></h4>
+                  <p className="skeleton w-20 h-4"></p>
+                </div>
+              </>
+            )
+          }
         </div>
-        {walletStatus === "connected" && hasProfile ? (
-          <div className={"card card-compact bg-gray-200 dark:bg-base-300/80 my-1"}>
-            <div className="card-body">
-              <div className="font-bold text-xs">About me</div>
-              {userData?.bio ? userData?.bio : "*********"}
+        {
+          walletStatus === "connected" && hasProfile ? (
+            <div className={"card card-compact bg-gray-200 dark:bg-base-300/80 my-1"}>
+              <div className="card-body">
+                <div className="font-bold text-xs">About me</div>
+                {userData?.bio ? userData?.bio : "***"}
+              </div>
             </div>
-          </div>
-        ) : null}
+          ) : null
+        }
         {walletStatus === "connected" && !hasProfile && (
           <NoProfileCard />
         )}
