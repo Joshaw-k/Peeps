@@ -5,6 +5,7 @@ import { calculateRepost } from "../utils";
 import { usePeepsContext } from "../context";
 import { EmptyPage } from "./EmptyPage";
 import { TrendingUp } from "lucide-react";
+import { Search } from "./Search";
 
 // Trending works by performing a calculation on the cartesi machine and returning a notice for the trends every 4 minutes or less.
 // The time to return the trend is fixed, but it can change based on the volume of content on the platform.
@@ -82,14 +83,18 @@ export const Trending = () => {
 
   if (postsNotice?.length < 1)
     return (
-      <EmptyPage
-        icon={<TrendingUp size={48} />}
-        text={"Nothing is trending at the moment"}
-      ></EmptyPage>
+      <>
+        <Search />
+        <EmptyPage
+          icon={<TrendingUp size={48} />}
+          text={"Nothing is trending at the moment"}
+        ></EmptyPage>
+      </>
     );
 
   return (
     <section className={"px-2 lg:px-4 mt-4 lg:mt-12 prose"}>
+      <Search />
       <h2 className="">Trending Posts</h2>
 
       {postsNotice.length && JSON.parse(postsNotice.reverse()[0]?.payload)?.trendingWords?.map(

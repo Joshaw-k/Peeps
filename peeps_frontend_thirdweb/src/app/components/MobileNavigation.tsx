@@ -1,15 +1,15 @@
 "use client";
 
-import {LucideHome, LucidePlus, LucideSearch, LucideTrendingUp} from "lucide-react";
-import {AvatarProfileSmall} from "./Avatar";
+import { LucideHome, LucidePlus, LucideSearch, LucideTrendingUp, LucideWallet2 } from "lucide-react";
+import { AvatarProfileSmall } from "./Avatar";
 import React from "react";
 import Link from "next/link";
-import {usePeepsContext} from "../context";
+import { usePeepsContext } from "../context";
 // import {useAccount} from "wagmi";
 import classNames from "classnames";
 import { useActiveWalletConnectionStatus } from "thirdweb/react";
-import {PostFormModal} from "@/app/components/postFormModal";
-import {usePathname} from "next/navigation";
+import { PostFormModal } from "@/app/components/postFormModal";
+import { usePathname } from "next/navigation";
 import toast from "react-hot-toast";
 
 export const MobileNavigation = () => {
@@ -30,14 +30,15 @@ export const MobileNavigation = () => {
                 <Link
                     href={"/"}
                     className={"flex flex-row flex-nowrap justify-center text-center rounded-xl"}>
-                    <LucideHome size={16} strokeWidth={4}/>
+                    <LucideHome size={16} strokeWidth={4} />
                     {/*<span>Search</span>*/}
                     {/*<span className="badge badge-sm badge-info">new</span>*/}
                 </Link>
             </li>
             <li>
-                <Link href={"/search"} className={"flex flex-row flex-nowrap justify-center text-center rounded-xl active:bg-base-300"}>
-                    <LucideSearch size={16} strokeWidth={4}/>
+                <Link href={"/trending"} className={"flex flex-row flex-nowrap justify-center text-center rounded-xl active:bg-base-300"}>
+                    <LucideSearch size={16} strokeWidth={4} />
+                    {/* <LucideTrendingUp size={16} strokeWidth={4} /> */}
                     {/*<span>Search</span>*/}
                     {/*<span className="badge badge-sm badge-warning">NEW</span>*/}
                 </Link>
@@ -47,31 +48,31 @@ export const MobileNavigation = () => {
                 (
                     walletStatus === "connected"
                         ? <li>
-                            <PostFormModal/>
+                            <PostFormModal />
                         </li>
                         : <li>
                             <div
                                 className={"flex flex-row flex-nowrap justify-center text-center bg-primary-content dark:bg-[#4563eb]/40 rounded-box"}
                                 onClick={() => toast("Sign in to make a Post")}
                             >
-                                <LucidePlus size={24} strokeWidth={4}/>
+                                <LucidePlus size={24} strokeWidth={4} />
                             </div>
                         </li>
                 )
             }
             <li>
-                <Link href={"/trending"}
-                      className={"flex flex-row flex-nowrap text-center rounded-xl text-ellipsis overflow-x-hidden whitespace-nowrap"}>
-                    <LucideTrendingUp size={16} strokeWidth={4}/>
+                <Link href={"/wallet"}
+                    className={"flex flex-row flex-nowrap text-center rounded-xl text-ellipsis overflow-x-hidden whitespace-nowrap"}>
+                    <LucideWallet2 size={16} strokeWidth={4} />
                     {/*<span>Trending</span>*/}
                     {/*<span className="badge badge-sm">99+</span>*/}
                 </Link>
             </li>
             <li>
                 <Link href={walletStatus === "connected" ? `/profile/${userData?.username}` : ""}
-                      className={"flex flex-row flex-nowrap gap-x-3 rounded-xl active:bg-base-300"}>
+                    className={"flex flex-row flex-nowrap gap-x-3 rounded-xl active:bg-base-300"}>
                     <div className={"relative"}>
-                        <AvatarProfileSmall src={userData?.profilePicture}/>
+                        <AvatarProfileSmall src={userData?.profilePicture} />
                         {
                             walletStatus === "connected" && !hasProfile &&
                             <span className="absolute top-0 -right-2 badge badge-xs badge-warning"></span>

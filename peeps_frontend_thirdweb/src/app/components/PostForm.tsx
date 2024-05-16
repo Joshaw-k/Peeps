@@ -12,7 +12,7 @@ import { v4 as uuidv4 } from "uuid";
 import { ButtonLoader } from "./Button";
 import { LucideImagePlus, LucideUpload, LucideX } from "lucide-react";
 import Image from "next/image";
-import {useActiveAccount, useActiveWalletConnectionStatus} from "thirdweb/react";
+import { useActiveAccount, useActiveWalletConnectionStatus } from "thirdweb/react";
 // import { useAccount } from "wagmi";
 
 export interface IInputProps {
@@ -144,7 +144,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
     setFormVideoPreview("");
   };
 
-  useEffect(() => {}, [
+  useEffect(() => { }, [
     postText,
     formImage,
     formImagePreview,
@@ -152,7 +152,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
   ]);
 
   return (
-    <div className="bg-gray-200 dark:bg-base-300 rounded-box focus-within:ring-2 focus-within:ring-primary">
+    <div className="bg-gray-200 dark:bg-base-300 rounded-box focus-within:ring-2 focus-within:ring-primary dark:focus-within:ring-[#4563eb]">
       <textarea
         placeholder="Write something"
         className="textarea textarea-lg text-base border-0 w-full resize-none bg-transparent focus:outline-0"
@@ -213,7 +213,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
           title="Submit post"
           type="button"
           disabled={postText.length < 1}
-          className="flex-grow-0 btn btn-sm btn-primary rounded-xl disabled:btn-disabled"
+          className="flex-grow-0 btn btn-sm btn-primary dark:bg-[#4563eb] dark:border-0 rounded-xl disabled:btn-disabled"
           onClick={handlePost}
         >
           {isSubmit ? <ButtonLoader /> : "Post"}

@@ -44,33 +44,39 @@ export const Balance = () => {
         }
         
         let fetchData: Promise<Response>;
-        console.log(`${apiURL}/${payload}`)
-        fetchData = fetch(`${apiURL}/${payload}`);
-        fetchData
-            .then(response => response.json())
-            .then(data => {
-                console.log("balance before decode");
-                // Decode payload from each report
-                const decode = data.reports.map((report: Report) => {
-                    return ethers.utils.toUtf8String(report.payload);
+        if (apiURL && payload) {
+            console.log(`${apiURL}/${payload}`)
+            // fetchData = fetch(`${apiURL}/${payload}`);
+            // fetchData
+            fetch(`${apiURL}/${payload}`)
+                .then(response => response.json())
+                .then(data => {
+                    console.log("balance before decode");
+                    // Decode payload from each report
+                    const decode = data.reports.map((report: Report) => {
+                        return ethers.utils.toUtf8String(report.payload);
+                    });
+                    console.log("Decoded Reports:", decode);
+                    const reportData = JSON.parse(decode)
+                    console.log("Report data erc20: ", typeof reportData.erc20)
+                    console.log("Report data: ", reportData)
+                    setBalance(
+                        reportData.erc20.length > 0
+                            ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
+                            : "0"
+                    );
+                    updateWalletBalance(
+                        reportData.erc20.length > 0
+                            ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
+                            : "0"
+                    )
+                    // console.log("Ether : ", reportData.ether)
+                    console.log("Ether : ", reportData.erc20)
+                })
+                .catch(err => {
+                    console.error(err);
                 });
-                console.log("Decoded Reports:", decode);
-                const reportData = JSON.parse(decode)
-                console.log("Report data erc20: ", typeof reportData.erc20)
-                console.log("Report data: ", reportData)
-                setBalance(
-                    reportData.erc20.length > 0
-                        ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
-                        : "0"
-                );
-                updateWalletBalance(
-                    reportData.erc20.length > 0
-                        ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
-                        : "0"
-                )
-                // console.log("Ether : ", reportData.ether)
-                console.log("Ether : ", reportData.erc20)
-            });
+        }
     };
 
     if(activeAccount){

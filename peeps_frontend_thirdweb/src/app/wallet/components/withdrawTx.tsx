@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { ethers } from "ethers";
@@ -9,52 +9,60 @@ import { useRollups } from "../../useRollups";
 import { usePeepsContext } from "../../context";
 import { ButtonLoader } from "../../components/Button";
 import { LucideArrowUpRight, LucideX } from "lucide-react";
+import { useActiveAccount } from "thirdweb/react";
+import toast from "react-hot-toast";
 
 export const WithDrawTransaction = () => {
     const { baseDappAddress } = usePeepsContext();
     const rollups = useRollups(baseDappAddress);
     const [dp, setDp] = useState<string>("");
-    const [depositDescription, setDepositDescription] = useState<string>("");
-    const [depositAddress, setDepositAddress] = useState("");
-    const [depositAmount, setDepositAmount] = useState<number>(0);
+    const [erc20Address, setERC20Address] = useState("0x886d23AEb37Fc21A6f46dA5c1d761F8C7797863a");
+    const [walletAmount, setWithdrawAmount] = useState<number>(0);
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
 
-    const addInput = async (str: string) => {
-        if (rollups) {
-            try {
-                let payload = ethers.utils.toUtf8Bytes(str);
-                // if (hexInput) {
-                //   payload = ethers.utils.arrayify(str);
-                // }
-                await rollups.inputContract.addInput(defaultDappAddress, payload);
-            } catch (e) {
-                console.log(`${e}`);
-            }
-        }
-    };
+    const activeAccount = useActiveAccount();
 
-    const handleSendToken = () => {
+    const handleWithdrawToken = async (e: any) => {
+        e.preventDefault()
         setIsSubmit(true);
-        // construct the json payload to send to addInput
-        // const jsonPayload = JSON.stringify({
-        //   method: "sendToken",
-        //   data: {
-        //     address: depositAddress,
-        //     amount: depositAmount,
-        //   },
-        // });
-        // addInput(JSON.stringify(jsonPayload));
-        // console.log(JSON.stringify(jsonPayload));
+        console.log(walletAmount)
+        try {
+            if (rollups && activeAccount) {
+                let erc20_amount = ethers.utils.parseEther(String(walletAmount)).toString();
+                console.log("erc20 after parsing: ", erc20_amount);
+                const input_obj = {
+                    method: "erc20_withdraw",
+                    args: {
+                        erc20: erc20Address,
+                        amount: erc20_amount,
+                    },
+                };
+                const data = JSON.stringify(input_obj);
+                let payload = ethers.utils.toUtf8Bytes(data);
+                await rollups.inputContract.addInput(baseDappAddress, payload);
+                setIsModalOpen(false);
+                toast.success("Withdraw successful");
+            }
+        } catch (e) {
+            console.log(e);
+            setIsModalOpen(false);
+            toast.error("Withdraw failed");
+        }
+
+        console.log("clicked")
     };
+
 
     return (
-        <AlertDialog.Root>
+        <AlertDialog.Root open={isModalOpen}>
             <AlertDialog.Trigger asChild>
                 <button
                     type="button"
                     className="btn bg-white text-walletDark hover:text-white btn-lg rounded-box inline-flex w-auto items-center justify-center font-medium text-base leading-none outline-none outline-0"
+                    onClick={() => setIsModalOpen(true)}
                 >
-                    Withdraw <LucideArrowUpRight />
+                    Withdraw <LucideArrowUpRight className="hidden lg:inline-block" />
                 </button>
             </AlertDialog.Trigger>
             <AlertDialog.Portal>
@@ -66,7 +74,7 @@ export const WithDrawTransaction = () => {
                     <AlertDialog.Description className="text-[15px] text-center leading-normal">
                         {/* We require this to serve the best experience */}
                         <div className="card items-center shrink-0 my-4 w-full bg-base-100">
-                            <form className="card-body w-full">
+                            <form className="card-body w-full" onSubmit={handleWithdrawToken}>
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text">Amount to withdraw</span>
@@ -75,27 +83,14 @@ export const WithDrawTransaction = () => {
                                         type="number"
                                         placeholder="Amount"
                                         className="input input-bordered"
-                                        onChange={(e) => setDepositAmount(Number(e.target.value))}
+                                        onChange={(e) => setWithdrawAmount(Number(e.target.value))}
                                         required
                                     />
                                 </div>
-                                <div className="form-control">
-                                    <label className="label">
-                    <span className="label-text">
-                      Describe this transaction
-                    </span>
-                                    </label>
-                                    <textarea
-                                        className="textarea textarea-lg textarea-bordered text-base resize-none"
-                                        placeholder="describe this transaction. It will help track older transactions"
-                                        onChange={(e) => setDepositDescription(e.target.value)}
-                                    ></textarea>
-                                </div>
                                 <div className="form-control mt-6">
                                     <button
-                                        type="button"
+                                        type="submit"
                                         className="btn btn-primary rounded-xl"
-                                        onClick={handleSendToken}
                                     >
                                         {isSubmit ? <ButtonLoader /> : "Withdraw"}
                                     </button>
