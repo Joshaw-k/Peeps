@@ -22,6 +22,7 @@
     "axios": "^1.6.8",
     "classnames": "^2.5.1",
     "ethers": "5.7.2",
+    "framer-motion": "^11.2.3",
     "graphql": "^16.8.1",
     "graphql-tag": "^2.12.6",
     "lucide-react": "^0.378.0",
