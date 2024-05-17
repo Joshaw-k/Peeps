@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { calculateRepost } from "../utils";
-import { usePeepsContext } from "../context";
+import { isJsonString, usePeepsContext } from "../context";
 import { EmptyPage } from "./EmptyPage";
 import { TrendingUp } from "lucide-react";
 import { Search } from "./Search";
@@ -84,7 +84,9 @@ export const Trending = () => {
   if (postsNotice?.length < 1)
     return (
       <>
-        <Search />
+        <div className="md:hidden">
+          <Search />
+          </div>
         <EmptyPage
           icon={<TrendingUp size={48} />}
           text={"Nothing is trending at the moment"}
@@ -94,10 +96,15 @@ export const Trending = () => {
 
   return (
     <section className={"px-2 lg:px-4 mt-4 lg:mt-12 prose"}>
-      <Search />
+      <div className="md:hidden">
+        <Search />
+        </div>
       <h2 className="">Trending Posts</h2>
+      {console.log(postsNotice, isJsonString(postsNotice.reverse()[0]?.payload))}
 
-      {postsNotice.length && JSON.parse(postsNotice.reverse()[0]?.payload)?.trendingWords?.map(
+      {
+      (postsNotice.length > 0 && isJsonString(postsNotice.reverse()[0]?.payload))
+       && (JSON.parse(postsNotice.reverse()[0]?.payload)?.trendingWords?.map(
         (eachTrends: any, index: number) => (
           <TrendingCard
             key={eachTrends[0]}
@@ -106,7 +113,8 @@ export const Trending = () => {
             repostCount={eachTrends[1]}
           ></TrendingCard>
         )
-      )}
+      ))
+      }
     </section>
   );
 };
