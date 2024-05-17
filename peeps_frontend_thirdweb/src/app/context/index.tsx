@@ -57,7 +57,9 @@ interface IPeepsContext {
   activeAddress: any,
   walletStatus: string,
   walletBalance: string,
-  updateWalletBalance: any
+  updateWalletBalance: any,
+  isPostModalOpen: boolean,
+  setIsPostModalOpen: any
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -105,7 +107,9 @@ const PeepsContext = createContext<IPeepsContext>({
   activeAddress: "",
   walletStatus: "",
   walletBalance: "",
-  updateWalletBalance: null
+  updateWalletBalance: null,
+  isPostModalOpen: false,
+  setIsPostModalOpen: null
 });
 
 export interface PeepsProviderProps {
@@ -212,6 +216,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [myFollowersListData, setMyFollowersListData] = useState<any>([]);
   // const [postsNotice, setPostsNotice] = useState<any>([]);
   const [walletBalance, setWalletBalance] = useState<string>("0");
+  const [isPostModalOpen, setIsPostModalOpen] = useState<boolean>(false);
 
   const [cursor, setCursor] = useState(null);
   const [endCursor, setEndCursor] = useState(20);
@@ -872,7 +877,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         activeAddress,
         walletStatus,
         walletBalance,
-        updateWalletBalance
+        updateWalletBalance,
+        isPostModalOpen,
+        setIsPostModalOpen
       }}
     >
       {children}
