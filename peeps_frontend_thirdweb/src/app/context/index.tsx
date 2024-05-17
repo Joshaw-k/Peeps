@@ -148,7 +148,7 @@ const GET_NOTICES = gql`
   }
 `;
 
-function isJsonString(str: string | null) {
+export function isJsonString(str: string | null) {
   try {
     if (typeof str === "string") {
       JSON.parse(str);
@@ -220,6 +220,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     variables: { cursor },
     pollInterval: 2000,
   });
+  console.log("Notice data", data);
 
   // const notices: Notice[] = data
   const postsNotice: Notice[] = data

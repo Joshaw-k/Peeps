@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { ethers } from "ethers";
-import { defaultDappAddress } from "../../utils/constants";
+import { defaultDappAddress, erc20Address } from "../../utils/constants";
 import { useRollups } from "../../useRollups";
 import { usePeepsContext } from "../../context";
 import { ButtonLoader } from "../../components/Button";
@@ -21,7 +21,6 @@ import { anvil } from "thirdweb/chains";
 
 export const FreeMintTransaction = () => {
     const { activeAddress, baseDappAddress } = usePeepsContext();
-    const erc20TokenAdress = "0x2797a6a6D9D94633BA700b52Ad99337DdaFA3f52"
     const activeAccount = useActiveAccount();
     const rollups = useRollups(baseDappAddress);
     // const [connectedWallet] = useWallets();
@@ -38,7 +37,7 @@ export const FreeMintTransaction = () => {
     const contract = getContract({
         client,
         chain: anvil,
-        address: "0xccaBe54998ff0e25f3eCdEb6D7637033C520CB49",
+        address: erc20Address,
         abi: [
             {
                 "inputs": [],
@@ -329,11 +328,6 @@ export const FreeMintTransaction = () => {
 
     console.log(contract)
     const handleFreeMint = async () => {
-        const tx2 = prepareTransaction({
-            to: "0xccaBe54998ff0e25f3eCdEb6D7637033C520CB49",
-            chain: anvil,
-            client: client
-        })
         const tx = prepareContractCall({
             contract,
             method: "freeMint",

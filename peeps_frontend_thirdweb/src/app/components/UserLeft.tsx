@@ -158,12 +158,13 @@ export const UserLeft = () => {
                 </Link>
               </li>
             )}
-            <li>
+            {
+              walletStatus === "connected" && <li>
               <Link href={"/wallet"} className="space-x-2">
                 <LucideWallet2 width={20} height={20} />
                 <span>Wallet</span>
               </Link>
-            </li>
+            </li>}
             {/* <li>
             <Link href={"/settings"} className="space-x-2">
               <FaGear />

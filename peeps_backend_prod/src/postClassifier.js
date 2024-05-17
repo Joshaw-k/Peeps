@@ -36,11 +36,17 @@ function trainClassifier() {
     // Example usage:
     const directoryPath = 'src/train-data';
     console.log("Before read line by line")
+    console.log(Object.keys(jsonResult));
     Object.keys(jsonResult).map((eachClassifier, index) => {
+        // console.log("Loop learning", jsonResult[eachClassifier]);
         jsonResult[eachClassifier].map((eachClassifierText, index) => {
+            // console.log("Loop learning nested", eachClassifierText);
             nbc.learn(eachClassifierText, eachClassifier);
+            // console.log("after Loop learning nested", nbc);
         });
+        // console.log("After learning results.")
     });
+    console.log("Done reading jsonResult");
     nbc.consolidate();
     console.log("Test prediction 1", nbc.predict('Is microsoft a 3 trillion dollar company'));
     console.log("Test prediction 2", nbc.predict('What is the current value of Apples stock?'));

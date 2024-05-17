@@ -8,49 +8,74 @@ import {LucideArrowUpRight, LucideHandCoins, LucideX} from "lucide-react";
 import {usePeepsContext} from "@/app/context";
 import {useRollups} from "@/app/useRollups";
 import { ButtonLoader } from "./Button";
+import { useActiveAccount } from "thirdweb/react";
+import toast from "react-hot-toast";
+import { erc20Address } from "../utils/constants";
 
 export const TipModal = ({address}: {address: string}) => {
     const { baseDappAddress } = usePeepsContext();
     const rollups = useRollups(baseDappAddress);
+    const activeAccount = useActiveAccount();
     const [dp, setDp] = useState<string>("");
-    const [depositDescription, setDepositDescription] = useState<string>("");
+    const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
     const [depositAddress, setDepositAddress] = useState("");
-    const [depositAmount, setDepositAmount] = useState<number>(0);
+    const [transferAmount, setTransferAmount] = useState<number>(0);
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
-    const handleSendToken = () => {
+    const transferErc20ToPortal = async () => {
+        try {
+            if (rollups && activeAccount) {
+                const input_obj = {
+
+                    method: "erc20_transfer",
+                    args: {
+                        to: address,
+                        amount: `${ethers.utils.parseEther(`${transferAmount}`)}`,
+                        erc20: erc20Address
+                    },
+                };
+                const data = JSON.stringify(input_obj);
+                let payload = ethers.utils.toUtf8Bytes(data);
+                await rollups.inputContract.addInput(baseDappAddress, payload);
+                setIsModalOpen(false);
+                toast.success("Transfer successful");
+            }
+        } catch (e) {
+            console.log(e);
+            setIsModalOpen(false);
+            toast.error("Transfer failed");
+        }
+        // "Unload" the submit button
+        setIsSubmit(false);
+    };
+
+    const handleSendToken = async (e: any) => {
+        e.preventDefault()
         setIsSubmit(true);
-        // construct the json payload to send to addInput
-        // const jsonPayload = JSON.stringify({
-        //   method: "sendToken",
-        //   data: {
-        //     address: depositAddress,
-        //     amount: depositAmount,
-        //   },
-        // });
-        // addInput(JSON.stringify(jsonPayload));
-        // console.log(JSON.stringify(jsonPayload));
+        await transferErc20ToPortal()
     };
 
     return (
-        <AlertDialog.Root>
+        <AlertDialog.Root open={isModalOpen}>
             <AlertDialog.Trigger asChild>
                 <div
-                    className={"absolute right-0 btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row items-center lg:gap-x-3"}>
+                    className={"absolute right-0 btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row items-center lg:gap-x-3"}
+                    onClick={() => setIsModalOpen(true)}
+                >
                     <LucideHandCoins size={8} width={18} height={18} className={"text-xs"}/>
                 </div>
             </AlertDialog.Trigger>
             <AlertDialog.Portal>
                 <AlertDialog.Overlay
                     className="bg-black/40 bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 dark:bg-base-300/80 dark:backdrop-blur-sm z-30" />
-                <AlertDialog.Content className="z-40 data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[800px] bg-base-100 translate-x-[-50%] translate-y-[-50%] rounded-lg p-1 lg:p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
-                    <AlertDialog.Title className="text-mauve12 mt-4 mb-8 text-xl text-center font-bold">
-                        Send Token
+                <AlertDialog.Content className="z-40 data-[state=open]:animate-contentShow fixed bottom-4 left-[50%] max-h-[85vh] w-[96vw] lg:w-[90vw] max-w-[540px] bg-base-100 translate-x-[-50%] lg:translate-y-[-50%] rounded-lg py-1 lg:p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
+                    <AlertDialog.Title className="text-mauve12 mt-12 mb-4 lg:mt-4 lg:mb-8 text-xl text-center font-bold">
+                        Tip User
                     </AlertDialog.Title>
                     <AlertDialog.Description className="text-[15px] text-center leading-normal">
                         {/* We require this to serve the best experience */}
-                        <div className="card items-center shrink-0 my-4 w-full bg-base-100">
-                            <form className="card-body w-full">
+                        <div className="card items-center shrink-0 my-0 lg:my-4 w-full bg-base-100">
+                            <form className="card-body w-full" onSubmit={handleSendToken}>
                                 <div className="form-control">
                                     <label className="label">
                                         <span className="label-text">Address to send token</span>
@@ -74,7 +99,7 @@ export const TipModal = ({address}: {address: string}) => {
                                         type="number"
                                         placeholder="Amount"
                                         className="input input-bordered"
-                                        onChange={(e) => setDepositAmount(Number(e.target.value))}
+                                        onChange={(e) => setTransferAmount(Number(e.target.value))}
                                         required
                                     />
                                 </div>
@@ -92,9 +117,8 @@ export const TipModal = ({address}: {address: string}) => {
                                 </div>*/}
                                 <div className="form-control mt-6">
                                     <button
-                                        type="button"
-                                        className="btn btn-primary rounded-xl"
-                                        onClick={handleSendToken}
+                                        type="submit"
+                                        className="btn btn-primary dark:bg-[#4563eb] dark:border-0 rounded-xl"
                                     >
                                         {isSubmit ? <ButtonLoader /> : "Send"}
                                     </button>
@@ -109,6 +133,7 @@ export const TipModal = ({address}: {address: string}) => {
                                 type="button"
                                 className="btn size-12 rounded-full text-xl"
                                 aria-label="Close"
+                                onClick={() => setIsModalOpen(false)}
                             >
                                 {/* <Cross2Icon size={64} /> */}
                                 <LucideX />
