@@ -21,7 +21,7 @@ export interface IInputProps {
 
 const PostForm: React.FC<IInputProps> = (props) => {
   // const {address, isConnected} = useAccount();
-  const { userData, refreshPost, setRefreshPost, pinFileToIPFS } =
+  const { userData, refreshPost, setRefreshPost, pinFileToIPFS, setIsPostModalOpen } =
     usePeepsContext();
   const activeAccount = useActiveAccount();
   const address = activeAccount?.address;
@@ -115,6 +115,8 @@ const PostForm: React.FC<IInputProps> = (props) => {
       } catch (error) {
         console.log(error);
       }
+      setIsSubmit(false);
+      setIsPostModalOpen(false);
     } else {
       toast.error("Error, Can't make post!");
       toast.error("Please connect your wallet!");
@@ -212,7 +214,7 @@ const PostForm: React.FC<IInputProps> = (props) => {
         <button
           title="Submit post"
           type="button"
-          disabled={postText.length < 1}
+          disabled={postText.length < 1 || isSubmit}
           className="flex-grow-0 btn btn-sm btn-primary dark:bg-[#4563eb] dark:border-0 rounded-xl disabled:btn-disabled"
           onClick={handlePost}
         >

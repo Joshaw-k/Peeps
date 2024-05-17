@@ -76,7 +76,7 @@ export const PostUser = (props: any) => {
           {props?.post_displayName ?? "Anonymous"}
         </span>
         <span className="hidden lg:block w-1 h-1 bg-gray-300 rounded-full"></span>
-        <span className="hidden lg:block relative text-xs lg:text-base dark:text-gray-400">
+        <span className="hidden lg:block relative text-xs lg:text-md dark:text-gray-400">
           @{props?.post_username ?? "Anonymous"}
         </span>
       </Link>

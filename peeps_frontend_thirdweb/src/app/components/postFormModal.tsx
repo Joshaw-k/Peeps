@@ -25,7 +25,7 @@ interface ICommentModal {
 }
 
 export const PostFormModal = () => {
-    const { baseDappAddress, userData, setRefreshPost, refreshPost } = usePeepsContext();
+    const { baseDappAddress, userData, setRefreshPost, refreshPost, isPostModalOpen, setIsPostModalOpen } = usePeepsContext();
     const walletStatus = useActiveWalletConnectionStatus();
     const activeAccount = useActiveAccount();
     const {connect, isConnecting} = useConnect();
@@ -34,10 +34,12 @@ export const PostFormModal = () => {
     const [isSubmit, setIsSubmit] = useState<boolean>(false);
 
     return (
-        <AlertDialog.Root>
+        <AlertDialog.Root open={isPostModalOpen}>
             <AlertDialog.Trigger asChild>
                 <div
-                    className={"flex flex-row flex-nowrap justify-center text-center bg-primary-content dark:bg-[#4563eb] rounded-box"}>
+                    className={"flex flex-row flex-nowrap justify-center text-center bg-primary-content dark:bg-[#4563eb] rounded-box"}
+                    onClick={() => setIsPostModalOpen(true)}
+                >
                     <LucidePlus size={24} strokeWidth={4}/>
                 </div>
             </AlertDialog.Trigger>
@@ -55,6 +57,7 @@ export const PostFormModal = () => {
                                 type="button"
                                 className="btn size-12 rounded-full text-xl"
                                 aria-label="Close"
+                                onClick={() => setIsPostModalOpen(false)}
                             >
                                 <LucideX size={48} strokeWidth={6} />
                             </button>
