@@ -15,7 +15,7 @@ import { ethers5Adapter } from "thirdweb/adapters/ethers5";
 import { IERC20__factory } from "@cartesi/rollups";
 import { localhostChain } from "@/app/components/Navbar";
 import { getContract, prepareContractCall, prepareTransaction } from "thirdweb";
-import { anvil } from "thirdweb/chains";
+import { anvil, arbitrumSepolia } from "thirdweb/chains";
 // import {useWallets} from "@web3-onboard/react";
 
 
@@ -36,7 +36,7 @@ export const FreeMintTransaction = () => {
 
     const contract = getContract({
         client,
-        chain: anvil,
+        chain: arbitrumSepolia,
         address: erc20Address,
         abi: [
             {
