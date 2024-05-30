@@ -37,7 +37,7 @@ export const Balance = () => {
         let apiURL= ""
 
         if(config[chainId.id]?.inspectAPIURL) {
-            apiURL = `${config[chainId.id].inspectAPIURL}/inspect`;
+            apiURL = `${config[chainId.id].inspectAPIURL}`;
         } else {
             console.error(`No inspect interface defined for chain ${chainId.id}`);
             return;
@@ -51,7 +51,7 @@ export const Balance = () => {
             fetch(`${apiURL}/${payload}`)
                 .then(response => response.json())
                 .then(data => {
-                    console.log("balance before decode");
+                    console.log("balance before decode", data);
                     // Decode payload from each report
                     const decode = data.reports.map((report: Report) => {
                         return ethers.utils.toUtf8String(report.payload);
