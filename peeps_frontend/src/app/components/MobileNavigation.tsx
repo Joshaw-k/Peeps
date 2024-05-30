@@ -5,8 +5,6 @@ import { AvatarProfileSmall } from "./Avatar";
 import React from "react";
 import Link from "next/link";
 import { usePeepsContext } from "../context";
-// import {useAccount} from "wagmi";
-import classNames from "classnames";
 import { useActiveWalletConnectionStatus } from "thirdweb/react";
 import { PostFormModal } from "@/app/components/postFormModal";
 import { usePathname } from "next/navigation";
@@ -14,11 +12,8 @@ import toast from "react-hot-toast";
 
 export const MobileNavigation = () => {
     const {
-        currentUser,
-        userCreated,
-        checkProfileExist,
+      activeAddress,
         userData,
-        setHasProfile,
         hasProfile,
     } = usePeepsContext();
     const walletStatus = useActiveWalletConnectionStatus();
@@ -39,7 +34,6 @@ export const MobileNavigation = () => {
                 <Link href={"/trending"} className={"flex flex-row flex-nowrap justify-center text-center rounded-xl active:bg-base-300"}>
                     <LucideSearch size={16} strokeWidth={4} />
                     {/* <LucideTrendingUp size={16} strokeWidth={4} /> */}
-                    {/*<span>Search</span>*/}
                     {/*<span className="badge badge-sm badge-warning">NEW</span>*/}
                 </Link>
             </li>
@@ -69,7 +63,7 @@ export const MobileNavigation = () => {
                 </Link>
             </li>
             <li>
-                <Link href={walletStatus === "connected" ? `/profile/${userData?.username}` : ""}
+                <Link href={walletStatus === "connected" ? (userData?.user === activeAddress ? `/profile/me` : `/profile/${userData?.username}`) : ""}
                     className={"flex flex-row flex-nowrap gap-x-3 rounded-xl active:bg-base-300"}>
                     <div className={"relative"}>
                         <AvatarProfileSmall src={userData?.profilePicture} />
