@@ -4,7 +4,7 @@ import axios from "axios";
 import { useEffect, useState } from "react";
 
 export const Search = () => {
-  const [searchText, setsearchText] = useState<string>();
+  const [searchText, setsearchText] = useState<string>("");
   const [usersIpfsHash, setUsersIpfsHash] = useState(null);
   const [usersData, setUsersData] = useState<any>();
   const searchForUser = async () => {
@@ -35,9 +35,9 @@ export const Search = () => {
       console.log(error);
     }
   };
-  useEffect(() => {
-    searchForUser();
-  }, [searchText]);
+  // useEffect(() => {
+  //   searchForUser();
+  // }, [searchText]);
   return (
     <section className={""}>
       <div className="join w-full">

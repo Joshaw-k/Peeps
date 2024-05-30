@@ -3,23 +3,15 @@
 import { useRouter } from "next/navigation";
 import { useRollups } from "../../useRollups";
 import { defaultDappAddress } from "../../utils/constants";
-import { ethers } from "ethers";
 import toast from "react-hot-toast";
 import { CommentModal } from "../commentModal";
-// import { FaRetweet } from "react-icons/fa6";
 import axios from "axios";
 import { usePeepsContext } from "../../context";
 import { useState } from "react";
-// import {useAccount} from "wagmi";
 import classNames from "classnames";
 import Link from "next/link";
 import {
-  LucideCoins,
-  LucideHandCoins,
   LucideMessageSquareShare,
-  LucideShare,
-  LucideShare2,
-  LucideThumbsUp
 } from "lucide-react";
 import {useActiveWalletConnectionStatus} from "thirdweb/react";
 import { TipModal } from "../tipModal";
@@ -42,9 +34,6 @@ interface IPostActions {
   children?: any;
 }
 
-// const defaultImage =
-//   "https://daisyui.com/images/stock/photo-1534528741775-53994a69daeb.jpg";
-
 const AvatarPost = ({ src }: {src: string}) => {
   return (
     <div className="avatar placeholder">
@@ -63,10 +52,12 @@ const AvatarPost = ({ src }: {src: string}) => {
 };
 
 export const PostUser = (props: any) => {
+  const {activeAddress} = usePeepsContext();
+
   return (
     <section className={"flex flex-row px-2 text-sm"}>
       <Link
-          href={`/profile/${props.post_username}`}
+          href={props.post_user === activeAddress ? `/profile/me` : `/profile/${props.post_username}`}
           className={"flex-1 flex flex-row items-center gap-x-4 leading-normal"}
       >
           <AvatarPost
@@ -81,7 +72,6 @@ export const PostUser = (props: any) => {
         </span>
       </Link>
       <div className={"flex-grow-0 lg:px-2 text-gray-500 text-right text-xs leading-tight"}>
-        {/* {new Date().toLocaleTimeString()} */}
         <div className={"text-[0.6rem] lg:text-xs"}>{new Date(props?.createdAt).toLocaleDateString()}</div>
         <div className={"text-[0.6rem] lg:text-xs font-semibold"}>{new Date(props?.createdAt).toLocaleTimeString()}</div>
       </div>
@@ -248,33 +238,6 @@ export const PostActionsContainer = ({
         </span>
       </div>
 
-      {/* <div
-        className={
-          "btn btn-ghost rounded-box flex flex-row items-center gap-x-3"
-        }
-      >
-        <span
-          className="flex-shrink-0 inline-flex justify-center items-center lg:h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 shadow-sm mx-auto dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200"
-          onClick={showCommentModal}
-        >
-          <svg
-            className="flex-shrink-0 w-5 h-5"
-            xmlns="http://www.w3.org/2000/svg"
-            width="24"
-            height="24"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          >
-            <path d="M14 9a2 2 0 0 1-2 2H6l-4 4V4c0-1.1.9-2 2-2h8a2 2 0 0 1 2 2v5Z" />
-            <path d="M18 9h2a2 2 0 0 1 2 2v11l-4-4h-6a2 2 0 0 1-2-2v-1" />
-          </svg>
-        </span>
-        <span className={"text-xs"}>Comment</span>
-      </div> */}
       <CommentModal
         postUuid={postId}
         message={message}

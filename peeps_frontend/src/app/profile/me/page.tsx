@@ -28,10 +28,10 @@ const Profile = ({ params }: { params: any }) => {
     myPosts,
     myPostsData,
     myLikedPosts,
-    myFollowersList
+    myLikedPostsData,
+    myFollowersList,
+    myFollowersListData,
   } = usePeepsContext();
-  const [userProfileIpfsHash, setUserProfileIpfsHash] = useState(null);
-  const [relationshipIpfsHash, setRelationshipIpfsHash] = useState(null);
   const [userProfileData, setUserProfileData] = useState({
     wallet: "",
     profilePicture: "",
@@ -42,53 +42,13 @@ const Profile = ({ params }: { params: any }) => {
     followers: "",
     following: ""
   });
+  const [userProfileIpfsHash, setUserProfileIpfsHash] = useState(null);
+  const [relationshipIpfsHash, setRelationshipIpfsHash] = useState(null);
   const [isFollow, setIsFollow] = useState(false);
-  const [posts, setPosts] = useState<any>();
-  const [postsData, setPostsData] = useState<any>();
-  let [likedPosts, setLikedPosts] = useState<any>();
-  const [likedPostsData, setLikedPostsData] = useState<any>();
-  const [followersList, setFollowersList] = useState<any>();
-  const [followersListData, setFollowersListData] = useState<any>();
   const walletStatus = useActiveWalletConnectionStatus();
-  const walletStatusConnected = walletStatus === "connected";
 
   const defaultImage: string = "";
-  if (userData?.username === params.id) {
-    likedPosts = myLikedPosts;
-  }
 
-  const fetchUserProfileData = async () => {
-    if (userProfileIpfsHash) {
-      try {
-        const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${userProfileIpfsHash}`
-        );
-        if (res.data) {
-          setUserProfileData(res.data);
-        }
-      } catch (error) {
-        console.log(error);
-      }
-    }
-  };
-
-  const fetchProfileUser = async () => {
-    try {
-      const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${params.id}","op":"eq"}&status=pinned`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-          },
-        }
-      );
-      if (res.data.rows.length > 0) {
-        setUserProfileIpfsHash(res.data.rows[0].ipfs_pin_hash);
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
 
   const unPin = async (IpfsHash: any) => {
     try {
@@ -100,12 +60,11 @@ const Profile = ({ params }: { params: any }) => {
           },
         }
       );
-      // toast.success("unpinning successful");
+      toast.success("unpinning successful");
       return true;
     } catch (error) {
       console.log(error);
-      console.error("unpinning failed");
-      toast.error("Unable to complete request. Kindly try again");
+      toast.error("unpinning failed");
       return false;
     }
   };
@@ -335,164 +294,6 @@ const Profile = ({ params }: { params: any }) => {
     }
   };
 
-  const fetchPosts = async () => {
-    try {
-      const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userProfileData?.wallet}","op":"eq"}&status=pinned`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-          },
-        }
-      );
-      if (res.data) {
-        if (res.data.rows.length > 0) {
-          setPosts(res.data.rows);
-          let data = [];
-          for (let index = 0; index < res.data.rows.length; index++) {
-            const res1 = await axios.get(
-              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
-            );
-            data.push(res1.data);
-          }
-          // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-          setPostsData(data);
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchLikePosts = async () => {
-    try {
-      const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${userProfileData?.wallet
-        }","op":"eq"}&status=pinned`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-          },
-        }
-      );
-
-      if (res.data) {
-        if (res.data.rows.length > 0) {
-          let data = [];
-          for (let index = 0; index < res.data.rows.length; index++) {
-            const res1 = await axios.get(
-              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
-              {
-                headers: {
-                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                },
-              }
-            );
-            data.push(res1.data.rows[0]);
-          }
-          console.log(data);
-          if (data.length > 0) {
-            setLikedPosts(data);
-            let dataOne = [];
-            for (let index = 0; index < data.length; index++) {
-              const res2 = await axios.get(
-                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
-              );
-              dataOne.push(res2.data);
-            }
-            // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-            setLikedPostsData(dataOne);
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  const fetchFollowers = async () => {
-    try {
-      const res = await axios.get(
-        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${userProfileData?.username
-        }","op":"eq"}&status=pinned`,
-        {
-          headers: {
-            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-          },
-        }
-      );
-
-      if (res.data) {
-        if (res.data.rows.length > 0) {
-          let data = [];
-          for (let index = 0; index < res.data.rows.length; index++) {
-            const res1 = await axios.get(
-              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
-              {
-                headers: {
-                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                },
-              }
-            );
-
-            data.push(res1.data.rows[0]);
-          }
-          if (data.length > 0) {
-            setFollowersList(data);
-            let dataOne = [];
-            for (let index = 0; index < data.length; index++) {
-              const res2 = await axios.get(
-                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
-              );
-              dataOne.push(res2.data);
-            }
-            // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-            setFollowersListData(dataOne);
-          }
-        }
-      }
-    } catch (error) {
-      console.log(error);
-    }
-  };
-
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     fetchPosts();
-  //   }, 6000);
-  // }, [wallet]);
-  //
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     fetchLikePosts();
-  //   }, 6000);
-  // }, [userProfileData]);
-  //
-  // useEffect(() => {
-  //   setInterval(() => {
-  //     fetchFollowers();
-  //   }, 6000);
-  // }, [userProfileData]);
-  useEffect(() => {
-    if (walletStatusConnected) {
-      fetchPosts();
-      fetchLikePosts();
-      fetchFollowers();
-    }
-  }, [params.id, walletStatusConnected]);
-
-  useEffect(() => {
-    checkIfFollowing();
-  }, [userData]);
-
-  useEffect(() => {
-    fetchProfileUser();
-  }, [params.id, profileChanged]);
-
-  useEffect(() => {
-    fetchUserProfileData();
-  }, [userProfileIpfsHash]);
-
   return (
     <section>
       {/*<div className={"prose text-4xl font-bold text-gray-400 px-2 py-6 mt-8"}>
@@ -520,7 +321,7 @@ const Profile = ({ params }: { params: any }) => {
           </>
           : <section>
             {
-              userProfileData?.wallet === ""
+              activeAddress === ""
                 ? <div>
                   <div className="hero min-h-60 bg-gray-200 dark:bg-base-200 rounded-lg">
                     <div className="hero-content text-center"></div>
@@ -561,8 +362,8 @@ const Profile = ({ params }: { params: any }) => {
                             width={100}
                             height={100}
                             src={
-                              userProfileData?.profilePicture
-                                ? userProfileData?.profilePicture
+                              userData?.profilePicture
+                                ? userData?.profilePicture
                                 : defaultImage
                             }
                             alt=""
@@ -594,16 +395,16 @@ const Profile = ({ params }: { params: any }) => {
                     <div className={"relative pt-20 pb-16 space-y-4 bg-transparent"}>
                       <div className={""}>
                         <div className={"font-bold text-2xl"}>
-                          {userProfileData?.displayName}
+                          {userData?.displayName}
                         </div>
-                        <div>@{userProfileData?.username}</div>
+                        <div>@{userData?.username}</div>
                       </div>
-                      <div className={""}>{userProfileData?.bio}</div>
-                      <div>{new Date(userProfileData?.createdAt).toDateString()}</div>
+                      <div className={""}>{userData?.bio}</div>
+                      <div>{new Date(userData?.createdAt).toDateString()}</div>
                       <div className="flex flex-row items-center gap-x-4">
-                        <span>Followers: {userProfileData?.followers}</span>
+                        <span>Followers: {userData?.followers}</span>
                         <div className="w-2 h-2 rounded-full bg-base-200"></div>
-                        <span>Following: {userProfileData?.following}</span>
+                        <span>Following: {userData?.following}</span>
                       </div>
                     </div>
                   </div>
@@ -674,7 +475,7 @@ const Profile = ({ params }: { params: any }) => {
                             message={eachPost?.post_content}
                             upload={eachPost?.post_media}
                             postData={eachPost}
-                            postMetaData={posts}
+                            postMetaData={myPosts}
                           />
                           {/*{<PostContainer></PostContainer>}*/}
                         </PostContainer>
@@ -689,11 +490,11 @@ const Profile = ({ params }: { params: any }) => {
                       "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                     )}
                   >
-                    {likedPostsData ? (
-                      likedPostsData.map((eachPost: any, index: number) => (
+                    {myLikedPostsData ? (
+                      myLikedPostsData.map((eachPost: any, index: number) => (
                         <PostContainer key={index}>
                           <PostUser {...eachPost} />
-                          <PostBody postMetaData={likedPosts?.[index]}>
+                          <PostBody postMetaData={myLikedPosts?.[index]}>
                             {eachPost?.post_content}
                           </PostBody>
                           <PostActionsContainer
@@ -701,7 +502,7 @@ const Profile = ({ params }: { params: any }) => {
                             message={eachPost?.post_content}
                             upload={eachPost?.post_media}
                             postData={eachPost}
-                            postMetaData={posts}
+                            postMetaData={myPosts}
                           />
                           {/*{<PostContainer></PostContainer>}*/}
                         </PostContainer>
@@ -716,8 +517,8 @@ const Profile = ({ params }: { params: any }) => {
                       "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                     )}
                   >
-                    {followersListData ? (
-                      followersListData.map((eachFollower: any, index: number) => (
+                    {myFollowersListData ? (
+                      myFollowersListData.map((eachFollower: any, index: number) => (
                         <Link key={index} href={`/profile/${eachFollower?.username}`}
                           className={"card card-compact p-4 flex flex-row gap-x-3 bg-base-200"}>
                           <div className="avatar">
@@ -742,29 +543,7 @@ const Profile = ({ params }: { params: any }) => {
             </div>
           </section>
       }
-      {/* {console.log(currentAddress)}
-      {console.log(JSON.parse(notices.reverse()[0].payload).posts)}
-      {console.log(
-        JSON.parse(notices.reverse()[0].payload).posts.filter(
-          (it: any) => it.address === currentAddress
-        )
-      )} */}
-      {/*{JSON.parse(notices?.reverse()[0].payload)
-        .posts.filter((it: any) => it.address === currentAddress)
-        .splice(0, endCursor)
-        .map((eachNotice: any) => (
-          // .filter((it) => JSON.parse(it.payload).posts.length > 0)
-          <>
-            <PostContainer key={eachNotice}>
-               {console.log(eachNotice)}
-              {console.log(wallet?.accounts[0])}
-              <PostUser {...eachNotice} />
-              <PostBody>{eachNotice?.content?.message}</PostBody>
-              <PostActionsContainer />
-            </PostContainer>
-             <div className="divider"></div>
-          </>
-        ))}*/}
+
       {/*<section className="flex flex-row justify-center w-full mx-auto">
         <button
           title="load more button"

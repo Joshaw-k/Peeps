@@ -1,18 +1,11 @@
 import React, { useEffect, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
-import { AvatarProfile } from "./Avatar";
-import { Camera, CameraIcon, X as LucideX } from "lucide-react";
-import { Cross2Icon } from "@radix-ui/react-icons";
-import { useRollups } from "../useRollups";
-import { ethers } from "ethers";
+import { X as LucideX } from "lucide-react";
 import { usePeepsContext } from "../context";
-import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
-import { CustomToastUI } from "./ToastUI";
 import { PostBody, PostContainer, PostUser } from "./Posts";
 import axios from "axios";
-// import { useAccount } from "wagmi";
 import classNames from "classnames";
 import {useActiveAccount, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
 
@@ -32,7 +25,6 @@ export const CommentModal = ({
   postMetaData,
 }: ICommentModal) => {
   const { userData, setRefreshPost, refreshPost } = usePeepsContext();
-  // const {address, isConnected} = useAccount();
   const walletStatus = useActiveWalletConnectionStatus();
   const activeAccount = useActiveAccount();
   const {connect, isConnecting} = useConnect();
@@ -40,23 +32,6 @@ export const CommentModal = ({
   const [commentText, setCommentText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [commentsUpdate, setCommentsUpdate] = useState(postData.post_comments);
-
-  // const addInput = async (str: string) => {
-  //   if (rollups) {
-  //     try {
-  //       let payload = ethers.utils.toUtf8Bytes(str);
-  //       // if (hexInput) {
-  //       //   payload = ethers.utils.arrayify(str);
-  //       // }
-  //       return await rollups.inputContract.addInput(
-  //         defaultDappAddress,
-  //         payload
-  //       );
-  //     } catch (e) {
-  //       console.log(`${e}`);
-  //     }
-  //   }
-  // };
 
   const unPin = async (postMetaData: any) => {
     try {
@@ -222,39 +197,7 @@ export const CommentModal = ({
       // toast.error("Error, Can't make post!");
       toast.error("Please connect your wallet!");
     }
-    // construct the json payload to send to addInput
-
-    // addInput(JSON.stringify(jsonPayload));
-    // console.log(JSON.stringify(jsonPayload));
-
-    // const res = await addInput(JSON.stringify(jsonPayload));
-    // // console.log(res);
-    // const receipt = await res?.wait(1);
-    // // console.log(receipt);
-    // const event = receipt?.events?.find((e) => e.event === "InputAdded");
-    // console.log(event);
-
-    // if (event) {
-    //   toast.success("Comment posted");
-    // }
-    // toast.custom((t) => (
-    //   <CustomToastUI t={t} message={"Address has been copied"}></CustomToastUI>
-    // ));
-
-    // // construct the json payload to send to addInput
-    // const jsonPayload = JSON.stringify({
-    //   method: "createProfile",
-    //   data: {
-    //     username: username,
-    //     bio: bio,
-    //     profile_pic: dp,
-    //   },
-    // });
-    // addInput(JSON.stringify(jsonPayload));
-    // console.log(JSON.stringify(jsonPayload));
   };
-
-  useEffect(() => {}, [postData]);
 
   return (
     <AlertDialog.Root>

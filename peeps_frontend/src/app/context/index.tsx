@@ -2,7 +2,6 @@
 
 import React, {
   createContext,
-  useCallback,
   useContext,
   useEffect,
   useState,
@@ -10,7 +9,6 @@ import React, {
 import {defaultDappAddress, PEEPS_USER_CACHE_NAME} from "../utils/constants";
 import axios from "axios";
 import toast from "react-hot-toast";
-// import {useAccount} from "wagmi";
 import {useRollups} from "../useRollups";
 import {useDebounce} from "@uidotdev/usehooks";
 import {ethers} from "ethers";
@@ -19,19 +17,13 @@ import {Address} from "thirdweb";
 import {useActiveAccount, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
 
 interface IPeepsContext {
-  // wallet: any;
-  // connecting: boolean;
-  // connect: any;
-  // disconnect: any;
   baseDappAddress: string;
   updateBaseDappAddress: any;
   currentUser: ICurrentUser[];
   updateCurrentUser: any;
   userCreated: boolean;
-  // data: any;
   error: any;
   loading: any;
-  // notices: any;
   checkProfileExist: any;
   userData: any;
   unPin: any;
@@ -52,6 +44,10 @@ interface IPeepsContext {
   postsData: any;
   myPosts: any;
   myPostsData: any;
+  myLikedPosts: any;
+  myLikedPostsData: any;
+  myFollowersList: any;
+  myFollowersListData: any;
   baseUserData: any,
   updateBaseUserData: any,
   activeAddress: any,
@@ -63,10 +59,6 @@ interface IPeepsContext {
 }
 
 const PeepsContext = createContext<IPeepsContext>({
-  // wallet: null,
-  // connecting: false,
-  // connect: null,
-  // disconnect: null,
   baseDappAddress: "",
   updateBaseDappAddress: null,
   currentUser: [
@@ -78,10 +70,8 @@ const PeepsContext = createContext<IPeepsContext>({
   ],
   updateCurrentUser: null,
   userCreated: false,
-  // data: null,
   error: null,
   loading: null,
-  // notices: null,
   checkProfileExist: null,
   userData: null,
   unPin: null,
@@ -102,6 +92,10 @@ const PeepsContext = createContext<IPeepsContext>({
   postsData: [],
   myPosts: [],
   myPostsData: [],
+  myLikedPosts: [],
+  myLikedPostsData: [],
+  myFollowersList: [],
+  myFollowersListData: [],
   baseUserData: null,
   updateBaseUserData: null,
   activeAddress: "",
@@ -197,9 +191,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const address = activeAccount?.address;
   const activeAddress = address;
   const walletStatus = useActiveWalletConnectionStatus();
+  const walletStatusConnected = walletStatus === "connected";
   const [currentUser, setCurrentUser] = useState<ICurrentUser[] | any>();
-  // const [profileExist, setProfileExist] = useState<ICurrentUser[] | any>();
-  // const [address, setAdress] = useState<any>();
   const [userData, setUserData] = useState<any>();
   const [hasProfile, setHasProfile] = useState(false);
   const [userIpfsHash, setUserIpfsHash] = useState(null);
@@ -214,7 +207,6 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [myLikedPostsData, setMyLikedPostsData] = useState<any>([]);
   const [myFollowersList, setMyFollowersList] = useState<any>([]);
   const [myFollowersListData, setMyFollowersListData] = useState<any>([]);
-  // const [postsNotice, setPostsNotice] = useState<any>([]);
   const [walletBalance, setWalletBalance] = useState<string>("0");
   const [isPostModalOpen, setIsPostModalOpen] = useState<boolean>(false);
 
@@ -223,9 +215,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
 
   const { loading, error, data } = useQuery(GET_NOTICES, {
     variables: { cursor },
-    pollInterval: 2000,
+    // pollInterval: 2000,
   });
-  console.log("Notice data", data);
 
   // const notices: Notice[] = data
   const postsNotice: Notice[] = data
@@ -268,17 +259,6 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           })
       : [];
 
-  // if (!loading && notices && notices.length > 0) {
-  //   setPostsNotice(notices);
-  // }
-
-  // const { data, notices, loading, error } = useNotices();
-  // // const [currentUser, setCurrentUser] = useState();
-  // const latestNotices = notices ? notices?.reverse()[0] : null;
-  // const usersInLatestNotices = latestNotices
-  //   ? JSON.parse(latestNotices.payload).users
-  //   : [];
-
   const userCreated = currentUser ? currentUser?.length > 0 : false;
 
   const rollups = useRollups(baseDappAddress);
@@ -286,26 +266,21 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [hexInput, setHexInput] = useState<boolean>(false);
 
   useEffect(() => {
-    console.log("debounced rollups not here...", rollupContracts);
+    // console.log("debounced rollups not here...", rollupContracts);
     if (rollupContracts && userData?.wallet) {
       handlePostToDapp()
     }
   }, [rollupContracts]);
 
   const addInput = async (str: string) => {
-    console.log("rollups.....", rollups);
-    console.log("rollupContracts", rollupContracts);
-    console.log("Debounced rollup contracts", debouncedRollups);
     if (rollupContracts) {
       try {
         let payload = ethers.utils.toUtf8Bytes(str);
-        console.log("Payload:::", payload);
         if (hexInput) {
           payload = ethers.utils.arrayify(str);
         }
         // await rollupContracts.inputContract.addInput(baseDappAddress, payload);
         await rollups?.inputContract.addInput(baseDappAddress, payload);
-        console.log("Inside the add input function");
       } catch (e) {
         console.log(`${e}`);
       }
@@ -313,7 +288,6 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   const handlePostToDapp = async () => {
-    // console.log(userData, postsData);
     // construct the json payload to send to addInput
     const jsonPayload = {
       method: "recommendPost",
@@ -333,7 +307,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
 
   const fetchMyPosts = async () => {
     try {
-      console.log("Fetch MY POSTS address: ", userData?.wallet, address);
+      // console.log("Fetch MY POSTS address: ", userData?.wallet, address);
       const res = await axios.get(
           `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
           {
@@ -342,7 +316,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
             },
           }
       );
-      console.log("MYPosts", res);
+      // console.log("MYPosts", res);
       if (res.data) {
         if (res.data.rows.length > 0) {
           setMyPosts(res.data.rows);
@@ -389,7 +363,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
             );
             data.push(res1.data.rows[0]);
           }
-          console.log(data);
+
           if (data.length > 0) {
             setMyLikedPosts(data);
             let dataOne = [];
@@ -400,7 +374,6 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
               dataOne.push(res2.data);
             }
             // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
-            console.log(dataOne);
             setMyLikedPostsData(dataOne);
           }
         }
@@ -467,8 +440,6 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
             },
           }
       );
-      console.log(res);
-      console.log(userData);
       if (res.data) {
         if (res.data.rows.length > 0) {
           setPosts(res.data.rows);
@@ -478,23 +449,17 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
                 `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
             );
             data.push(res1.data);
-            console.log(res1);
+            // console.log(res1);
           }
           // data.sort((a, b) => a.createdAt.localeCompare(b.createdAt));
           setPostsData(data);
-          // setIsPageLoading(false);
-          // setIsPageError(false);
-          // pageLoadCount === 0 && setPageLoadCount((value) => value + 1);
-          // if (data.length > 0) await handlePostToDapp();
         } else {
           // setIsPageLoading(false);
           // setIsPageError(false);
         }
       }
     } catch (error) {
-      console.log(error);
-      // setIsPageLoading(false);
-      // setIsPageError(true);
+      console.error(error);
     }
   };
   // END OF FETCH FOR LIKES, FOLLOWS AND MY POSTS
@@ -544,7 +509,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           setHasProfile(false);
         }
       } catch (error) {
-        console.log(error);
+        console.error(error);
       }
     }
   };
@@ -555,7 +520,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
       data.append("file", files);
       data.append("pinataOptions", '{"cidVersion": 0}');
       data.append("pinataMetadata", '{"name": "peeps"}');
-      toast.success("Uploading event image to IPFS .....");
+      toast.loading("Upload in progress.");
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
         data,
@@ -597,11 +562,11 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
             // console.log(res2.data);
           }
         } catch (error) {
-          console.log(error);
+          console.error(error);
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
     }
   };
 
@@ -622,9 +587,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
       // toast.success("unpinning successful");
       return true;
     } catch (error) {
-      console.log(error);
+      console.error(error);
       // toast.success("unpinning failed");
-      toast.success("Unable to complete request. Kindly try again.");
+      toast.error("Unable to complete request. Kindly try again.");
       return false;
     }
   };
@@ -707,7 +672,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         }
       }
     } catch (error) {
-      console.log(error);
+      console.error(error);
       // toast.error(`${action} failed`);
     }
   };
@@ -803,55 +768,45 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         await pinPost(postData, postMetaData[postId], action);
         await handlePostToDapp();
       } else {
-        toast.error(
-          "Something went wrong at our end. We are working to resolve it as we speak."
-        );
+        // toast.error(
+        //   "Something went wrong at our end. We are working to resolve it as we speak."
+        // );
         toast.error("Please try again in a few minutes.");
       }
     } else {
-      toast.error("Error, Can't make post!");
+      // toast.error("Error, Can't make post!");
       toast.error("Please connect your wallet!");
     }
   };
 
-  // useEffect(() => {
-  //   setAdress(address);
-  // }, [wallet]);
+  useEffect(() => {
+    checkProfileExist();
+    if (walletStatus === "connected") {
+      fetchUserData();
+    }
+  }, [walletStatusConnected]);
 
   useEffect(() => {
-    fetchUserData();
-    checkProfileExist();
-    fetchMyPosts();
-    fetchLikePosts();
     fetchPosts();
-  // }, [isConnected, address, hasProfile, profileChanged, refreshPost]);
-  }, [address, hasProfile, profileChanged, refreshPost]);
+  }, [refreshPost]);
 
-  // useEffect(() => {
-  //   fetchUserData();
-  //   checkProfileExist();
-  // }, [hasProfile]);
-
-  // useEffect(() => {
-  //   fetchUserData();
-  // }, [profileChanged]);
+  useEffect(() => {
+    if (walletStatusConnected) {
+      fetchMyPosts();
+      fetchLikePosts();
+    }
+  }, [address, walletStatusConnected]);
 
   return (
     <PeepsContext.Provider
       value={{
-        // wallet,
-        // connecting,
-        // connect,
-        // disconnect,
         baseDappAddress,
         updateBaseDappAddress,
         currentUser,
         updateCurrentUser,
         userCreated,
-        // data,
         error,
         loading,
-        // notices,
         checkProfileExist,
         userData,
         unPin,
@@ -872,6 +827,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         postsData,
         myPosts,
         myPostsData,
+        myLikedPosts,
+        myLikedPostsData,
+        myFollowersList,
+        myFollowersListData,
         baseUserData,
         updateBaseUserData,
         activeAddress,
