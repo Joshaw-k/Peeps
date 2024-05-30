@@ -4,7 +4,7 @@ import React, { useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { ethers } from "ethers";
-import { defaultDappAddress, erc20Address } from "../../utils/constants";
+import { defaultDappAddress, erc20Address, PEEPS_SEPOLIA_ARBITRUM_RPC } from "../../utils/constants";
 import { useRollups } from "../../useRollups";
 import { usePeepsContext } from "../../context";
 import { ButtonLoader } from "../../components/Button";
@@ -25,7 +25,7 @@ export const FreeMintTransaction = () => {
     const rollups = useRollups(baseDappAddress);
     // const [connectedWallet] = useWallets();
     // const provider = new ethers.providers.Web3Provider(connectedWallet.provider);
-    const provider = new ethers.providers.JsonRpcProvider();
+    const provider = new ethers.providers.JsonRpcProvider(PEEPS_SEPOLIA_ARBITRUM_RPC);
     const [dp, setDp] = useState<string>("");
     const [depositDescription, setDepositDescription] = useState<string>("");
     const [depositAddress, setDepositAddress] = useState("");

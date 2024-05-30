@@ -55,17 +55,18 @@ const URL_QUERY_GRAPHQL = process.env.NEXT_PUBLIC_NODE_URL;
 
 const httpLink = createHttpLink({
   uri: URL_QUERY_GRAPHQL, // URL of your proxy server
+  fetchOptions: {
+    mode: "no-cors",
+  },
   headers: {
     "Content-Type": "application/json",
     Accept: "application/json",
-    "Access-Control-Allow-Origin": "*",
-    "mode": "cors"
+    "Origin": "*",
   },
-
 });
 
 const client = new ApolloClient({
-  link: httpLink,
+  uri: URL_QUERY_GRAPHQL,
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {

@@ -42,6 +42,7 @@ import { ChainOptions } from "thirdweb/src/chains/types";
 import { ethers5Adapter } from "thirdweb/adapters/ethers5";
 import { client } from "@/app/client";
 import { localhostChain } from "@/app/components/Navbar";
+import { PEEPS_SEPOLIA_ARBITRUM_RPC } from "@/app/utils/constants";
 
 const config: any = configFile;
 
@@ -62,7 +63,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
   const [contracts, setContracts] = useState<RollupsContracts | undefined>();
   // const [{ connectedChain }] = useSetChain();
   const connectedChain = useActiveWalletChain();
-  const provider = new ethers.providers.JsonRpcProvider("https://sepolia-rollup.arbitrum.io/rpc");
+  const provider = new ethers.providers.JsonRpcProvider(PEEPS_SEPOLIA_ARBITRUM_RPC);
   // const [connectedWallet] = useWallets();
   const activeAccount = useActiveAccount();
   const [dappAddress] = useState<string>(dAddress);
