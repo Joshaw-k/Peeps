@@ -1,13 +1,10 @@
 "use client";
 
 import Link from "next/link";
-// import { FaGear, FaWallet } from "react-icons/fa6";
 import { ProfileForm } from "./ProfileForm";
-// import { useConnectWallet } from "@web3-onboard/react";
-// import { useNotices } from "./useNotices";
 import { useEffect, useState } from "react";
 import { usePeepsContext } from "../context";
-// import {useAccount} from "wagmi";
+
 import Image from "next/image";
 import { useActiveAccount, useActiveWalletConnectionStatus, useConnect } from "thirdweb/react";
 import { LucideWallet2 } from "lucide-react";
@@ -42,29 +39,20 @@ export const NoProfileCard = () => {
 }
 
 export const UserLeft = () => {
-  // const [{ wallet, connecting }, connect, disconnect] = useConnectWallet();
   const {
-    currentUser,
-    userCreated,
+    activeAddress,
     checkProfileExist,
     userData,
-    setHasProfile,
     hasProfile,
     profileChanged,
   } = usePeepsContext();
-  // const {address, isConnected} = useAccount();
-  // console.log(address, isConnected, hasProfile);
   const activeAccount = useActiveAccount();
-  const { connect, isConnecting } = useConnect();
   const address = activeAccount?.address;
   const walletStatus = useActiveWalletConnectionStatus();
-  console.log(walletStatus, hasProfile);
 
   useEffect(() => {
     checkProfileExist();
   }, [walletStatus, hasProfile, profileChanged]);
-
-  useEffect(() => { }, [userData]);
 
   return (
     <>
@@ -88,9 +76,9 @@ export const UserLeft = () => {
                   <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
                     {userData?.displayName ? userData?.displayName : "Anonymous"}
                   </h4>
-                  <p className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500">
+                  <div className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500 keep-all overflow-x-hidden text-ellipsis">
                     @{userData?.username ? userData?.username : "Anonymous"}
-                  </p>
+                  </div>
                 </div>
               </>
             ) : (
@@ -113,7 +101,7 @@ export const UserLeft = () => {
             <div className={"card card-compact bg-gray-200 dark:bg-base-300/80 my-1"}>
               <div className="card-body">
                 <div className="font-bold text-xs">About me</div>
-                {userData?.bio ? userData?.bio : "***"}
+                <div className={"keep-all overflow-x-hidden text-ellipsis"}>{userData?.bio ? userData?.bio : "***"}</div>
               </div>
             </div>
           ) : null
@@ -126,7 +114,7 @@ export const UserLeft = () => {
             {walletStatus === "connected" && hasProfile && (
               <li>
                 <Link
-                  href={`/profile/${userData?.username}`}
+                  href={userData?.wallet === activeAddress ? `/profile/me` : `/profile/${userData?.username}`}
                   className="space-x-2 bg-gray-100 dark:bg-base-200"
                 >
                   <svg

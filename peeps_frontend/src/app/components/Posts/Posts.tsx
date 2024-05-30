@@ -1,9 +1,7 @@
 "use client";
 
-// import { FaRetweet } from "react-icons/fa6";
 import { ethers } from "ethers";
 import React, { use, useEffect, useState } from "react";
-// import { useNoticesQuery } from "../../generated/graphql";
 import { useQuery, gql } from "@apollo/client";
 import { useRollups } from "../../useRollups";
 import { defaultDappAddress } from "../../utils/constants";
@@ -55,19 +53,8 @@ const GET_NOTICES = gql`
 `;
 
 export const Post = () => {
-  // const [result, reexecuteQuery] = useNoticesQuery();
-  // const { data, fetching, error } = result;
-
-  const [cursor, setCursor] = useState(null);
   const [endCursor, setEndCursor] = useState(20);
 
-  const { loading, error, data } = useQuery(GET_NOTICES, {
-    variables: { cursor },
-    pollInterval: 2000,
-  });
-
-  // const [posts, setPosts] = useState<any>();
-  // const [postsData, setPostsData] = useState<any>();
   const [myPosts, setMyPosts] = useState<any>();
   const [myPostsData, setMyPostsData] = useState<any>();
   const [myLikedPosts, setMyLikedPosts] = useState<any>();
@@ -77,30 +64,9 @@ export const Post = () => {
   const [isPageLoading, setIsPageLoading] = useState<boolean>(false);
   const [isPageError, setIsPageError] = useState<boolean>(false);
   const [pageLoadCount, setPageLoadCount] = useState<number>(0);
-  const { baseDappAddress, posts, postsData, refreshPost, rollupContracts, userData, updatePostsNotice } = usePeepsContext();
-  // console.log(posts);
+  const { posts, postsData, userData, postsNotice } = usePeepsContext();
 
-  // // if (fetching) return <p>Loading...</p>;
-  // if (loading)
-  //   return (
-  //     <EmptyPage
-  //       icon={<span className="loading loading-dots loading-lg"></span>}
-  //       text={""}
-  //     >
-  //       <div className="text-xl">Loading...</div>
-  //     </EmptyPage>
-  //   );
-  // // if (error) return <p>Oh no... {error.message}</p>;
-
-  // if (!data || !data.notices)
-  //   return (
-  //     <EmptyPage
-  //       icon={<MessageSquareText size={48} />}
-  //       text={"No posts yet"}
-  //     ></EmptyPage>
-  //   );
-
-  const notices: Notice[] = data
+  /*const notices: Notice[] = data
       ? data.notices.edges
     .map((node: any) => {
       const n = node.node;
@@ -138,68 +104,7 @@ export const Post = () => {
         return b.input.index - a.input.index;
       }
     })
-  : [];
-
-  // if (notices.length < 1) {
-  //   return (
-  //     <EmptyPage
-  //       icon={<MessageSquareText size={48} />}
-  //       text={"No posts yet"}
-  //     ></EmptyPage>
-  //   );
-  // }
-
-  // const rollups = useRollups(baseDappAddress);
-  // const debouncedRollups = useDebounce(rollups, 1000);
-  // const [hexInput, setHexInput] = useState<boolean>(false);
-  //
-  // useEffect(() => {
-  //   console.log("debounced rollups not here...", rollupContracts);
-  //   if (rollupContracts && !isPageLoading && userData?.wallet) {
-  //     handlePostToDapp()
-  //   }
-  // }, [rollupContracts]);
-  //
-  // const addInput = async (str: string) => {
-  //   console.log("rollups.....", rollups);
-  //   console.log("rollupContracts", rollupContracts);
-  //   console.log("Debounced rollup contracts", debouncedRollups);
-  //   if (rollupContracts) {
-  //     try {
-  //       let payload = ethers.utils.toUtf8Bytes(str);
-  //       console.log("Payload:::", payload);
-  //       if (hexInput) {
-  //         payload = ethers.utils.arrayify(str);
-  //       }
-  //       await rollupContracts.inputContract.addInput(baseDappAddress, payload);
-  //       console.log("Inside the add input function");
-  //     } catch (e) {
-  //       console.log(`${e}`);
-  //     }
-  //   }
-  // };
-  //
-  // const handlePostToDapp = async () => {
-  //   console.log(userData, postsData);
-  //   // construct the json payload to send to addInput
-  //   const jsonPayload = {
-  //     method: "recommendPost",
-  //     data: {
-  //       user: userData,
-  //       likedPosts: myLikedPostsData,
-  //       followersPosts: myFollowersListData,
-  //       myPosts: myPostsData,
-  //       posts: postsData
-  //     },
-  //   };
-  //   await addInput(JSON.stringify(jsonPayload));
-  //   console.log("handle Post to Dapp", jsonPayload);
-  // };
-
-  // update PostsNotice
-  // if (notices.length > 0) {
-  //   updatePostsNotice(notices);
-  // }
+  : [];*/
 
   const fetchMyPosts = async () => {
     try {
@@ -369,30 +274,6 @@ export const Post = () => {
     }
   };
 
-  // useEffect(() => {
-  //   // Increase the pageLoadCount by 1. This is used to calculate when the page loader should be displayed.
-  //   if (pageLoadCount === 0) {
-  //     fetchPosts();
-  //   }
-  //   setInterval(() => {
-  //     fetchPosts();
-  //   }, 6000);
-  // }, []);
-
-  // useEffect(() => {
-  //   // console.log(userData?.wallet);
-  //   // fetchLikePosts();
-  //   // fetchFollowers();
-  //   fetchMyPosts();
-  //   // fetchPosts();
-  // }, [userData?.wallet]);
-
-  useEffect(() => {
-    // fetchPosts();
-  }, [refreshPost]);
-
-  useEffect(() => {}, [postsData]);
-
   if (isPageLoading && pageLoadCount === 0)
     return (
       <EmptyPage
@@ -410,21 +291,8 @@ export const Post = () => {
       </EmptyPage>
     );
 
-
-  // // if (fetching) return <p>Loading...</p>;
-  if (loading)
-    return (
-      <EmptyPage
-        icon={<span className="loading loading-dots loading-lg"></span>}
-        text={""}
-      >
-        <div className="text-xl">Loading...</div>
-      </EmptyPage>
-    );
-  // if (error) return <p>Oh no... {error.message}</p>;
-
   // if (!data || !data.notices)
-  if (notices.length < 1)
+  if (postsNotice.length < 1)
     return (
       <EmptyPage
         icon={<MessageSquareText size={48} />}
@@ -436,8 +304,8 @@ export const Post = () => {
     <>
       {/*{notices ? notices.length > 0 && <div>New messages</div> : null}*/}
       {
-        notices.length > 0 && notices[0].payload !== undefined
-          ? JSON.parse(notices[0]?.payload)?.posts?.splice(0, endCursor)
+        postsNotice.length > 0 && postsNotice[0].payload !== undefined
+          ? JSON.parse(postsNotice[0]?.payload)?.posts?.splice(0, endCursor)
                 .map((eachNotice: any, index: number) => (
                     // .filter((it) => JSON.parse(it.payload).posts.length > 0)
                     <>
@@ -469,78 +337,6 @@ export const Post = () => {
                 ))
             : <div>No posts</div>
       }
-
-      {/*<button onClick={handlePostToDapp}>Trigger wallet</button>*/}
-      {/* <button onClick={() => reexecuteQuery({ requestPolicy: "network-only" })}>
-        Reload
-      </button> */}
-      {/* <table>
-        <thead>
-          <tr>
-            <th>Input Index</th>
-            <th>Notice Index</th>
-            <th>Input Payload</th>
-            <th>Payload</th>
-          </tr>
-        </thead>
-        <tbody>
-          {notices.length === 0 && (
-            <tr>
-              <td colSpan={4}>no notices</td>
-            </tr>
-          )}
-          {notices.map((n: any) => (
-            <tr key={`${n.input.index}-${n.index}`}>
-              <td>{n.input.index}</td>
-              <td>{n.index}</td>
-              <td>{n.input.payload}</td>
-              <td>{n.payload}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table> */}
-      {/* {notices
-        ? JSON.parse(notices.reverse()[0].payload)
-            .posts.reverse()
-            .splice(0, endCursor) */}
-      {/* .map((eachNotice: any) => (
-              // .filter((it) => JSON.parse(it.payload).posts.length > 0) */}
-      {/* <>
-                <PostContainer key={eachNotice}> */}
-      {/* {console.log(eachNotice)} */}
-      {/* <PostUser {...eachNotice} />
-                  <PostBody postId={eachNotice.id}>
-                    {eachNotice?.content?.message}
-                  </PostBody>
-                  <PostActions
-                    postId={eachNotice.id}
-                    message={eachNotice?.content?.message}
-                    upload={eachNotice?.content?.uplooad}
-                    postData={eachNotice}
-                  /> */}
-      {/* {<PostContainer></PostContainer>} */}
-      {/* </PostContainer> */}
-      {/* <div className="divider"></div> */}
-      {/* </>
-            )) */}
-      {/* : null} */}
-      {/*<div>*/}
-      {/*  {postsData ? (*/}
-      {/*    postsData.map((post: any, index: number) => (*/}
-      {/*      <div key={index}>*/}
-      {/*        <p>{post.post_content}</p>*/}
-      {/*        <button*/}
-      {/*          className="bg-blue-500 p-3"*/}
-      {/*          onClick={() => PostActions(post, posts[index], "like")}*/}
-      {/*        >*/}
-      {/*          like*/}
-      {/*        </button>*/}
-      {/*      </div>*/}
-      {/*    ))*/}
-      {/*  ) : (*/}
-      {/*    <p>No posts</p>*/}
-      {/*  )}*/}
-      {/*</div>*/}
 
       {/*{postsData ? (
         postsData.map((eachPost: any, index: number) => (

@@ -70,9 +70,7 @@ const HomePosts = () => {
         "0x70ac08179605AF2D9e75782b8DEcDD3c22aA4D0C"
     );
     const {postsNotice} = usePeepsContext();
-    console.log(postsNotice);
     const recommendedPosts = postsNotice[0]?.payload ? JSON.parse(postsNotice[0]?.payload)?.posts : [];
-    console.log(recommendedPosts);
 
     return (
         <div className={"lg:py-0 w-full"}>

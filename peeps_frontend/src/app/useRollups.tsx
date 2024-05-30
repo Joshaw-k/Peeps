@@ -40,8 +40,7 @@ import { JsonRpcSigner } from "@ethersproject/providers";
 import { useActiveAccount, useActiveWalletChain } from "thirdweb/react";
 import { ChainOptions } from "thirdweb/src/chains/types";
 import { ethers5Adapter } from "thirdweb/adapters/ethers5";
-import { createThirdwebClient } from "thirdweb";
-import { baseClientId, client } from "@/app/client";
+import { client } from "@/app/client";
 import { localhostChain } from "@/app/components/Navbar";
 
 const config: any = configFile;
@@ -63,7 +62,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
   const [contracts, setContracts] = useState<RollupsContracts | undefined>();
   // const [{ connectedChain }] = useSetChain();
   const connectedChain = useActiveWalletChain();
-  const provider = new ethers.providers.JsonRpcProvider();
+  const provider = new ethers.providers.JsonRpcProvider("https://sepolia-rollup.arbitrum.io/rpc");
   // const [connectedWallet] = useWallets();
   const activeAccount = useActiveAccount();
   const [dappAddress] = useState<string>(dAddress);
@@ -72,12 +71,12 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
     const connect = async (
       chain: ChainOptions
     ): Promise<RollupsContracts> => {
-      console.log("useRollups chainId", chain, config[chain.id]?.DAppRelayAddress);
+      // console.log("useRollups chainId", chain, config[chain.id]?.DAppRelayAddress);
       /*const provider = new ethers.providers.Web3Provider(
           connectedWallet.provider
       );
       const signer = provider.getSigner();*/
-      console.log("CHain from rollups", connectedChain);
+      // console.log("CHain from rollups", connectedChain);
       const signer = await ethers5Adapter.signer.toEthers({
         client: client,
         chain: localhostChain!,
@@ -158,7 +157,6 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
 
       const erc1155BatchPortalContract = ERC1155BatchPortal__factory.connect(erc1155BatchPortalAddress, signer);
 
-      console.log("useRollups dappContract", dappContract);
       return {
         dappContract,
         signer,

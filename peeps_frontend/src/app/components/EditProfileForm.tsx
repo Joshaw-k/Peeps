@@ -1,18 +1,14 @@
 import React, { useEffect, useRef, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { AvatarProfile } from "./Avatar";
-import { Camera, CameraIcon, X as LucideX } from "lucide-react";
-import { Cross2Icon } from "@radix-ui/react-icons";
+import { CameraIcon, X as LucideX } from "lucide-react";
 import { useRollups } from "../useRollups";
-import { ethers } from "ethers";
 import { usePeepsContext } from "../context";
-import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
 import axios from "axios";
-import Image from "next/image";
 import {useActiveAccount, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
-// import {useAccount} from "wagmi";
+
 
 export const EditProfileForm = () => {
   // const {address, isConnected} = useAccount();
@@ -34,8 +30,8 @@ export const EditProfileForm = () => {
   const [dp, setDp] = useState<string>("");
   const [dpPreview, setDpPreview] = useState<string>("");
   const [username, setUsername] = useState<string>("");
-  const [bio, setBio] = useState<string>(userData.bio);
-  const [displayName, setDisplayName] = useState<string>(userData.displayName);
+  const [bio, setBio] = useState<string>(userData?.bio);
+  const [displayName, setDisplayName] = useState<string>(userData?.displayName);
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const profileFormCloseButton = useRef(null);
   const [open, setOpen] = React.useState(false);
@@ -144,8 +140,8 @@ export const EditProfileForm = () => {
   useEffect(() => {
     if (
       dpPreview != "" ||
-      displayName != userData.displayName ||
-      bio != userData.bio
+      displayName != userData?.displayName ||
+      bio != userData?.bio
     ) {
       setDisableSave(false);
     } else {
@@ -181,9 +177,9 @@ export const EditProfileForm = () => {
                   ) : (
                     <AvatarProfile
                       src={
-                        userData.profilePicture == ""
+                        userData?.profilePicture == ""
                           ? defaultImage
-                          : userData.profilePicture
+                          : userData?.profilePicture
                       }
                     />
                   )}

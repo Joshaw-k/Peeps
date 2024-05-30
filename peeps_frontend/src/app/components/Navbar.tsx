@@ -7,10 +7,11 @@ import {client} from "@/app/client";
 import {ConnectButton} from "thirdweb/react";
 // import {ConnectButton, WalletButton} from "@rainbow-me/rainbowkit";
 import { defineChain } from "thirdweb";
+import {arbitrumSepolia} from "thirdweb/chains";
 
 export const localhostChain = defineChain({
-    id: 31337,
-    rpc: "http://localhost:8545"
+    id: 421614,
+    rpc: "https://sepolia-rollup.arbitrum.io/rpc"
 });
 
 const Navbar: React.FC = () => {
@@ -30,10 +31,10 @@ const Navbar: React.FC = () => {
         <div className="navbar-end">
           <ConnectButton
               client={client}
-              chain={localhostChain}
+              chain={arbitrumSepolia}
               appMetadata={{
                 name: "Peeps",
-                url: "https://peeps-mu.vercel.app",
+                url: "https://peeps-dev.vercel.app",
                 description: "Peeps is a decentralized social media platform"
               }}
               connectButton={{

@@ -4,7 +4,7 @@ import type { Metadata } from "next";
 import { Inter, Noto_Sans } from "next/font/google";
 import "./globals.css";
 import { ThirdwebProvider } from "thirdweb/react";
-import { ApolloClient, ApolloProvider, InMemoryCache } from "@apollo/client";
+import { ApolloClient, ApolloProvider, createHttpLink, InMemoryCache } from "@apollo/client";
 import PeepsProvider from "@/app/context";
 import { Toaster } from "react-hot-toast";
 import Navbar from "@/app/components/Navbar";
@@ -51,10 +51,21 @@ init({
 });
 
 //Setup GraphQL Apollo client
-const URL_QUERY_GRAPHQL = "http://localhost:8080/graphql";
+const URL_QUERY_GRAPHQL = process.env.NEXT_PUBLIC_NODE_URL;
+
+const httpLink = createHttpLink({
+  uri: URL_QUERY_GRAPHQL, // URL of your proxy server
+  headers: {
+    "Content-Type": "application/json",
+    Accept: "application/json",
+    "Access-Control-Allow-Origin": "*",
+    "mode": "cors"
+  },
+
+});
 
 const client = new ApolloClient({
-  uri: URL_QUERY_GRAPHQL,
+  link: httpLink,
   cache: new InMemoryCache(),
   defaultOptions: {
     watchQuery: {

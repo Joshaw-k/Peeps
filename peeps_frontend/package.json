@@ -33,7 +33,8 @@
     "react-hot-toast": "^2.4.1",
     "thirdweb": "^5",
     "urql": "^4.1.0",
-    "uuid": "^9.0.1"
+    "uuid": "^9.0.1",
+    "yarn": "^1.22.22"
   },
   "devDependencies": {
     "@types/node": "^20",
