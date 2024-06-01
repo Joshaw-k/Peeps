@@ -207,7 +207,7 @@ export const CommentModal = ({
             "btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row items-center lg:gap-x-3"
           }
         >
-          <span className="flex-shrink-0 inline-flex justify-center items-center lg:h-[46px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 mx-auto scale-75 lg:scale-100 dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
+          <span className="flex-shrink-0 inline-flex justify-center items-center lg:h-[54px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 mx-auto scale-75 lg:scale-100 dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
             <svg
               className={classNames("flex-shrink-0 w-5 h-5", {"text-primary": commentsUpdate > 0})}
               xmlns="http://www.w3.org/2000/svg"
