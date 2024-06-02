@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useRef, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import * as AlertDialog from "@radix-ui/react-alert-dialog";
 import { Cross2Icon } from "@radix-ui/react-icons";
 import { ethers } from "ethers";
@@ -9,13 +9,13 @@ import { useRollups } from "../../useRollups";
 import { usePeepsContext } from "../../context";
 import { ButtonLoader } from "../../components/Button";
 import { LucideArrowDownRight, LucideArrowUpRight, LucideX } from "lucide-react";
-import { useActiveAccount, useActiveWallet, useReadContract,useActiveWalletChain, useSendTransaction } from "thirdweb/react";
+import { useActiveAccount, useActiveWallet, useReadContract, useActiveWalletChain, useSendTransaction, useWaitForReceipt } from "thirdweb/react";
 import { client } from "@/app/client";
 import { ethers5Adapter } from "thirdweb/adapters/ethers5";
 import { IERC20__factory } from "@cartesi/rollups";
 import { localhostChain } from "@/app/components/Navbar";
 import toast from "react-hot-toast";
-import { getContract } from "thirdweb";
+import { getContract, prepareContractCall } from "thirdweb";
 import { arbitrumSepolia } from "thirdweb/chains";
 // import {useWallets} from "@web3-onboard/react";
 
@@ -37,7 +37,7 @@ export const DepositTransaction = () => {
   const closeButton = useRef(null);
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
   const erc20PortalAddress = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB";
-  console.log(activeAccount);
+  // console.log(activeAccount);
 
   const { mutate: sendTx, data: transactionResult } = useSendTransaction()
   const tokenContract = getContract({
@@ -329,70 +329,65 @@ export const DepositTransaction = () => {
       }
     ]
   })
-  const { data: dataOne, isLoading } = useReadContract({
+  const { data: currentAllowance, isLoading } = useReadContract({
     contract: tokenContract,
     method: "allowance",
     params: [activeAddress, erc20PortalAddress]
   });
-  const depositErc20ToPortal = async (token: string, amount: number) => {
-    const ethersSigner = provider.getSigner();
+  const tx = prepareContractCall({
+    contract: tokenContract,
+    method: "approve",
+    params: [erc20PortalAddress, ethers.utils.parseEther(`${depositAmount}`).toBigInt()],
+  });
+
+  const { data: receipt } = useWaitForReceipt({
+    client,
+    chain: arbitrumSepolia,
+    transactionHash: transactionResult?.transactionHash,
+  });
+
+  const depositToDapp = async () => {
+    try {
+      const data = ethers.utils.toUtf8Bytes(
+        `Deposited (${depositAmount}) of ERC20 (${erc20Address}).`
+      );
+      await rollups?.erc20PortalContract.depositERC20Tokens(
+        erc20Address,
+        baseDappAddress,
+        ethers.utils.parseEther(`${depositAmount}`),
+        data
+      );
+      setIsModalOpen(false);
+      toast.success("Deposit successful");
+    } catch (err) {
+      setIsModalOpen(false);
+      toast.error("Deposit failed");
+      console.log(err);
+    }
+  }
+
+  const depositErc20ToPortal = async () => {
     try {
       if (rollups && activeAccount) {
         console.log("Inside rollups", rollups);
         const data = ethers.utils.toUtf8Bytes(
-          `Deposited (${amount}) of ERC20 (${token}).`
+          `Deposited (${depositAmount}) of ERC20 (${erc20Address}).`
         );
-        console.log(dataOne)
+        console.log(currentAllowance)
 
-        // // Approve portal to withdraw `amount` tokens from signerconst erc20PortalAddress = rollups.erc20PortalContract.address;
-        // const tokenContract = ethersSigner
-        //   ? IERC20__factory.connect(token, ethersSigner)
-        //   : IERC20__factory.connect(token, provider);
-        // console.log("token Contract obj:", tokenContract, activeAddress, erc20PortalAddress);
-        //
-        // // query current allowance
-        // const currentAllowance = await tokenContract.allowance(
-        //   activeAddress,
-        //   erc20PortalAddress
-        // );
-        // // ethersSigner.connect();
-        // console.log("Current allowance:", currentAllowance);
-        // if (ethers.utils.parseEther(`${amount}`) > currentAllowance) {
-        //   console.log("enough allowance");
-        //   // Allow portal to withdraw `amount` tokens from signer
-        //   const tx = await tokenContract.approve(
-        //     erc20PortalAddress,
-        //     ethers.utils.parseEther(`${amount}`)
-        //   );
-        //   console.log("Passed approve", tx);
-        //   const receipt = await tx.wait(1);
-        //   const event = (
-        //     await tokenContract.queryFilter(
-        //       tokenContract.filters.Approval(),
-        //       receipt.blockHash
-        //     )
-        //   ).pop();
-        //   if (!event) {
-        //     throw Error(
-        //       `could not approve ${amount} tokens for DAppERC20Portal(${erc20PortalAddress})  (signer: ${activeAddress}, tx: ${tx.hash})`
-        //     );
-        //   }
-        // }
-        //
-        // try {
-        //   await rollups.erc20PortalContract.depositERC20Tokens(
-        //     token,
-        //     baseDappAddress,
-        //     ethers.utils.parseEther(`${amount}`),
-        //     data
-        //   );
-        //   setIsModalOpen(false);
-        //   toast.success("Deposit successful");
-        // } catch (err) {
-        //   setIsModalOpen(false);
-        //   toast.error("Deposit failed");
-        //   console.log(err);
-        // }
+        if (depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
+          console.log("not enough allowance");
+          // Allow portal to withdraw `amount` tokens from signer
+
+          try {
+            sendTx(tx)
+          } catch (error) {
+            console.log(`could not approve ${depositAmount} tokens for DAppERC20Portal(${erc20PortalAddress})  (signer: ${activeAddress}`)
+          }
+        }
+        else {
+          await depositToDapp()
+        }
       }
     } catch (e) {
       console.log(`${e}`);
@@ -401,12 +396,20 @@ export const DepositTransaction = () => {
     setIsSubmit(false);
   };
 
+
   const handleSubmit = async (e: any) => {
     e.preventDefault()
     setIsSubmit(true);
-    const txReceipt = await depositErc20ToPortal(erc20Address, depositAmount)
-    console.log(txReceipt)
+    await depositErc20ToPortal()
   };
+
+  useEffect(() => {
+    if (receipt?.status == "success") {
+      const func = async () => { await depositToDapp() }
+      func()
+    }
+  }, [transactionResult?.transactionHash, receipt])
+
 
   return (
     <AlertDialog.Root open={isModalOpen}>
