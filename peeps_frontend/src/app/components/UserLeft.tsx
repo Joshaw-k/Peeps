@@ -71,7 +71,7 @@ export const UserLeft = () => {
 
   return (
     <>
-      <div className="hidden lg:block absolute left-24 bottom-10 card w-full lg:max-w-[280px] bg-base-200/80 opacity-60">
+      <div className="hidden lg:hidden absolute left-24 bottom-10 card w-full lg:max-w-[280px] bg-base-200/80 opacity-60">
         <div className="card-body">
           <div className="font-bold">Ad</div>
           Play your favourite games on a web3 decentralized platform.

@@ -328,7 +328,7 @@ export const DepositTransaction = () => {
         "type": "function"
       }
     ]
-  })
+  });
   const { data: dataOne, isLoading } = useReadContract({
     contract: tokenContract,
     method: "allowance",
