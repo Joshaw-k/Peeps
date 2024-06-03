@@ -32,6 +32,7 @@ export const CommentModal = ({
   const [commentText, setCommentText] = useState<string>("");
   const [isSubmit, setIsSubmit] = useState<boolean>(false);
   const [commentsUpdate, setCommentsUpdate] = useState(postData.post_comments);
+  const [open, setOpen] = React.useState(false);
 
   const unPin = async (postMetaData: any) => {
     try {
@@ -174,6 +175,7 @@ export const CommentModal = ({
             if (pinRes.IpfsHash) {
               setIsSubmit(false);
               toast.success(`commented successful`);
+              setOpen(false);
               await wait(300);
               setRefreshPost(!refreshPost);
             }
@@ -200,14 +202,14 @@ export const CommentModal = ({
   };
 
   return (
-    <AlertDialog.Root>
+    <AlertDialog.Root open={open} onOpenChange={setOpen}>
       <AlertDialog.Trigger asChild>
         <div
           className={
             "btn btn-sm md:btn-md btn-ghost rounded-box font-normal text-xs flex flex-row items-center lg:gap-x-3"
           }
         >
-          <span className="flex-shrink-0 inline-flex justify-center items-center lg:h-[54px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 mx-auto scale-75 lg:scale-100 dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
+          <span className="flex-shrink-0 inline-flex justify-center items-center lg:h-[48px] rounded-full border-0 border-gray-200 bg-transparent text-gray-800 mx-auto scale-75 lg:scale-100 dark:bg-slate-90 dark:border-gray-700 dark:text-gray-200">
             <svg
               className={classNames("flex-shrink-0 w-5 h-5", {"text-primary": commentsUpdate > 0})}
               xmlns="http://www.w3.org/2000/svg"
@@ -238,25 +240,25 @@ export const CommentModal = ({
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="bg-black/40 bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 dark:bg-base-300/80 dark:backdrop-blur-sm z-30" />
-        <AlertDialog.Content className="rounded-box z-40 data-[state=open]:animate-contentShow fixed bottom-4 lg:top-[50%] left-[50%] max-h-[85vh] w-[96vw] max-w-full lg:w-[90vw] lg:max-w-[500px] bg-base-100 translate-x-[-50%] lg:translate-y-[-50%] lg:rounded-[6px] p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
+        <AlertDialog.Content className="rounded-box z-40 data-[state=open]:animate-contentShow fixed bottom-4 lg:top-[50%] left-[50%] max-h-[85vh] w-[96vw] max-w-full lg:w-[90vw] lg:max-w-[500px] lg:h-[80vh] bg-base-100 translate-x-[-50%] lg:translate-y-[-50%] lg:rounded-lg p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
           {/* <AlertDialog.Title className="text-mauve12 mt-4 mb-12 text-xl text-center font-bold">
             Comment on @{postData?.username} peep
           </AlertDialog.Title> */}
-          <AlertDialog.Description className="text-[15px] leading-normal">
+          <AlertDialog.Description className="text-[15px] leading-normal h-full flex flex-col">
             <PostContainer>
               <PostUser {...postData} />
               <PostBody postMetaData={postMetaData}>{message}</PostBody>
               {/* <PostActions postId={postData.id} /> */}
             </PostContainer>
             {/* We require this to serve the best experience */}
-            <div className="card items-center w-full bg-base-100">
-              <form className="w-full">
-                <div className="max-w-full text-base">
+            <div className="card items-center w-full flex-auto">
+              <form className="block w-full h-full flex flex-col">
+                <div className="max-w-full h-full text-base flex-auto bg-base-300 rounded-box">
                   {/* <label className="label">
                     <span className="label-text">Your comment</span>
                   </label> */}
                   <textarea
-                    className="textarea textarea-lg lg:text-base border-0 w-full h-54 lg:h-54 resize-none bg-transparent focus:outline-primary"
+                    className="textarea textarea-lg lg:text-base border-0 w-full h-54 lg:h-full resize-none bg-transparent focus:outline-primary"
                     placeholder="write your comment here"
                     onChange={(e) => setCommentText(e.target.value)}
                   ></textarea>
@@ -266,6 +268,7 @@ export const CommentModal = ({
                     type="button"
                     className="btn btn-primary rounded-xl"
                     onClick={handleCreateComment}
+                    disabled={isSubmit}
                   >
                     {isSubmit ? <ButtonLoader /> : "Send comment"}
                   </button>

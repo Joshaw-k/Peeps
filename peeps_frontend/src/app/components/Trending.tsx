@@ -55,7 +55,7 @@ const TrendingCard = ({ index, hashTag, repostCount }: ITweet) => {
         #{index}
       </div>
       <div className="font-bold">{hashTag}</div>
-      <div className="text-gray-600 text-sm">{repostCount} repost</div>
+      <div className="text-gray-600 text-sm">{repostCount} repeep</div>
     </Link>
   );
 };
