@@ -343,7 +343,7 @@ export const DepositTransaction = () => {
   const { data: receipt } = useWaitForReceipt({
     client,
     chain: arbitrumSepolia,
-    transactionHash: transactionResult?.transactionHash,
+    transactionHash: transactionResult?.transactionHash!,
   });
 
   const depositToDapp = async () => {
@@ -375,12 +375,12 @@ export const DepositTransaction = () => {
         );
         console.log(currentAllowance)
 
-        if (depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
+        if (currentAllowance && depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
           console.log("not enough allowance");
           // Allow portal to withdraw `amount` tokens from signer
 
           try {
-            sendTx(tx)
+            sendTx(tx as any);
           } catch (error) {
             console.log(`could not approve ${depositAmount} tokens for DAppERC20Portal(${erc20PortalAddress})  (signer: ${activeAddress}`)
           }
