@@ -326,7 +326,7 @@ export const FreeMintTransaction = () => {
 
     const { mutate: sendTx, data: transactionResult } = useSendTransaction()
 
-    console.log(contract)
+    // console.log(contract)
     const handleFreeMint = async () => {
         const tx = prepareContractCall({
             contract,

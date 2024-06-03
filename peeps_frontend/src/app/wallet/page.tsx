@@ -44,7 +44,7 @@ const Wallet = () => {
     const { activeAddress } = usePeepsContext();
     const connectedChain = useActiveWalletChain();
     const balance = Balance();
-    console.log("Wallet balance", balance, walletBalance);
+    // console.log("Wallet balance", balance, walletBalance);
     const [transactionsGrid, setTransactionsGrid] = useState([
         {
             type: "Balance",
