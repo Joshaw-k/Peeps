@@ -62,7 +62,7 @@ export const PostExplore = () => {
 
     const { loading, error, data } = useQuery(GET_NOTICES, {
         variables: { cursor },
-        pollInterval: 2000,
+        pollInterval: 10000,
     });
 
     // // if (fetching) return <p>Loading...</p>;
@@ -197,8 +197,7 @@ export const PostExplore = () => {
     const fetchMyPosts = async () => {
         try {
             const res = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
-                    userData?.wallet
+                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userData?.wallet
                 }","op":"eq"}&status=pinned`,
                 {
                     headers: {
@@ -228,8 +227,7 @@ export const PostExplore = () => {
     const fetchLikePosts = async () => {
         try {
             const res = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${
-                    userData?.wallet
+                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${userData?.wallet
                 }","op":"eq"}&status=pinned`,
                 {
                     headers: {
@@ -276,8 +274,7 @@ export const PostExplore = () => {
     const fetchFollowers = async () => {
         try {
             const res = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${
-                    userData?.username
+                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${userData?.username
                 }","op":"eq"}&status=pinned`,
                 {
                     headers: {
@@ -385,7 +382,7 @@ export const PostExplore = () => {
         // fetchPosts();
     }, [refreshPost]);
 
-    useEffect(() => {}, [postsData]);
+    useEffect(() => { }, [postsData]);
 
     if (isPageLoading && pageLoadCount === 0)
         return (
@@ -533,7 +530,7 @@ export const PostExplore = () => {
                         title="load more button"
                         type="button"
                         className="btn btn-wide block"
-                        // onClick={() => setEndCursor((endCursor) => endCursor + 20)}
+                    // onClick={() => setEndCursor((endCursor) => endCursor + 20)}
                     >
                         Load more
                     </button>
