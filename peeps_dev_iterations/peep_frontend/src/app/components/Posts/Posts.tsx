@@ -62,7 +62,7 @@ export const Post = () => {
 
   const { loading, error, data } = useQuery(GET_NOTICES, {
     variables: { cursor },
-    pollInterval: 2000,
+    pollInterval: 10000,
   });
 
   // const [posts, setPosts] = useState<any>();
@@ -100,44 +100,44 @@ export const Post = () => {
   //   );
 
   const notices: Notice[] = data
-      ? data.notices.edges
-    .map((node: any) => {
-      const n = node.node;
-      let inputPayload = n?.input.payload;
-      if (inputPayload) {
-        try {
-          inputPayload = ethers.utils.toUtf8String(inputPayload);
-        } catch (e) {
-          inputPayload = inputPayload + " (hex)";
+    ? data.notices.edges
+      .map((node: any) => {
+        const n = node.node;
+        let inputPayload = n?.input.payload;
+        if (inputPayload) {
+          try {
+            inputPayload = ethers.utils.toUtf8String(inputPayload);
+          } catch (e) {
+            inputPayload = inputPayload + " (hex)";
+          }
+        } else {
+          inputPayload = "(empty)";
         }
-      } else {
-        inputPayload = "(empty)";
-      }
-      let payload = n?.payload;
-      if (payload) {
-        try {
-          payload = ethers.utils.toUtf8String(payload);
-        } catch (e) {
-          payload = payload + " (hex)";
+        let payload = n?.payload;
+        if (payload) {
+          try {
+            payload = ethers.utils.toUtf8String(payload);
+          } catch (e) {
+            payload = payload + " (hex)";
+          }
+        } else {
+          payload = "(empty)";
         }
-      } else {
-        payload = "(empty)";
-      }
-      return {
-        id: `${n?.id}`,
-        index: parseInt(n?.index),
-        payload: `${payload}`,
-        input: n ? { index: n.input.index, payload: inputPayload } : {},
-      };
-    })
-    .sort((b: any, a: any) => {
-      if (a.input.index === b.input.index) {
-        return b.index - a.index;
-      } else {
-        return b.input.index - a.input.index;
-      }
-    })
-  : [];
+        return {
+          id: `${n?.id}`,
+          index: parseInt(n?.index),
+          payload: `${payload}`,
+          input: n ? { index: n.input.index, payload: inputPayload } : {},
+        };
+      })
+      .sort((b: any, a: any) => {
+        if (a.input.index === b.input.index) {
+          return b.index - a.index;
+        } else {
+          return b.input.index - a.input.index;
+        }
+      })
+    : [];
 
   // if (notices.length < 1) {
   //   return (
@@ -203,14 +203,13 @@ export const Post = () => {
   const fetchMyPosts = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
-              userData?.wallet
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userData?.wallet
+        }","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
       if (res.data) {
         if (res.data.rows.length > 0) {
@@ -218,7 +217,7 @@ export const Post = () => {
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
+              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
             );
             data.push(res1.data);
           }
@@ -234,14 +233,13 @@ export const Post = () => {
   const fetchLikePosts = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${
-              userData?.wallet
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${userData?.wallet
+        }","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
 
       if (res.data) {
@@ -249,12 +247,12 @@ export const Post = () => {
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                  },
-                }
+              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                },
+              }
             );
             data.push(res1.data.rows[0]);
           }
@@ -264,7 +262,7 @@ export const Post = () => {
             let dataOne = [];
             for (let index = 0; index < data.length; index++) {
               const res2 = await axios.get(
-                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
               );
               dataOne.push(res2.data);
             }
@@ -282,14 +280,13 @@ export const Post = () => {
   const fetchFollowers = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${
-              userData?.username
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${userData?.username
+        }","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
 
       if (res.data) {
@@ -297,12 +294,12 @@ export const Post = () => {
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                  },
-                }
+              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                },
+              }
             );
 
             data.push(res1.data.rows[0]);
@@ -312,7 +309,7 @@ export const Post = () => {
             let dataOne = [];
             for (let index = 0; index < data.length; index++) {
               const res2 = await axios.get(
-                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
               );
               dataOne.push(res2.data);
             }
@@ -390,7 +387,7 @@ export const Post = () => {
     // fetchPosts();
   }, [refreshPost]);
 
-  useEffect(() => {}, [postsData]);
+  useEffect(() => { }, [postsData]);
 
   if (isPageLoading && pageLoadCount === 0)
     return (
@@ -415,28 +412,28 @@ export const Post = () => {
       {
         notices.length > 0 && notices[0].payload !== undefined
           ? JSON.parse(notices[0]?.payload)?.posts
-              .splice(0, endCursor)
-                .map((eachNotice: any, index: number) => (
-                    // .filter((it) => JSON.parse(it.payload).posts.length > 0)
-          <>
-            <PostContainer key={index}>
-              <PostUser {...eachNotice} />
-              <PostBody postMetaData={posts[index]}>
-                {eachNotice?.post_content}
-              </PostBody>
-              <PostActionsContainer
-                  postId={index}
-                  message={eachNotice?.post_content}
-                  upload={eachNotice?.post_media}
-                  postData={eachNotice}
-                  postMetaData={posts}
-              />
-              {/*{<PostContainer></PostContainer>}*/}
-            </PostContainer>
-            {/*<div className={"divider"}></div>*/}
-          </>
-                ))
-            : <div>No posts</div>
+            .splice(0, endCursor)
+            .map((eachNotice: any, index: number) => (
+              // .filter((it) => JSON.parse(it.payload).posts.length > 0)
+              <>
+                <PostContainer key={index}>
+                  <PostUser {...eachNotice} />
+                  <PostBody postMetaData={posts[index]}>
+                    {eachNotice?.post_content}
+                  </PostBody>
+                  <PostActionsContainer
+                    postId={index}
+                    message={eachNotice?.post_content}
+                    upload={eachNotice?.post_media}
+                    postData={eachNotice}
+                    postMetaData={posts}
+                  />
+                  {/*{<PostContainer></PostContainer>}*/}
+                </PostContainer>
+                {/*<div className={"divider"}></div>*/}
+              </>
+            ))
+          : <div>No posts</div>
       }
 
       {/*<button onClick={handlePostToDapp}>Trigger wallet</button>*/}
@@ -536,7 +533,7 @@ export const Post = () => {
             title="load more button"
             type="button"
             className="btn btn-wide block"
-            // onClick={() => setEndCursor((endCursor) => endCursor + 20)}
+          // onClick={() => setEndCursor((endCursor) => endCursor + 20)}
           >
             Load more
           </button>
