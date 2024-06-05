@@ -98,19 +98,21 @@ export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
 
     useEffect(() => {
         const setVoucher = async (voucher: any) => {
+            let voucherD;
             if (rollups) {
                 console.log("Was voucher executed", voucher);
                 const isExecuted = await rollups.dappContract.wasVoucherExecuted(BigNumber.from(voucher.input.index), BigNumber.from(voucher.index));
                 // voucher.executed
-                console.log("voucher executed", isExecuted);
+                voucherD = { ...voucher, executed: isExecuted }
+                console.log("voucher executed", voucherD);
             }
-            setVoucherToExecute(voucher);
+            setVoucherToExecute(voucherD);
         }
 
         // if (!voucherResult.fetching && voucherResult.data) {
         //     setVoucher(voucherResult.data.voucher);
         // }
-        if (!voucherLoading && voucherData) {
+        if (voucherData) {
             console.log("Voucher data", voucherData);
             setVoucher(voucherData.voucher);
         }
@@ -219,6 +221,7 @@ export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
 
     console.log(vouchers)
     console.log(data)
+    console.log("voucherToExecute", voucherToExecute)
 
     // const forceUpdate = useForceUpdate();
     return (
@@ -227,71 +230,60 @@ export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
             {/* <Button marginTop={'15px'} float={'right'} size='sm' onClick={() => reexecuteQuery({ requestPolicy: 'network-only' })}>
                 Reload 🔃
             </Button> */}
-            {voucherToExecute ?
-                <Table>
+            <div>
+                {voucherToExecute ?
+                    <div className="mb-10 mt-4"><Table>
+                        <Thead>
+                            <Tr>
+                                <Th>V. Index</Th>
+                                <Th>Action</Th>
+                            </Tr>
+                        </Thead>
+                        <Tbody>
+                            <Tr key={`${voucherToExecute.input.index}-${voucherToExecute.index}`}>
+                                <Td>{voucherToExecute.input.index}</Td>
+                                {/*<Td>{voucherToExecute.destination}</Td> */}
+                                <Td>
+                                    <button className={`${(!voucherToExecute.proof || voucherToExecute.executed) ? "text-white bg-gray-900" : "text-black bg-white cursor-pointer"} px-3 py-1 rounded-lg`} disabled={!voucherToExecute.proof || voucherToExecute.executed} onClick={() => executeVoucher(voucherToExecute)}>{voucherToExecute.proof ? (voucherToExecute.executed ? "Voucher executed" : "Execute voucher") : "No proof yet"}</button>
+                                </Td>
+                            </Tr>
+                        </Tbody>
+                    </Table></div> : <Text></Text>}
+            </div>
+            <TableContainer>
+                <Table marginTop={'20px'} size="lg" width={"850px"}>
                     <Thead>
                         <Tr>
-                            <Th>Input Index</Th>
+                            <Th>V. Index</Th>
                             <Th>Action</Th>
-                            <Th>Voucher Index</Th>
-                            {/*<Th>Destination</Th> */}
-                            {/* <Th>Payload</Th> */}
-                            {/* <th>Proof</th> */}
-                            {/* <Th>Input Payload</Th> */}
-                            {/* <Th>Msg</Th> */}
+                            <Th>Payload</Th>
                         </Tr>
                     </Thead>
                     <Tbody>
-                        <Tr key={`${voucherToExecute.input.index}-${voucherToExecute.index}`}>
-                            <Td>{voucherToExecute.input.index}</Td>
-                            {/*<Td>{voucherToExecute.destination}</Td> */}
-                            <Td>
-                                <Button size='sm' isDisabled={!voucherToExecute.proof || voucherToExecute.executed} onClick={() => executeVoucher(voucherToExecute)}>{voucherToExecute.proof ? (voucherToExecute.executed ? "Voucher executed" : "Execute voucher") : "No proof yet"}</Button>
-                            </Td>
-                            <Td>{voucherToExecute.index}</Td>
-                            {/* <td>{voucherToExecute.payload}</td> */}
-                            {/* <td>{voucherToExecute.proof}</td> */}
-                            {/* <Td>{voucherToExecute.input.payload}</Td> */}
-                            {/* <Td>{voucherToExecute.msg}</Td> */}
-                            <br /> <br />
-                        </Tr>
-                    </Tbody>
-                </Table> : <Text></Text>}
-            <Table marginTop={'20px'}>
-                <Thead>
-                    <Tr>
-                        {/*<Th>Input Index</Th>
-                        <Th>Voucher Index</Th>
-                        <Th>Destination</Th> */}
-                        <Th>Action</Th>
-                        {/* <th>Input Payload</th> */}
-                        <Th>Payload</Th>
-                        {/* <th>Proof</th> */}
-                    </Tr>
-                </Thead>
-                <Tbody>
-                    {vouchers.length === 0 && (
-                        <Tr>
-                            <Td textAlign={'center'} colSpan={4}>-</Td>
-                        </Tr>
-                    )}
-                    {vouchers.map((n: any) => (
-                        <Tr key={`${n.input.index}-${n.index}`}>
-                            {/*<Td>{n.input.index}</Td>
+                        {vouchers.length === 0 && (
+                            <Tr>
+                                <Td textAlign={'center'} colSpan={4}>-</Td>
+                            </Tr>
+                        )}
+                        {vouchers.map((n: any, index: number) => (
+                            <Tr key={`${n.input.index}-${n.index}`}>
+                                {/*<Td>{n.input.index}</Td>
                             <Td>{n.index}</Td>
                             <Td>{n.destination}</Td> */}
-                            <Td>
-                                <Button size='sm' onClick={() => getProof(n)}>Info</Button>
-                            </Td>
-                            {/* <td>{n.input.payload}</td> */}
-                            <Td color={'grey'}>{n.payload}</Td>
-                            {/* <td>
+                                <Td><p className="text-center">{n.input.index}</p></Td>
+                                <Td>
+                                    <button onClick={() => getProof(n)} className="text-black bg-white px-3 py-1 rounded-lg cursor-pointer">Info</button>
+                                </Td>
+                                {/* <td>{n.input.payload}</td> */}
+                                <Td color={'grey'}>{n.payload}</Td>
+                                {/* <td>
                                 <button disabled={!!n.proof} onClick={() => executeVoucher(n)}>Execute voucher</button>
                             </td> */}
-                        </Tr>
-                    ))}
-                </Tbody>
-            </Table>
+                            </Tr>
+                        ))}
+                    </Tbody>
+                </Table>
+            </TableContainer>
 
         </div>
     );
