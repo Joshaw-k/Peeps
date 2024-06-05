@@ -372,12 +372,8 @@ export const DepositTransaction = () => {
     try {
       if (rollups && activeAccount) {
         console.log("Inside rollups", rollups);
-        const data = ethers.utils.toUtf8Bytes(
-          `Deposited (${depositAmount}) of ERC20 (${erc20Address}).`
-        );
-        console.log(currentAllowance)
 
-        if (currentAllowance && depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
+        if (Number(currentAllowance) >= 0 && depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
           console.log("not enough allowance");
           // Allow portal to withdraw `amount` tokens from signer
 
