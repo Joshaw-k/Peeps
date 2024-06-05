@@ -18,7 +18,7 @@ import { useActiveAccount } from "thirdweb/react";
 import toast from "react-hot-toast";
 
 export const TransferTransaction = () => {
-    const { baseDappAddress } = usePeepsContext();
+    const { baseDappAddress, fetchBalance } = usePeepsContext();
     const rollups = useRollups(baseDappAddress);
     const activeAccount = useActiveAccount();
     const [recipientAddress, setRecipientAddress] = useState<string>("");
@@ -44,6 +44,7 @@ export const TransferTransaction = () => {
                 await rollups.inputContract.addInput(baseDappAddress, payload);
                 setIsModalOpen(false);
                 toast.success("Transfer successful");
+                fetchBalance();
             }
         } catch (e) {
             console.log(e);
