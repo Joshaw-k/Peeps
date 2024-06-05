@@ -14,7 +14,10 @@ import {useDebounce} from "@uidotdev/usehooks";
 import {ethers} from "ethers";
 import {gql, useQuery} from "@apollo/client";
 import {Address} from "thirdweb";
-import {useActiveAccount, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
+import {useActiveAccount, useActiveWalletChain, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
+
+import configFile from "../config.json";
+const config: any = configFile;
 
 interface IPeepsContext {
   baseDappAddress: string;
@@ -55,7 +58,8 @@ interface IPeepsContext {
   walletBalance: string,
   updateWalletBalance: any,
   isPostModalOpen: boolean,
-  setIsPostModalOpen: any
+  setIsPostModalOpen: any,
+  fetchBalance: any
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -103,7 +107,8 @@ const PeepsContext = createContext<IPeepsContext>({
   walletBalance: "",
   updateWalletBalance: null,
   isPostModalOpen: false,
-  setIsPostModalOpen: null
+  setIsPostModalOpen: null,
+  fetchBalance: null
 });
 
 export interface PeepsProviderProps {
@@ -192,6 +197,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const activeAddress = address;
   const walletStatus = useActiveWalletConnectionStatus();
   const walletStatusConnected = walletStatus === "connected";
+  const chainId = useActiveWalletChain();
   const [currentUser, setCurrentUser] = useState<ICurrentUser[] | any>();
   const [userData, setUserData] = useState<any>();
   const [hasProfile, setHasProfile] = useState(false);
@@ -217,6 +223,74 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     variables: { cursor },
     // pollInterval: 2000,
   });
+
+  const inspectCall = async (str: string) => {
+    let payload = str;
+
+    if (!chainId) {
+      return;
+    }
+
+    let apiURL = "";
+
+    if (config[chainId.id]?.inspectAPIURL) {
+      apiURL = `${config[chainId.id].inspectAPIURL}`;
+    } else {
+      console.error(`No inspect interface defined for chain ${chainId.id}`);
+      return;
+    }
+
+    let fetchData: Promise<Response>;
+    if (apiURL && payload) {
+      fetch(`${apiURL}/${payload}`)
+        .then((response) => response.json())
+        .then((data) => {
+          // console.log("balance before decode", data);
+          // Decode payload from each report
+          const decode = data.reports.map((report: Report) => {
+            return ethers.utils.toUtf8String(report?.payload);
+          });
+          // console.log("Decoded Reports:", decode);
+          const reportData = JSON.parse(decode);
+          // console.log("Report data erc20: ", typeof reportData.erc20)
+          // console.log("Report data: ", reportData)
+          // setBalance(
+          //   reportData.erc20.length > 0
+          //     ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
+          //     : "0"
+          // );
+          updateWalletBalance(
+            reportData.erc20.length > 0
+              ? ethers.utils.formatEther(reportData.erc20[0][1]).toString()
+              : "0"
+          );
+          // console.log("Ether : ", reportData.ether)
+          console.log("Erc20 : ", reportData.erc20);
+        })
+        .catch((err) => {
+          console.error(err);
+        });
+    }
+  };
+
+  useEffect(() => {
+    if (activeAccount) {
+      const getBalance = async () => {
+        await inspectCall(
+          `balance/${activeAccount.address ? activeAccount.address : ""}`
+        );
+      };
+      getBalance();
+    }
+  }, [activeAddress]);
+
+  const fetchBalance = async () => {
+    if (activeAccount) {
+      await inspectCall(
+        `balance/${activeAccount.address ? activeAccount.address : ""}`
+      );
+    }
+  };
 
   // const notices: Notice[] = data
   const postsNotice: Notice[] = data
@@ -838,7 +912,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         walletBalance,
         updateWalletBalance,
         isPostModalOpen,
-        setIsPostModalOpen
+        setIsPostModalOpen,
+        fetchBalance
       }}
     >
       {children}

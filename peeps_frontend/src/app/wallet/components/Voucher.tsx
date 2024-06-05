@@ -6,6 +6,7 @@ import { VoucherHistory } from './VoucherHistory';
 
 const Voucher = () => {
     const { activeAddress, baseDappAddress } = usePeepsContext();
+
     // const [dappRelayedAddress, setDappRelayedAddress] = useState<boolean>(false)
     // const rollups = useRollups(baseDappAddress);
     // const sendAddress = async () => {
