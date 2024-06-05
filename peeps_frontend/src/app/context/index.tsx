@@ -858,7 +858,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     if (walletStatus === "connected") {
       fetchUserData();
     }
-  }, [walletStatusConnected]);
+  }, [walletStatusConnected, activeAddress]);
 
   useEffect(() => {
     fetchPosts();
@@ -869,7 +869,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
       fetchMyPosts();
       fetchLikePosts();
     }
-  }, [address, walletStatusConnected]);
+  }, [activeAddress, walletStatusConnected]);
 
   return (
     <PeepsContext.Provider
