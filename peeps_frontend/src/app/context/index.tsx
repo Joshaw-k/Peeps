@@ -248,7 +248,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           // console.log("balance before decode", data);
           // Decode payload from each report
           const decode = data.reports.map((report: Report) => {
-            return ethers.utils.toUtf8String(report?.payload);
+            return ethers.utils.toUtf8String((report as any)?.payload);
           });
           // console.log("Decoded Reports:", decode);
           const reportData = JSON.parse(decode);
