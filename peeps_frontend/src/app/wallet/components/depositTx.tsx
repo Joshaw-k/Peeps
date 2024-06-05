@@ -375,8 +375,6 @@ export const DepositTransaction = () => {
         const data = ethers.utils.toUtf8Bytes(
           `Deposited (${depositAmount}) of ERC20 (${erc20Address}).`
         );
-        // console.log("Allowance", currentAllowance, "depositAmount", depositAmount);
-        // console.log("Condition", depositAmount > Number(ethers.utils.formatEther(currentAllowance)))
 
         if (Number(currentAllowance) >= 0 && depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
           console.log("not enough allowance");
