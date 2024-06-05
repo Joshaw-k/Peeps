@@ -13,7 +13,7 @@ import { useActiveAccount } from "thirdweb/react";
 import toast from "react-hot-toast";
 
 export const WithDrawTransaction = () => {
-    const { baseDappAddress } = usePeepsContext();
+    const { baseDappAddress, fetchBalance } = usePeepsContext();
     const rollups = useRollups(baseDappAddress);
     const [dp, setDp] = useState<string>("");
     const [walletAmount, setWithdrawAmount] = useState<number>(0);
@@ -42,6 +42,7 @@ export const WithDrawTransaction = () => {
                 await rollups.inputContract.addInput(baseDappAddress, payload);
                 setIsModalOpen(false);
                 toast.success("Withdrawal successful");
+                fetchBalance();
             }
         } catch (e) {
             console.log(e);
