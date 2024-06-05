@@ -8,7 +8,7 @@ import { useActiveWalletChain, useActiveWalletConnectionStatus } from "thirdweb/
 import { usePeepsContext } from "../context";
 import { getWalletBalance } from "thirdweb/wallets";
 import { client } from "@/app/client";
-import { useEffect, useState } from "react";
+import { memo, useEffect, useMemo, useState } from "react";
 import { GetWalletBalanceResult } from "thirdweb/src/wallets/utils/getWalletBalance";
 import { DepositTransaction } from "./components/depositTx";
 import { TransferTransaction } from "./components/transferTx";
@@ -43,12 +43,14 @@ const Wallet = () => {
     const walletStatus = useActiveWalletConnectionStatus();
     const { activeAddress } = usePeepsContext();
     const connectedChain = useActiveWalletChain();
-    const balance = Balance();
+    // const balance = useMemo(() => Balance(), []);
+    // const balance = Balance();
+    // console.log("balance", balance);
     // console.log("Wallet balance", balance, walletBalance);
     const [transactionsGrid, setTransactionsGrid] = useState([
         {
             type: "Balance",
-            value: balance,
+            value: walletBalance,
         },
         {
             type: "spent",
@@ -58,9 +60,10 @@ const Wallet = () => {
             type: "received",
             value: "0.0",
         },
-    ])
+    ]);
 
     useEffect(() => {
+        console.log("Wallet balance set transaction grid");
         setTransactionsGrid([
             {
                 type: "Balance",
@@ -78,12 +81,12 @@ const Wallet = () => {
     }, [walletBalance]);
 
 
-    useEffect(() => {
-        if (connectedChain) {
-            // walletBalance();
-            console.log(balance)
-        }
-    }, [connectedChain, activeAddress]);
+    // useEffect(() => {
+    //     if (connectedChain) {
+    //         // walletBalance();
+    //         console.log(balance)
+    //     }
+    // }, [connectedChain, activeAddress]);
 
     // async function walletBalance() {
     //     console.log("Fetching wallet balance");
@@ -213,4 +216,4 @@ const Wallet = () => {
     );
 };
 
-export default Wallet;
+export default memo(Wallet);

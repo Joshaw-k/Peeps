@@ -8,6 +8,7 @@ const Voucher = () => {
     const { activeAddress, baseDappAddress } = usePeepsContext();
     const [dappRelayedAddress, setDappRelayedAddress] = useState<boolean>(false)
     const rollups = useRollups(baseDappAddress);
+
     const sendAddress = async () => {
         if (rollups) {
             try {
@@ -18,11 +19,10 @@ const Voucher = () => {
             }
         }
     };
+
     useEffect(() => {
-        console.log("reachead1")
-        sendAddress()
-        console.log("reachead2")
-    }, [])
+        sendAddress();
+    }, []);
 
     return (
         <div>{!dappRelayedAddress &&
