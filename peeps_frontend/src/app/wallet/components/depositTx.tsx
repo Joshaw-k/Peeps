@@ -372,9 +372,6 @@ export const DepositTransaction = () => {
     try {
       if (rollups && activeAccount) {
         console.log("Inside rollups", rollups);
-        const data = ethers.utils.toUtf8Bytes(
-          `Deposited (${depositAmount}) of ERC20 (${erc20Address}).`
-        );
 
         if (Number(currentAllowance) >= 0 && depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
           console.log("not enough allowance");
