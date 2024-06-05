@@ -428,7 +428,7 @@ export const DepositTransaction = () => {
           <AlertDialog.Title className="text-mauve12 mt-12 mb-4 lg:mt-4 lg:mb-8 text-xl text-center font-bold">
             Deposit Token
           </AlertDialog.Title>
-          <AlertDialog.Description className="text-[15px] text-center leading-normal">
+          <AlertDialog.Description asChild className="text-[15px] text-center leading-normal">
             {/* We require this to serve the best experience */}
             <div className="card items-center shrink-0 lg:my-4 w-full bg-base-100">
               <form className="card-body w-full" onSubmit={handleSubmit}>
