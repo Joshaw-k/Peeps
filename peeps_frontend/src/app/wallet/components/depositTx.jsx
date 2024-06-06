@@ -28,14 +28,14 @@ export const DepositTransaction = () => {
   // const [connectedWallet] = useWallets();
   // const provider = new ethers.providers.Web3Provider(connectedWallet.provider);
   const provider = new ethers.providers.JsonRpcProvider(PEEPS_SEPOLIA_ARBITRUM_RPC);
-  const [dp, setDp] = useState<string>("");
-  const [depositDescription, setDepositDescription] = useState<string>("");
+  const [dp, setDp] = useState("");
+  const [depositDescription, setDepositDescription] = useState("");
   const [depositAddress, setDepositAddress] = useState("");
-  const [depositAmount, setDepositAmount] = useState<number>(0);
-  const [isSubmit, setIsSubmit] = useState<boolean>(false);
+  const [depositAmount, setDepositAmount] = useState(0);
+  const [isSubmit, setIsSubmit] = useState(false);
   const connectedChain = useActiveWalletChain();
   const closeButton = useRef(null);
-  const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
+  const [isModalOpen, setIsModalOpen] = useState(false);
   const erc20PortalAddress = "0x9C21AEb2093C32DDbC53eEF24B873BDCd1aDa1DB";
 
   const { mutate: sendTx, data: transactionResult } = useSendTransaction()
