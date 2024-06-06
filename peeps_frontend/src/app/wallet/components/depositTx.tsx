@@ -373,18 +373,20 @@ export const DepositTransaction = () => {
       if (rollups && activeAccount) {
         console.log("Inside rollups", rollups);
 
-        if (Number(currentAllowance) >= 0 && depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
-          console.log("not enough allowance");
-          // Allow portal to withdraw `amount` tokens from signer
+        if (currentAllowance) {
+          if (Number(currentAllowance) >= 0 && depositAmount > Number(ethers.utils.formatEther(currentAllowance))) {
+            console.log("not enough allowance");
+            // Allow portal to withdraw `amount` tokens from signer
 
-          try {
-            sendTx(tx as any);
-          } catch (error) {
-            console.log(`could not approve ${depositAmount} tokens for DAppERC20Portal(${erc20PortalAddress})  (signer: ${activeAddress}`)
+            try {
+              sendTx(tx as any);
+            } catch (error) {
+              console.log(`could not approve ${depositAmount} tokens for DAppERC20Portal(${erc20PortalAddress})  (signer: ${activeAddress}`)
+            }
           }
-        }
-        else {
-          await depositToDapp()
+          else {
+            await depositToDapp()
+          }
         }
       }
     } catch (e) {
