@@ -10,12 +10,12 @@ import { getWalletBalance } from "thirdweb/wallets";
 import { client } from "@/app/client";
 import { memo, useEffect, useMemo, useState } from "react";
 import { GetWalletBalanceResult } from "thirdweb/src/wallets/utils/getWalletBalance";
-import { DepositTransaction } from "./components/depositTx";
 import { TransferTransaction } from "./components/transferTx";
 import { WithDrawTransaction } from "./components/withdrawTx";
 import { Balance } from "./balance";
 import { FreeMintTransaction } from "./components/freeMint";
 import Voucher from "./components/Voucher";
+import { DepositTransaction } from "./components/depositTx";
 
 
 const nftGrid = [
