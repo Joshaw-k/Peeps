@@ -1,49 +1,15 @@
-# thirdweb SDK + Next.js starter
+# Peeps Frontend
 
-## Setup client id
+This is the frontend repo for Peeps and contains all of the source code for Peeps frontend.
 
-Before you start, you need to replace the placeholder `clientId` with your client ID to use thirdweb SDK.
+## Running Peeps Frontend
 
-Refer to [Creating a client](https://portal.thirdweb.com/typescript/v5/client) guide to see how you can get a client id.
+To start the frontend:
 
-Go to `src/client.ts` file and replace the placeholder `clientId` with your client ID.
+- Run the command `cd peeps_frontend`. 
 
-```ts
-const clientId = "......";
-```
+- Once you are in the frontend folder, run the command `yarn` to install dependencies.
 
-## Usage
+- Once installation is complete, run the command `yarn dev` and the frontend will run at `http://localhost:3000/`.
 
-### Install dependencies
-
-```bash
-yarn
-```
-
-### Start development server
-
-```bash
-yarn dev
-```
-
-### Create a production build
-
-```bash
-yarn build
-```
-
-### Preview the production build
-
-```bash
-yarn start
-```
-
-## Resources
-
-- [thirdweb SDK documentation](https://portal.thirdweb.com/typescript/v5)
-- [React components and hooks](https://portal.thirdweb.com/typescript/v5/react)
-- [thirdweb Dashboard](https://thirdweb.com/dashboard)
-
-## Join our Discord!
-
-For any questions or suggestions, join our discord at [https://discord.gg/thirdweb](https://discord.gg/thirdweb).
+Upon completing the Frontend setup, proceed to the backend directory to setup the backend.
