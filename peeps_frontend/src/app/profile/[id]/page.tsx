@@ -51,6 +51,7 @@ const Profile = ({ params }: { params: any }) => {
   const [followersListData, setFollowersListData] = useState<any>();
   const walletStatus = useActiveWalletConnectionStatus();
   const walletStatusConnected = walletStatus === "connected";
+  console.log("user profile IPFS hash", userProfileIpfsHash);
 
   const defaultImage: string = "";
   if (userData?.username === params.id) {
@@ -491,7 +492,7 @@ const Profile = ({ params }: { params: any }) => {
 
   useEffect(() => {
     fetchUserProfileData();
-  }, [userProfileIpfsHash]);
+  }, [params.id, userProfileIpfsHash]);
 
   return (
     <section>

@@ -214,11 +214,11 @@ const PostForm: React.FC<IInputProps> = (props) => {
         <button
           title="Submit post"
           type="button"
-          disabled={postText.length < 1 || isSubmit}
+          disabled={walletStatus !== "connected" || postText.length < 1 || isSubmit}
           className="flex-grow-0 btn btn-sm btn-primary dark:bg-[#4563eb] dark:border-0 rounded-xl disabled:btn-disabled"
           onClick={handlePost}
         >
-          {isSubmit ? <ButtonLoader /> : "Post"}
+          {isSubmit ? <ButtonLoader /> : (walletStatus === "connected" ? "Post" : "Sign in to post")}
         </button>
       </div>
     </div>
