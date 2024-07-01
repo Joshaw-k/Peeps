@@ -112,7 +112,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
         erc20PortalAddress = config[chain.id].Erc20PortalAddress;
       } else {
         console.error(`No erc20 portal address address defined for chain ${chain.id}`);
-        alert(`No erc20 portal address defined for chain ${chain.id}`);
+        // alert(`No erc20 portal address defined for chain ${chain.id}`);
       }
 
       let erc721PortalAddress = "";
@@ -120,7 +120,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
         erc721PortalAddress = config[chain.id].Erc721PortalAddress;
       } else {
         console.error(`No erc721 portal address address defined for chain ${chain.id}`);
-        alert(`No erc721 portal address defined for chain ${chain.id}`);
+        // alert(`No erc721 portal address defined for chain ${chain.id}`);
       }
 
       let erc1155SinglePortalAddress = "";
@@ -128,7 +128,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
         erc1155SinglePortalAddress = config[chain.id].Erc1155SinglePortalAddress;
       } else {
         console.error(`No erc1155 single portal address address defined for chain ${chain.id}`);
-        alert(`No erc1155 single portal address defined for chain ${chain.id}`);
+        // alert(`No erc1155 single portal address defined for chain ${chain.id}`);
       }
 
       let erc1155BatchPortalAddress = "";
@@ -136,7 +136,7 @@ export const useRollups = (dAddress: string): RollupsContracts | undefined => {
         erc1155BatchPortalAddress = config[chain.id].Erc1155BatchPortalAddress;
       } else {
         console.error(`No erc1155 batch portal address address defined for chain ${chain.id}`);
-        alert(`No erc1155 batch portal address defined for chain ${chain.id}`);
+        // alert(`No erc1155 batch portal address defined for chain ${chain.id}`);
       }
       // dapp contract
       const dappContract = CartesiDApp__factory.connect(dappAddress, signer);

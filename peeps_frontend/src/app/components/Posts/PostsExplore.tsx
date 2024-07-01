@@ -74,7 +74,7 @@ export const PostExplore = () => {
         <>
             {postsData ? (
                 postsData.map((eachPost: any, index: number) => (
-                    <PostContainer key={index}>
+                    <PostContainer key={eachPost.post_id}>
                         <PostUser {...eachPost} />
                         <PostBody postMetaData={posts[index]}>
                             {eachPost?.post_content}
@@ -91,6 +91,7 @@ export const PostExplore = () => {
                         </PostBody>
                         <PostActionsContainer
                             postId={index}
+                            // postId={eachPost?.post_id}
                             message={eachPost?.post_content}
                             upload={eachPost?.post_media}
                             postData={eachPost}

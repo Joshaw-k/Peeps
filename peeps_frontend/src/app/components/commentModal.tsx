@@ -190,10 +190,11 @@ export const CommentModal = ({
         // Update the comments count - clientSide
         setCommentsUpdate(postData.post_comments + 1);
       } else {
-        toast.error(
-          "Something went wrong at our end. We are working to resolve it as we speak."
-        );
+        // toast.error(
+        //   "Something went wrong at our end. We are working to resolve it as we speak."
+        // );
         toast.error("Please try again in a few minutes.");
+        setCommentsUpdate(postData.post_comments !== 0 ? postData.post_comments - 1 : 0);
       }
     } else {
       // toast.error("Error, Can't make post!");

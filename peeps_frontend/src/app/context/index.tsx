@@ -659,7 +659,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         }
       );
       // toast.success("unpinning successful");
-      return true;
+      console.log("delete response", res);
+      if (res?.status === 200 || res?.status === 201) return true;
     } catch (error) {
       console.error(error);
       // toast.success("unpinning failed");
@@ -752,12 +753,13 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   const pinPost = async (postData: any, postMetaData: any, action: string) => {
+    console.log("Post data: ", postData);
     const likelist = postData?.post_likes;
     const post_creator = postMetaData.metadata?.keyvalues?.addr;
     const post_uuid = postMetaData.metadata?.keyvalues?.uuid;
     const username = postData?.post_username;
     const userDp = postData?.post_user_dp;
-    const displayName = postData?.displayName;
+    const displayName = postData?.post_displayName;
     const postContent = postData?.post_content;
     const postMedia = postData?.post_media;
     const commentList = postData?.post_comments;

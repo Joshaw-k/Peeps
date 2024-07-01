@@ -184,6 +184,7 @@ export const PostActionsContainer = ({
           postMetaData[postId].metadata?.keyvalues?.uuid,
           actionData
         );
+        setLikesUpdate(postData.post_likes !== 0 ? postData.post_likes - 1 : 0);
       }
     } else {
       toast.error("connect your wallet");
@@ -195,12 +196,14 @@ export const PostActionsContainer = ({
       const actionData = action ? "repeep" : "unrepeep";
       if (actionData == "repeep") {
         await PostActions(postId, postData, postMetaData, actionData);
+        setRepeepsUpdate(postData.post_repeeps + 1);
       } else {
         await revertReactions(
           userData?.wallet,
           postMetaData[postId].metadata?.keyvalues?.uuid,
           actionData
         );
+        setRepeepsUpdate(postData.post_repeeps !== 0 ? postData.post_repeeps - 1 : 0);
       }
     } else {
       toast.error("connect your wallet");
