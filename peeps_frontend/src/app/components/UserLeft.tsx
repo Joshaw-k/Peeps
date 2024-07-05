@@ -60,6 +60,7 @@ export const UserLeft = () => {
     baseUserData,
     userData,
     hasProfile,
+    isFetchingUserData,
     profileChanged,
   } = usePeepsContext();
   const activeAccount = useActiveAccount();
@@ -89,19 +90,37 @@ export const UserLeft = () => {
         >
           {walletStatus === "connected" && hasProfile ? (
             <>
-              <Avatar profileImage={userData?.profilePicture} />
-              <div className="grow">
-                <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
-                  {userData?.displayName ? userData?.displayName : "Anonymous"}
-                </h4>
-                <div className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500 keep-all overflow-x-hidden text-ellipsis">
-                  @{userData?.username ? userData?.username : "Anonymous"}
-                </div>
-              </div>
+              {isFetchingUserData ? (
+                <>
+                  <div className="avatar">
+                    <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
+                      <div className="skeleton w-12 h-12 rounded-full"></div>
+                    </div>
+                  </div>
+                  <div className="grow space-y-2">
+                    <h4 className="skeleton w-full h-6 max-w-sm"></h4>
+                    <p className="skeleton w-20 h-4"></p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <Avatar profileImage={userData?.profilePicture} />
+                  <div className="grow">
+                    <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
+                      {userData?.displayName
+                        ? userData?.displayName
+                        : "Anonymous"}
+                    </h4>
+                    <div className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500 keep-all overflow-x-hidden text-ellipsis">
+                      @{userData?.username ? userData?.username : "Anonymous"}
+                    </div>
+                  </div>
+                </>
+              )}
             </>
           ) : (
             <>
-              {walletStatus === "connecting" ? (
+              {walletStatus === "connecting" || isFetchingUserData ? (
                 <>
                   <div className="avatar">
                     <div className="w-12 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2">
@@ -130,16 +149,36 @@ export const UserLeft = () => {
           )}
         </div>
         {walletStatus === "connected" && hasProfile ? (
-          <div
-            className={"card card-compact bg-gray-200 dark:bg-base-300/80 my-1"}
-          >
-            <div className="card-body">
-              <div className="font-bold text-xs">About me</div>
-              <div className={"keep-all overflow-x-hidden text-ellipsis"}>
-                {userData?.bio ? userData?.bio : "***"}
+          <>
+            {isFetchingUserData ? (
+              <>
+                <div
+                  className={
+                    "card card-compact bg-gray-200 dark:bg-base-300/80 my-1"
+                  }
+                >
+                  <div className="card-body">
+                    <p className="skeleton w-20 h-4"></p>
+                    <h4 className="skeleton w-full h-6 max-w-sm"></h4>
+                    <h4 className="skeleton w-full h-6 max-w-sm"></h4>
+                  </div>
+                </div>
+              </>
+            ) : (
+              <div
+                className={
+                  "card card-compact bg-gray-200 dark:bg-base-300/80 my-1"
+                }
+              >
+                <div className="card-body">
+                  <div className="font-bold text-xs">About me</div>
+                  <div className={"keep-all overflow-x-hidden text-ellipsis"}>
+                    {userData?.bio ? userData?.bio : "***"}
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
+            )}
+          </>
         ) : null}
         {walletStatus === "disconnected" && <NoSignInCard />}
         {walletStatus === "connected" && !hasProfile && <NoProfileCard />}
@@ -186,7 +225,10 @@ export const UserLeft = () => {
             )}
             {walletStatus === "connected" && (
               <li>
-                <Link href={"/wallet"} className="space-x-2 hover:bg-gray-100 dark:hover:bg-base-200 active:bg-green-400 dark:active:bg-green-600">
+                <Link
+                  href={"/wallet"}
+                  className="space-x-2 hover:bg-gray-100 dark:hover:bg-base-200 active:bg-green-400 dark:active:bg-green-600"
+                >
                   <LucideWallet2 width={20} height={20} />
                   <span>Wallet</span>
                 </Link>

@@ -60,7 +60,9 @@ interface IPeepsContext {
   updateWalletBalance: any,
   isPostModalOpen: boolean,
   setIsPostModalOpen: any,
-  fetchBalance: any
+  fetchBalance: any,
+  isFetchingUserData: boolean,
+  setIsFetchingUserData: any,
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -110,7 +112,9 @@ const PeepsContext = createContext<IPeepsContext>({
   updateWalletBalance: null,
   isPostModalOpen: false,
   setIsPostModalOpen: null,
-  fetchBalance: null
+  fetchBalance: null,
+  isFetchingUserData: false,
+  setIsFetchingUserData: null
 });
 
 export interface PeepsProviderProps {
@@ -217,6 +221,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [myFollowersListData, setMyFollowersListData] = useState<any>([]);
   const [walletBalance, setWalletBalance] = useState<string>("0");
   const [isPostModalOpen, setIsPostModalOpen] = useState<boolean>(false);
+  const [isFetchingUserData, setIsFetchingUserData] = useState<boolean>(false);
 
   const [cursor, setCursor] = useState(null);
   const [endCursor, setEndCursor] = useState(20);
@@ -622,6 +627,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   const fetchUserData = async () => {
+    setIsFetchingUserData(true);
     try {
       const res1 = await axios.get(
         `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
@@ -641,6 +647,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           if (res2.data) {
             setUserData(res2.data);
             // console.log(res2.data);
+            setIsFetchingUserData(false);
           }
         } catch (error) {
           console.error(error);
@@ -925,7 +932,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         updateWalletBalance,
         isPostModalOpen,
         setIsPostModalOpen,
-        fetchBalance
+        fetchBalance,
+        isFetchingUserData,
+        setIsFetchingUserData,
       }}
     >
       {children}
