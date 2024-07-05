@@ -82,8 +82,8 @@ export const ProfileForm = () => {
         toast.success("Profile created");
         setOpen(false);
         setHasProfile(true);
-        await wait(800);
-        setProfileChanged(!profileChanged);
+        // await wait(800);
+        setProfileChanged(true);
         updateBaseUserData({
           username: username,
           wallet: `${address}`,
@@ -103,7 +103,6 @@ export const ProfileForm = () => {
   };
 
   const handleCreateProfile = async () => {
-    // if (isConnected) {
     if (walletStatus === "connected") {
       // Creating userProfile
       try {

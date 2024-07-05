@@ -626,6 +626,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         }
       );
       if (res1.data.rows.length > 0) {
+        setHasProfile(true);
         setUserIpfsHash(res1.data.rows[0].ipfs_pin_hash);
         try {
           const res2 = await axios.get(
@@ -638,6 +639,8 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         } catch (error) {
           console.error(error);
         }
+      } else {
+        setHasProfile(false);
       }
     } catch (error) {
       console.error(error);
@@ -856,7 +859,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   useEffect(() => {
-    checkProfileExist();
+    // checkProfileExist();
     if (walletStatus === "connected") {
       fetchUserData();
     }
