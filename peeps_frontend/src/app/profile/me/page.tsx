@@ -490,7 +490,9 @@ const Profile = ({ params }: { params: any }) => {
                       </PostContainer>
                     ))
                   ) : (
-                    <div>No posts</div>
+                    <div className={"card bg-base-200"}>
+                      <div className="card-body text-center">No Posts</div>
+                    </div>
                   )}
                 </Tab.Panel>
                 <Tab.Panel
