@@ -83,8 +83,19 @@ const Profile = ({ params }: { params: any }) => {
           },
         }
       );
+      console.log("Profile user", res);
       if (res.data.rows.length > 0) {
-        setUserProfileIpfsHash(res.data.rows[0].ipfs_pin_hash);
+        // setUserProfileIpfsHash(res.data.rows[0].ipfs_pin_hash);
+        try {
+          const res2 = await axios.get(
+            `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[0].ipfs_pin_hash}`
+          );
+          if (res2.data) {
+            setUserProfileData(res2.data);
+          }
+        } catch (error) {
+          console.log(error);
+        }
       }
     } catch (error) {
       console.log(error);
@@ -339,6 +350,7 @@ const Profile = ({ params }: { params: any }) => {
   const fetchPosts = async () => {
     try {
       const res = await axios.get(
+        // `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
         `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userProfileData?.wallet}","op":"eq"}&status=pinned`,
         {
           headers: {
@@ -475,12 +487,12 @@ const Profile = ({ params }: { params: any }) => {
   //   }, 6000);
   // }, [userProfileData]);
   useEffect(() => {
-    if (walletStatusConnected) {
+    if (walletStatusConnected && userProfileData?.wallet) {
       fetchPosts();
       fetchLikePosts();
       fetchFollowers();
     }
-  }, [params.id, walletStatusConnected]);
+  }, [params.id, walletStatusConnected, userProfileData?.wallet]);
 
   useEffect(() => {
     checkIfFollowing();
@@ -490,9 +502,9 @@ const Profile = ({ params }: { params: any }) => {
     fetchProfileUser();
   }, [params.id, profileChanged]);
 
-  useEffect(() => {
-    fetchUserProfileData();
-  }, [params.id, userProfileIpfsHash]);
+  // useEffect(() => {
+  //   fetchUserProfileData();
+  // }, [params.id, userProfileIpfsHash]);
 
   return (
     <section>
@@ -662,8 +674,8 @@ const Profile = ({ params }: { params: any }) => {
                       "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
                     )}
                   >
-                    {myPostsData ? (
-                      myPostsData.map((eachPost: any, index: number) => (
+                    {postsData ? (
+                      postsData.map((eachPost: any, index: number) => (
                         <PostContainer key={index}>
                           {/*{console.log(eachPost)}*/}
                           <PostUser {...eachPost} />
