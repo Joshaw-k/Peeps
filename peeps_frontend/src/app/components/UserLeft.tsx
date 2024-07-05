@@ -89,13 +89,13 @@ export const UserLeft = () => {
         >
           {walletStatus === "connected" && hasProfile ? (
             <>
-              <Avatar profileImage={baseUserData?.profilePicture} />
+              <Avatar profileImage={userData?.profilePicture} />
               <div className="grow">
                 <h4 className="font-semibold text-sm text-gray-800 dark:text-white">
-                  {baseUserData?.displayName ? baseUserData?.displayName : "Anonymous"}
+                  {userData?.displayName ? userData?.displayName : "Anonymous"}
                 </h4>
                 <div className="text-sm text-gray-800 md:text-gray-500 dark:text-white md:dark:text-gray-500 keep-all overflow-x-hidden text-ellipsis">
-                  @{baseUserData?.username ? baseUserData?.username : "Anonymous"}
+                  @{userData?.username ? userData?.username : "Anonymous"}
                 </div>
               </div>
             </>
@@ -136,22 +136,22 @@ export const UserLeft = () => {
             <div className="card-body">
               <div className="font-bold text-xs">About me</div>
               <div className={"keep-all overflow-x-hidden text-ellipsis"}>
-                {baseUserData?.bio ? baseUserData?.bio : "***"}
+                {userData?.bio ? userData?.bio : "***"}
               </div>
             </div>
           </div>
         ) : null}
-        {walletStatus === "connected" && !hasProfile && <NoProfileCard />}
         {walletStatus === "disconnected" && <NoSignInCard />}
+        {walletStatus === "connected" && !hasProfile && <NoProfileCard />}
         <div>
           <ul className="lg:menu menu-md lg:py-4 gap-y-2 lg:[&_a]:py-4">
             {walletStatus === "connected" && hasProfile && (
               <li>
                 <Link
                   href={
-                    baseUserData?.wallet === activeAddress
+                    userData?.wallet === activeAddress
                       ? `/profile/me`
-                      : `/profile/${baseUserData?.username}`
+                      : `/profile/${userData?.username}`
                   }
                   className="space-x-2 hover:bg-gray-100 dark:hover:bg-base-200"
                 >

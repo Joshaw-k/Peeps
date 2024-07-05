@@ -29,6 +29,7 @@ interface IPeepsContext {
   loading: any;
   checkProfileExist: any;
   userData: any;
+  updateUserData: any;
   unPin: any;
   PostActions: any;
   hasProfile: boolean;
@@ -78,6 +79,7 @@ const PeepsContext = createContext<IPeepsContext>({
   loading: null,
   checkProfileExist: null,
   userData: null,
+  updateUserData: null,
   unPin: null,
   PostActions: null,
   hasProfile: false,
@@ -549,6 +551,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     updateCurrentUserCache(_newUserData);
   }
 
+  const updateUserData = (_newUserData: any) => {
+    setUserData(_newUserData);
+  }
+
   const updateCurrentUser = (_user: ICurrentUser) => {
     setCurrentUser(_user);
   };
@@ -888,6 +894,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         loading,
         checkProfileExist,
         userData,
+        updateUserData,
         unPin,
         PostActions,
         hasProfile,
