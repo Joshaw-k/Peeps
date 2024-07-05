@@ -29,6 +29,7 @@ interface IPeepsContext {
   loading: any;
   checkProfileExist: any;
   userData: any;
+  updateUserData: any;
   unPin: any;
   PostActions: any;
   hasProfile: boolean;
@@ -59,7 +60,9 @@ interface IPeepsContext {
   updateWalletBalance: any,
   isPostModalOpen: boolean,
   setIsPostModalOpen: any,
-  fetchBalance: any
+  fetchBalance: any,
+  isFetchingUserData: boolean,
+  setIsFetchingUserData: any,
 }
 
 const PeepsContext = createContext<IPeepsContext>({
@@ -78,6 +81,7 @@ const PeepsContext = createContext<IPeepsContext>({
   loading: null,
   checkProfileExist: null,
   userData: null,
+  updateUserData: null,
   unPin: null,
   PostActions: null,
   hasProfile: false,
@@ -108,7 +112,9 @@ const PeepsContext = createContext<IPeepsContext>({
   updateWalletBalance: null,
   isPostModalOpen: false,
   setIsPostModalOpen: null,
-  fetchBalance: null
+  fetchBalance: null,
+  isFetchingUserData: false,
+  setIsFetchingUserData: null
 });
 
 export interface PeepsProviderProps {
@@ -215,6 +221,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [myFollowersListData, setMyFollowersListData] = useState<any>([]);
   const [walletBalance, setWalletBalance] = useState<string>("0");
   const [isPostModalOpen, setIsPostModalOpen] = useState<boolean>(false);
+  const [isFetchingUserData, setIsFetchingUserData] = useState<boolean>(false);
 
   const [cursor, setCursor] = useState(null);
   const [endCursor, setEndCursor] = useState(20);
@@ -549,6 +556,10 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     updateCurrentUserCache(_newUserData);
   }
 
+  const updateUserData = (_newUserData: any) => {
+    setUserData(_newUserData);
+  }
+
   const updateCurrentUser = (_user: ICurrentUser) => {
     setCurrentUser(_user);
   };
@@ -616,6 +627,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   const fetchUserData = async () => {
+    setIsFetchingUserData(true);
     try {
       const res1 = await axios.get(
         `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
@@ -626,6 +638,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         }
       );
       if (res1.data.rows.length > 0) {
+        setHasProfile(true);
         setUserIpfsHash(res1.data.rows[0].ipfs_pin_hash);
         try {
           const res2 = await axios.get(
@@ -634,10 +647,13 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           if (res2.data) {
             setUserData(res2.data);
             // console.log(res2.data);
+            setIsFetchingUserData(false);
           }
         } catch (error) {
           console.error(error);
         }
+      } else {
+        setHasProfile(false);
       }
     } catch (error) {
       console.error(error);
@@ -856,7 +872,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   useEffect(() => {
-    checkProfileExist();
+    // checkProfileExist();
     if (walletStatus === "connected") {
       fetchUserData();
     }
@@ -885,6 +901,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         loading,
         checkProfileExist,
         userData,
+        updateUserData,
         unPin,
         PostActions,
         hasProfile,
@@ -915,7 +932,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         updateWalletBalance,
         isPostModalOpen,
         setIsPostModalOpen,
-        fetchBalance
+        fetchBalance,
+        isFetchingUserData,
+        setIsFetchingUserData,
       }}
     >
       {children}

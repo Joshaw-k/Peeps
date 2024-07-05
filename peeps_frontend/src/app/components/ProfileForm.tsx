@@ -10,7 +10,11 @@ import { defaultDappAddress } from "../utils/constants";
 import { ButtonLoader } from "./Button";
 import toast from "react-hot-toast";
 import axios from "axios";
-import {useActiveAccount, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
+import {
+  useActiveAccount,
+  useActiveWalletConnectionStatus,
+  useConnect,
+} from "thirdweb/react";
 // import { useAccount } from "wagmi";
 
 export const ProfileForm = () => {
@@ -24,7 +28,8 @@ export const ProfileForm = () => {
     pinFileToIPFS,
     profileChanged,
     setProfileChanged,
-      updateBaseUserData
+    updateBaseUserData,
+    updateUserData,
   } = usePeepsContext();
   const rollups = useRollups(baseDappAddress);
   const [dp, setDp] = useState<string>("");
@@ -82,9 +87,19 @@ export const ProfileForm = () => {
         toast.success("Profile created");
         setOpen(false);
         setHasProfile(true);
-        await wait(800);
-        setProfileChanged(!profileChanged);
+        // await wait(800);
+        setProfileChanged(true);
         updateBaseUserData({
+          username: username,
+          wallet: `${address}`,
+          displayName: displayName,
+          profilePicture: imgUrl,
+          bio: bio,
+          following: 0,
+          followers: 0,
+          createdAt: new Date(),
+        });
+        updateUserData({
           username: username,
           wallet: `${address}`,
           displayName: displayName,
@@ -103,7 +118,6 @@ export const ProfileForm = () => {
   };
 
   const handleCreateProfile = async () => {
-    // if (isConnected) {
     if (walletStatus === "connected") {
       // Creating userProfile
       try {
@@ -243,7 +257,7 @@ export const ProfileForm = () => {
                 aria-label="Close"
                 ref={profileFormCloseButton}
               >
-                <LucideX size={48}  strokeWidth={4} />
+                <LucideX size={48} strokeWidth={4} />
               </button>
             </AlertDialog.Cancel>
             {/* <AlertDialog.Action asChild>
