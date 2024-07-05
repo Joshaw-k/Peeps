@@ -45,7 +45,7 @@ interface IVoucherPropos {
 }
 
 export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
-    const { baseDappAddress } = usePeepsContext();
+    const { activeAddress, baseDappAddress } = usePeepsContext();
     const { loading, error, data } = useQuery(VouchersDocument);
     const query = useQuery(VouchersDocument);
     console.log(query)
@@ -78,6 +78,8 @@ export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
 
     const executeVoucher = async (voucher: any) => {
         if (rollups && !!voucher.proof) {
+
+            console.log("Testing", voucher)
 
             const newVoucherToExecute = { ...voucher };
             try {
@@ -265,7 +267,7 @@ export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
                                 <Td textAlign={'center'} colSpan={4}>-</Td>
                             </Tr>
                         )}
-                        {vouchers.map((n: any, index: number) => (
+                        {vouchers.filter(it => it.payload.endsWith(activeAddress)).map((n: any, index: number) => (
                             <Tr key={`${n.input.index}-${n.index}`}>
                                 {/*<Td>{n.input.index}</Td>
                             <Td>{n.index}</Td>
