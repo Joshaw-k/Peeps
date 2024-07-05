@@ -16,6 +16,7 @@ import React from "react";
 import injectedModule from "@web3-onboard/injected-wallets";
 import { init } from "@web3-onboard/react";
 import configFile from "./config-web3onboard.json";
+import NextTopLoader from "nextjs-toploader";
 
 const inter = Inter({ subsets: ["latin"] });
 const notoSans = Noto_Sans({
@@ -87,6 +88,7 @@ export default function RootLayout({
         <ApolloProvider client={client}>
           <ThirdwebProvider>
             <PeepsProvider>
+              <NextTopLoader />
               <section className="w-full h-dvh overflow-y-auto">
                 <Navbar />
                 <section className={"flex flex-col lg:grid lg:grid-cols-12 py-2 lg:py-8"}>
