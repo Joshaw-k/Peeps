@@ -181,7 +181,7 @@ export const UserLeft = () => {
           </>
         ) : null}
         {walletStatus === "disconnected" && <NoSignInCard />}
-        {walletStatus === "connected" && !isFetchingUserData && !hasProfile && <NoProfileCard />}
+        {walletStatus === "connected" && !hasProfile && !isFetchingUserData && <NoProfileCard />}
         <div>
           <ul className="lg:menu menu-md lg:py-4 gap-y-2 lg:[&_a]:py-4">
             {walletStatus === "connected" && hasProfile && (
