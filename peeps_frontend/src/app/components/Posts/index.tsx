@@ -176,8 +176,8 @@ export const PostActionsContainer = ({
     if (walletStatus === "connected") {
       const actionData = action ? "like" : "unlike";
       if (actionData == "like") {
-        await PostActions(postId, postData, postMetaData, actionData);
         setLikesUpdate(postData.post_likes + 1);
+        await PostActions(postId, postData, postMetaData, actionData);
       } else {
         await revertReactions(
           userData?.wallet,
@@ -195,8 +195,8 @@ export const PostActionsContainer = ({
     if (walletStatus === "connected") {
       const actionData = action ? "repeep" : "unrepeep";
       if (actionData == "repeep") {
-        await PostActions(postId, postData, postMetaData, actionData);
         setRepeepsUpdate(postData.post_repeeps + 1);
+        await PostActions(postId, postData, postMetaData, actionData);
       } else {
         await revertReactions(
           userData?.wallet,

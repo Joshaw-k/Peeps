@@ -222,6 +222,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const [walletBalance, setWalletBalance] = useState<string>("0");
   const [isPostModalOpen, setIsPostModalOpen] = useState<boolean>(false);
   const [isFetchingUserData, setIsFetchingUserData] = useState<boolean>(false);
+  const [isPostActionsTriggered, setIsPostActionsTriggered] = useState<boolean>(false);
 
   const [cursor, setCursor] = useState(null);
   const [endCursor, setEndCursor] = useState(20);
@@ -605,7 +606,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
       data.append("file", files);
       data.append("pinataOptions", '{"cidVersion": 0}');
       data.append("pinataMetadata", '{"name": "peeps"}');
-      toast.loading("Upload in progress.");
+      const loadingToast = toast.loading("Upload in progress.");
       const res = await axios.post(
         "https://api.pinata.cloud/pinning/pinFileToIPFS",
         data,
@@ -615,7 +616,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           },
         }
       );
-      toast.success("Image upload complete");
+      toast.success("Image upload complete", {id: loadingToast});
       return {
         uploaded: true,
         image: `https://moccasin-many-grasshopper-363.mypinata.cloud/ipfs/${res.data.IpfsHash}`,
@@ -654,9 +655,11 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         }
       } else {
         setHasProfile(false);
+        setIsFetchingUserData(false);
       }
     } catch (error) {
       console.error(error);
+      setIsFetchingUserData(false);
     }
   };
 
@@ -676,7 +679,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
       );
       // toast.success("unpinning successful");
       console.log("delete response", res);
-      if (res?.status === 200 || res?.status === 201) return true;
+      if (res?.status >= 200 || res?.status <= 204) return true;
     } catch (error) {
       console.error(error);
       // toast.success("unpinning failed");
@@ -836,11 +839,15 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         );
         if (res.data.IpfsHash) pinActionPost(post_uuid, action);
         // toast.success("Repinning successful");
+        return true;
       } catch (error) {
         console.log(error);
         // toast.error("Repinning failed");
         toast.error("We couldn't complete your request.");
+        return false;
       }
+    } else {
+      return false;
     }
   };
 
@@ -850,23 +857,19 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     postMetaData: any,
     action: string
   ) => {
-    // if (wallet) {
     if (address) {
       //unpin from ipfs
       const unPinRes = await unPin(postMetaData[postId]);
 
       if (unPinRes) {
         // Then repin on ipfs
-        await pinPost(postData, postMetaData[postId], action);
-        await handlePostToDapp();
+        const pinPostRes = await pinPost(postData, postMetaData[postId], action);
+        if (pinPostRes) await handlePostToDapp();
+        setIsPostActionsTriggered(true);
       } else {
-        // toast.error(
-        //   "Something went wrong at our end. We are working to resolve it as we speak."
-        // );
         toast.error("Please try again in a few minutes.");
       }
     } else {
-      // toast.error("Error, Can't make post!");
       toast.error("Please connect your wallet!");
     }
   };
@@ -876,18 +879,18 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     if (walletStatus === "connected") {
       fetchUserData();
     }
-  }, [walletStatusConnected, activeAddress]);
+  }, [walletStatusConnected, activeAddress, profileChanged]);
 
   useEffect(() => {
     fetchPosts();
-  }, [refreshPost]);
+  }, [refreshPost, isPostActionsTriggered]);
 
   useEffect(() => {
     if (walletStatusConnected) {
       fetchMyPosts();
       fetchLikePosts();
     }
-  }, [activeAddress, walletStatusConnected]);
+  }, [activeAddress, walletStatusConnected, refreshPost, isPostActionsTriggered]);
 
   return (
     <PeepsContext.Provider

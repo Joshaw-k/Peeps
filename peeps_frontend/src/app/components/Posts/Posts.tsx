@@ -109,14 +109,12 @@ export const Post = () => {
   const fetchMyPosts = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${
-              userData?.wallet
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${userData?.wallet}","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
       if (res.data) {
         if (res.data.rows.length > 0) {
@@ -124,7 +122,7 @@ export const Post = () => {
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
+              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
             );
             data.push(res1.data);
           }
@@ -140,14 +138,12 @@ export const Post = () => {
   const fetchLikePosts = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${
-              userData?.wallet
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${userData?.wallet}","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
 
       if (res.data) {
@@ -155,12 +151,12 @@ export const Post = () => {
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                  },
-                }
+              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                },
+              }
             );
             data.push(res1.data.rows[0]);
           }
@@ -170,7 +166,7 @@ export const Post = () => {
             let dataOne = [];
             for (let index = 0; index < data.length; index++) {
               const res2 = await axios.get(
-                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
               );
               dataOne.push(res2.data);
             }
@@ -188,14 +184,12 @@ export const Post = () => {
   const fetchFollowers = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${
-              userData?.username
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${userData?.username}","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
 
       if (res.data) {
@@ -203,12 +197,12 @@ export const Post = () => {
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                  },
-                }
+              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                },
+              }
             );
 
             data.push(res1.data.rows[0]);
@@ -218,7 +212,7 @@ export const Post = () => {
             let dataOne = [];
             for (let index = 0; index < data.length; index++) {
               const res2 = await axios.get(
-                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
               );
               dataOne.push(res2.data);
             }
@@ -303,40 +297,43 @@ export const Post = () => {
   return (
     <>
       {/*{notices ? notices.length > 0 && <div>New messages</div> : null}*/}
-      {
-        postsNotice.length > 0 && postsNotice[0].payload !== undefined
-          ? JSON.parse(postsNotice[0]?.payload)?.posts?.splice(0, endCursor)
-                .map((eachNotice: any, index: number) => (
-                    // .filter((it) => JSON.parse(it.payload).posts.length > 0)
-                    <>
-                      <PostContainer key={index}>
-                        <PostUser {...eachNotice} />
-                        <PostBody postMetaData={posts[index]}>
-                          {eachNotice?.post_content}
-                          {
-                              eachNotice?.post_media && <Image
-                                  src={eachNotice?.post_media}
-                                  alt={"Post media"}
-                                  width={100}
-                                  height={100}
-                                  className={"w-full"}
-                              />
-                          }
-                        </PostBody>
-                        <PostActionsContainer
-                            postId={index}
-                            message={eachNotice?.post_content}
-                            upload={eachNotice?.post_media}
-                            postData={eachNotice}
-                            postMetaData={posts}
-                        />
-                        {/*{<PostContainer></PostContainer>}*/}
-                      </PostContainer>
-                      {/*<div className={"divider"}></div>*/}
-                    </>
-                ))
-            : <div>No posts</div>
-      }
+      {postsNotice.length > 0 && postsNotice[0].payload !== undefined ? (
+        JSON.parse(postsNotice[0]?.payload)
+          ?.posts?.splice(0, endCursor)
+          .map((eachNotice: any, index: number) => (
+            // .filter((it) => JSON.parse(it.payload).posts.length > 0)
+            <>
+              <PostContainer key={eachNotice.post_id}>
+                <PostUser {...eachNotice} />
+                <PostBody postMetaData={posts[index]}>
+                  {eachNotice?.post_content}
+                  {eachNotice?.post_media && (
+                    <Image
+                      src={eachNotice?.post_media}
+                      alt={"Post media"}
+                      width={100}
+                      height={100}
+                      className={"w-full"}
+                    />
+                  )}
+                </PostBody>
+                <PostActionsContainer
+                  postId={index}
+                  message={eachNotice?.post_content}
+                  upload={eachNotice?.post_media}
+                  postData={eachNotice}
+                  postMetaData={posts}
+                />
+                {/*{<PostContainer></PostContainer>}*/}
+              </PostContainer>
+              {/*<div className={"divider"}></div>*/}
+            </>
+          ))
+      ) : (
+        <div className={"card"}>
+          <div className="card-body text-center">No Posts</div>
+        </div>
+      )}
 
       {/*{postsData ? (
         postsData.map((eachPost: any, index: number) => (

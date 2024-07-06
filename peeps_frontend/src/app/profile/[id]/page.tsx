@@ -111,7 +111,7 @@ const Profile = ({ params }: { params: any }) => {
         }
       );
       // toast.success("unpinning successful");
-      return true;
+      if (res?.status >= 200 || res?.status <= 204) return true;
     } catch (error) {
       console.log(error);
       console.error("unpinning failed");
@@ -284,10 +284,11 @@ const Profile = ({ params }: { params: any }) => {
         }
         // Then repin on ipfs
       } else {
-        toast.error(
-          "Something went wrong at our end. We are working to resolve it as we speak."
-        );
-        toast.error("Please try again in a few minutes.");
+        // toast.error(
+        //   "Something went wrong at our end. We are working to resolve it as we speak."
+        // );
+        // toast.error("Please try again in a few minutes.");
+        toast.error("Something went wrong. Please try again.");
       }
     } else {
       toast.error("Error, Can't make post!");
