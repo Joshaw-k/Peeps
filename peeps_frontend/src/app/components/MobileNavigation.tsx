@@ -63,7 +63,7 @@ export const MobileNavigation = () => {
                 </Link>
             </li>
             <li>
-                <Link href={walletStatus === "connected" ? (userData?.user === activeAddress ? `/profile/me` : `/profile/${userData?.username}`) : ""}
+                <Link href={walletStatus === "connected" ? (userData?.wallet === activeAddress ? `/profile/me` : `/profile/${userData?.username}`) : ""}
                     className={"flex flex-row flex-nowrap gap-x-3 rounded-xl active:bg-base-300"}>
                     <div className={"relative"}>
                         <AvatarProfileSmall src={userData?.profilePicture} />

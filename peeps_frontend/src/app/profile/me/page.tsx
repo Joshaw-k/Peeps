@@ -428,10 +428,10 @@ const Profile = ({ params }: { params: any }) => {
                   className={({ selected }) =>
                     classNames(
                       "rounded-lg px-8 py-2.5 font-medium leading-5",
-                      "ring-white/60 focus:outline-none hover:bg-gray-300",
+                      "ring-white/60 focus:outline-none hover:bg-gray-300 dark:hover:bg-base-300",
                       selected
-                        ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow"
-                        : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
+                        ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow hover:bg-primary dark:hover:bg-[#4563eb]"
+                        : "text-base-content dark:hover:text-white"
                     )
                   }
                 >
@@ -441,10 +441,10 @@ const Profile = ({ params }: { params: any }) => {
                   className={({ selected }) =>
                     classNames(
                       "rounded-lg px-8 py-2.5 font-medium leading-5",
-                      "ring-white/60 focus:outline-none hover:bg-gray-300",
+                      "ring-white/60 focus:outline-none hover:bg-gray-300 dark:hover:bg-base-300",
                       selected
-                        ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow"
-                        : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
+                        ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow hover:bg-primary dark:hover:bg-[#4563eb]"
+                        : "text-base-content dark:hover:text-white"
                     )
                   }
                 >
@@ -454,10 +454,10 @@ const Profile = ({ params }: { params: any }) => {
                   className={({ selected }) =>
                     classNames(
                       "rounded-lg px-8 py-2.5 font-medium leading-5",
-                      "ring-white/60 focus:outline-none hover:bg-gray-300",
+                      "ring-white/60 focus:outline-none hover:bg-gray-300 dark:hover:bg-base-300",
                       selected
-                        ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow"
-                        : "text-base-content hover:bg-white/[0.12] dark:hover:text-white"
+                        ? "bg-primary dark:bg-[#4563eb] text-primary-content dark:text-white shadow hover:bg-primary dark:hover:bg-[#4563eb]"
+                        : "text-base-content dark:hover:text-white"
                     )
                   }
                 >
@@ -468,7 +468,7 @@ const Profile = ({ params }: { params: any }) => {
                 <Tab.Panel
                   className={classNames(
                     "rounded-xl py-3",
-                    "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                    "focus:outline-none"
                   )}
                 >
                   {myPostsData?.length > 0 ? (
@@ -490,7 +490,7 @@ const Profile = ({ params }: { params: any }) => {
                       </PostContainer>
                     ))
                   ) : (
-                    <div className={"card bg-base-200"}>
+                    <div className={"card"}>
                       <div className="card-body text-center">No Posts</div>
                     </div>
                   )}
@@ -498,7 +498,7 @@ const Profile = ({ params }: { params: any }) => {
                 <Tab.Panel
                   className={classNames(
                     "rounded-xl p-3",
-                    "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                    "focus:outline-none"
                   )}
                 >
                   {myLikedPostsData?.length > 0 ? (
@@ -519,7 +519,7 @@ const Profile = ({ params }: { params: any }) => {
                       </PostContainer>
                     ))
                   ) : (
-                    <div className={"card bg-base-200"}>
+                    <div className={"card"}>
                       <div className="card-body text-center">You have not liked any posts</div>
                     </div>
                   )}
@@ -527,7 +527,7 @@ const Profile = ({ params }: { params: any }) => {
                 <Tab.Panel
                   className={classNames(
                     "rounded-xl p-3",
-                    "ring-white/60 ring-offset-2 ring-offset-blue-400 focus:outline-none focus:ring-2"
+                    "focus:outline-none"
                   )}
                 >
                   {myFollowersListData?.length > 0 ? (
@@ -554,7 +554,7 @@ const Profile = ({ params }: { params: any }) => {
                       )
                     )
                   ) : (
-                    <div className={"card bg-base-200"}>
+                    <div className={"card"}>
                       <div className="card-body text-center">No followers yet</div>
                     </div>
                   )}

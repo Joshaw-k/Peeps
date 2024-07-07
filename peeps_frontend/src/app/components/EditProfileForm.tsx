@@ -101,6 +101,7 @@ export const EditProfileForm = () => {
     // if (isConnected) {
     if (walletStatus === "connected") {
       // Creating userProfile
+      console.log(dp);
       const unpinRes = await unPin(userIpfsHash);
       if (unpinRes) {
         try {
@@ -163,11 +164,11 @@ export const EditProfileForm = () => {
       </AlertDialog.Trigger>
       <AlertDialog.Portal>
         <AlertDialog.Overlay className="bg-black/40 bg-blackA6 data-[state=open]:animate-overlayShow fixed inset-0 dark:bg-base-300/80 dark:backdrop-blur-sm z-30" />
-        <AlertDialog.Content className="z-40 data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[90vw] max-w-[500px] bg-base-100 translate-x-[-50%] translate-y-[-50%] rounded-[6px] p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
-          <AlertDialog.Title className="text-mauve12 mt-4 mb-12 text-xl text-center font-bold">
+        <AlertDialog.Content className="z-40 data-[state=open]:animate-contentShow fixed top-[50%] left-[50%] max-h-[85vh] w-[96vw] max-w-[500px] bg-base-100 translate-x-[-50%] translate-y-[-50%] rounded-[8px] px-1 py-4 lg:p-[25px] shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,_hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] focus:outline-none dark:bg-base-100">
+          <AlertDialog.Title className="text-mauve12 mt-6 mb-12 text-xl text-center font-bold">
             Create your Profile
           </AlertDialog.Title>
-          <AlertDialog.Description className="text-[15px] text-center leading-normal">
+          <AlertDialog.Description asChild={true} className="text-[15px] text-center leading-normal">
             {/* We require this to serve the best experience */}
             <div className="card items-center shrink-0 my-4 w-full bg-base-100">
               <div className={"relative inline-block"}>
@@ -183,22 +184,6 @@ export const EditProfileForm = () => {
                       }
                     />
                   )}
-                  {/* <div
-                    className="w-32 rounded-full ring ring-primary-content ring-offset-base-100 ring-offset-2"
-                    ref={profileImageRef}
-                  >
-                    <Image
-                      width={100}
-                      height={100}
-                      alt=""
-                      src={
-                        userData.profilePicture == ""
-                          ? defaultImage
-                          : userData.profilePicture
-                      }
-                      className="bg-base-300"
-                    />
-                  </div> */}
                 </div>
                 {dpPreview && (
                   <span
@@ -273,7 +258,7 @@ export const EditProfileForm = () => {
                 aria-label="Close"
                 ref={profileFormCloseButton}
               >
-                <LucideX size={64} />
+                <LucideX size={16} strokeWidth={4} />
               </button>
             </AlertDialog.Cancel>
             {/* <AlertDialog.Action asChild>
