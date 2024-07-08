@@ -265,7 +265,7 @@ export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
                                 <Td textAlign={'center'} colSpan={4}>-</Td>
                             </Tr>
                         )}
-                        {vouchers.map((n: any, index: number) => (
+                        {vouchers.filter(it => it.payload.endsWith(activeAddress)).map((n: any, index: number) => (
                             <Tr key={`${n.input.index}-${n.index}`}>
                                 {/*<Td>{n.input.index}</Td>
                             <Td>{n.index}</Td>
