@@ -45,7 +45,7 @@ interface IVoucherPropos {
 }
 
 export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
-    const { baseDappAddress } = usePeepsContext();
+    const { baseDappAddress, activeAddress } = usePeepsContext();
     const { loading, error, data } = useQuery(VouchersDocument);
     const query = useQuery(VouchersDocument);
     console.log(query)
