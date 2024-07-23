@@ -53,6 +53,7 @@ init({
 
 //Setup GraphQL Apollo client
 const URL_QUERY_GRAPHQL = process.env.NEXT_PUBLIC_NODE_URL;
+console.log("url query graphql", URL_QUERY_GRAPHQL);
 
 const httpLink = createHttpLink({
   uri: URL_QUERY_GRAPHQL, // URL of your proxy server
