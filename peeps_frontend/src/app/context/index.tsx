@@ -341,6 +341,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
         }
       })
     : [];
+  console.log("postNotice: ", postsNotice);
 
   const userCreated = currentUser ? currentUser?.length > 0 : false;
 
