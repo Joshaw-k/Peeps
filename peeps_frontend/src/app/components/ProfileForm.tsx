@@ -119,24 +119,24 @@ export const ProfileForm = () => {
 
   const handleCreateProfile = async () => {
     if (walletStatus === "connected") {
-      console.log(dp);
+      // console.log(dp);
       // Creating userProfile
-      // try {
-      //   if (dp == "") {
-      //     await createProfile();
-      //   } else {
-      //     const imgUploadRes = await pinFileToIPFS(dp);
-      //     await wait(600);
-      //     if (imgUploadRes.uploaded) {
-      //       setDp("");
-      //       await createProfile(
-      //         imgUploadRes.uploaded ? imgUploadRes.image : ""
-      //       );
-      //     }
-      //   }
-      // } catch (error) {
-      //   console.log(error);
-      // }
+      try {
+        if (dp == "") {
+          await createProfile();
+        } else {
+          const imgUploadRes = await pinFileToIPFS(dp);
+          await wait(600);
+          if (imgUploadRes.uploaded) {
+            setDp("");
+            await createProfile(
+              imgUploadRes.uploaded ? imgUploadRes.image : ""
+            );
+          }
+        }
+      } catch (error) {
+        console.log(error);
+      }
     } else {
       toast.error("Error, Can't make post!");
       toast.error("Please connect your wallet!");

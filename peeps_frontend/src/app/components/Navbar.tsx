@@ -52,18 +52,6 @@ const Navbar: React.FC = () => {
               }}
               walletConnect={{projectId: "7f49c7e89e54528522eef8334c58506e"}}
           />
-          {/*<Network />*/}
-          {/*<ConnectButton*/}
-          {/*    accountStatus={{smallScreen: "avatar", largeScreen: "full"}}*/}
-          {/*    chainStatus={{smallScreen: "icon", largeScreen: "full"}}*/}
-          {/*    showBalance={false}*/}
-          {/*/>*/}
-          {/*<WalletButton wallet="metamask" />*/}
-          {/*{*/}
-          {/*  isConnected*/}
-          {/*      ? <Account/>*/}
-          {/*      : <WalletOptions/>*/}
-          {/*}*/}
         </div>
       </div>
     </section>
