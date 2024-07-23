@@ -301,6 +301,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   };
 
   // const notices: Notice[] = data
+  console.log("get notices data", data);
   const postsNotice: Notice[] = data
     ? data.notices.edges
       .map((node: any) => {
