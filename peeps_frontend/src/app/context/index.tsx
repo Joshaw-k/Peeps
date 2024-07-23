@@ -6,15 +6,15 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import {defaultDappAddress, PEEPS_USER_CACHE_NAME} from "../utils/constants";
+import { defaultDappAddress, PEEPS_USER_CACHE_NAME } from "../utils/constants";
 import axios from "axios";
 import toast from "react-hot-toast";
-import {useRollups} from "../useRollups";
-import {useDebounce} from "@uidotdev/usehooks";
-import {ethers} from "ethers";
-import {gql, useQuery} from "@apollo/client";
-import {Address} from "thirdweb";
-import {useActiveAccount, useActiveWalletChain, useActiveWalletConnectionStatus, useConnect} from "thirdweb/react";
+import { useRollups } from "../useRollups";
+import { useDebounce } from "@uidotdev/usehooks";
+import { ethers } from "ethers";
+import { gql, useQuery } from "@apollo/client";
+import { Address } from "thirdweb";
+import { useActiveAccount, useActiveWalletChain, useActiveWalletConnectionStatus, useConnect } from "thirdweb/react";
 
 import configFile from "../config.json";
 const config: any = configFile;
@@ -198,7 +198,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   // const {address, isConnecting, isConnected} = useAccount();
   const [baseUserData, setBaseUserData] = useState(getCurrentUserCache() || null);
   const activeAccount = useActiveAccount();
-  const {connect, isConnecting} = useConnect();
+  const { connect, isConnecting } = useConnect();
   const address = activeAccount?.address;
   const activeAddress = address;
   const walletStatus = useActiveWalletConnectionStatus();
@@ -302,44 +302,44 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
 
   // const notices: Notice[] = data
   const postsNotice: Notice[] = data
-      ? data.notices.edges
-          .map((node: any) => {
-            const n = node.node;
-            let inputPayload = n?.input.payload;
-            if (inputPayload) {
-              try {
-                inputPayload = ethers.utils.toUtf8String(inputPayload);
-              } catch (e) {
-                inputPayload = inputPayload + " (hex)";
-              }
-            } else {
-              inputPayload = "(empty)";
-            }
-            let payload = n?.payload;
-            if (payload) {
-              try {
-                payload = ethers.utils.toUtf8String(payload);
-              } catch (e) {
-                payload = payload + " (hex)";
-              }
-            } else {
-              payload = "(empty)";
-            }
-            return {
-              id: `${n?.id}`,
-              index: parseInt(n?.index),
-              payload: `${payload}`,
-              input: n ? { index: n.input.index, payload: inputPayload } : {},
-            };
-          })
-          .sort((b: any, a: any) => {
-            if (a.input.index === b.input.index) {
-              return b.index - a.index;
-            } else {
-              return b.input.index - a.input.index;
-            }
-          })
-      : [];
+    ? data.notices.edges
+      .map((node: any) => {
+        const n = node.node;
+        let inputPayload = n?.input.payload;
+        if (inputPayload) {
+          try {
+            inputPayload = ethers.utils.toUtf8String(inputPayload);
+          } catch (e) {
+            inputPayload = inputPayload + " (hex)";
+          }
+        } else {
+          inputPayload = "(empty)";
+        }
+        let payload = n?.payload;
+        if (payload) {
+          try {
+            payload = ethers.utils.toUtf8String(payload);
+          } catch (e) {
+            payload = payload + " (hex)";
+          }
+        } else {
+          payload = "(empty)";
+        }
+        return {
+          id: `${n?.id}`,
+          index: parseInt(n?.index),
+          payload: `${payload}`,
+          input: n ? { index: n.input.index, payload: inputPayload } : {},
+        };
+      })
+      .sort((b: any, a: any) => {
+        if (a.input.index === b.input.index) {
+          return b.index - a.index;
+        } else {
+          return b.input.index - a.input.index;
+        }
+      })
+    : [];
 
   const userCreated = currentUser ? currentUser?.length > 0 : false;
 
@@ -391,12 +391,12 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
     try {
       // console.log("Fetch MY POSTS address: ", userData?.wallet, address);
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&metadata[keyvalues]["addr"]={"value":"${address}","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
       // console.log("MYPosts", res);
       if (res.data) {
@@ -405,7 +405,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
+              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
             );
             data.push(res1.data);
           }
@@ -421,14 +421,13 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const fetchLikePosts = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${
-              userData?.wallet
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_LIKES&metadata[keyvalues]["addr"]={"value":"${userData?.wallet
+        }","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
 
       if (res.data) {
@@ -436,12 +435,12 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                  },
-                }
+              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&?metadata[keyvalues]["post_uuid"]={"value":"${res.data.rows[index].metadata?.keyvalues?.uuid}","op":"eq"}&status=pinned`,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                },
+              }
             );
             data.push(res1.data.rows[0]);
           }
@@ -451,7 +450,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
             let dataOne = [];
             for (let index = 0; index < data.length; index++) {
               const res2 = await axios.get(
-                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
               );
               dataOne.push(res2.data);
             }
@@ -468,14 +467,13 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const fetchFollowers = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${
-              userData?.username
-          }","op":"eq"}&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_FOLLOW&metadata[keyvalues]["following"]={"value":"${userData?.username
+        }","op":"eq"}&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
 
       if (res.data) {
@@ -483,12 +481,12 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
-                {
-                  headers: {
-                    Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-                  },
-                }
+              `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_USER&metadata[keyvalues]["username"]={"value":"${res.data.rows[index].metadata?.keyvalues?.follower}","op":"eq"}&status=pinned`,
+              {
+                headers: {
+                  Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+                },
+              }
             );
 
             data.push(res1.data.rows[0]);
@@ -498,7 +496,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
             let dataOne = [];
             for (let index = 0; index < data.length; index++) {
               const res2 = await axios.get(
-                  `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
+                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${data[index].ipfs_pin_hash}`
               );
               dataOne.push(res2.data);
             }
@@ -515,12 +513,12 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const fetchPosts = async () => {
     try {
       const res = await axios.get(
-          `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&status=pinned`,
-          {
-            headers: {
-              Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
-            },
-          }
+        `https://api.pinata.cloud/data/pinList?metadata[name]=PEEPS_POSTS&status=pinned`,
+        {
+          headers: {
+            Authorization: `Bearer ${process.env.NEXT_PUBLIC_JWT}`,
+          },
+        }
       );
       if (res.data) {
         if (res.data.rows.length > 0) {
@@ -528,7 +526,7 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
           let data = [];
           for (let index = 0; index < res.data.rows.length; index++) {
             const res1 = await axios.get(
-                `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
+              `${process.env.NEXT_PUBLIC_GATEWAY_URL}/ipfs/${res.data.rows[index].ipfs_pin_hash}`
             );
             data.push(res1.data);
             // console.log(res1);
@@ -666,10 +664,9 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
   const unPin = async (postMetaData: any) => {
     try {
       const res = await axios.delete(
-        `https://api.pinata.cloud/pinning/unpin/${
-          postMetaData?.ipfs_pin_hash
-            ? postMetaData?.ipfs_pin_hash
-            : postMetaData
+        `https://api.pinata.cloud/pinning/unpin/${postMetaData?.ipfs_pin_hash
+          ? postMetaData?.ipfs_pin_hash
+          : postMetaData
         }`,
         {
           headers: {
@@ -809,20 +806,20 @@ const PeepsProvider: React.FC<PeepsProviderProps> = ({
               action == "comment"
                 ? commentList + 1
                 : action == "uncomment"
-                ? commentList - 1
-                : commentList,
+                  ? commentList - 1
+                  : commentList,
             post_repeeps:
               action == "repeep"
                 ? repeepList + 1
                 : action == "unrepeep"
-                ? repeepList - 1
-                : repeepList,
+                  ? repeepList - 1
+                  : repeepList,
             post_likes:
               action == "like"
                 ? likelist + 1
                 : action == "unlike"
-                ? likelist - 1
-                : likelist,
+                  ? likelist - 1
+                  : likelist,
             createdAt: createdAt,
           },
         });

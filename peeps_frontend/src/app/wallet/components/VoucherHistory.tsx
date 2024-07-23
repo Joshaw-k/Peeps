@@ -79,6 +79,8 @@ export const VoucherHistory: React.FC<IVoucherPropos> = ({ dappAddress }) => {
     const executeVoucher = async (voucher: any) => {
         if (rollups && !!voucher.proof) {
 
+            console.log("Testing", voucher)
+
             const newVoucherToExecute = { ...voucher };
             try {
                 const tx = await rollups.dappContract.executeVoucher(voucher.destination, voucher.payload, voucher.proof);
